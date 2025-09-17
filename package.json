@@ -11,8 +11,10 @@
 		"format": "biome check --write ."
 	},
 	"dependencies": {
+		"@heroui/react": "^2.8.4",
 		"@react-router/node": "^7.7.1",
 		"@react-router/serve": "^7.7.1",
+		"framer-motion": "^12.23.13",
 		"isbot": "^5.1.27",
 		"react": "^19.1.0",
 		"react-dom": "^19.1.0",
@@ -32,6 +34,7 @@
 	},
 	"pnpm": {
 		"onlyBuiltDependencies": [
+			"@heroui/shared-utils",
 			"@tailwindcss/oxide",
 			"esbuild"
 		]
