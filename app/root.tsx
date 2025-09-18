@@ -10,6 +10,7 @@ import {
 import type { Route } from './+types/root';
 import './app.css';
 import { Providers } from './providers';
+import { Snippet } from '@heroui/react';
 
 export const links: Route.LinksFunction = () => [
 	{ rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -67,9 +68,9 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 			<h1>{message}</h1>
 			<p>{details}</p>
 			{stack && (
-				<pre className="w-full p-4 overflow-x-auto">
-					<code>{stack}</code>
-				</pre>
+				<Snippet className="w-full" hideCopyButton variant="bordered">
+					{stack}
+				</Snippet>
 			)}
 		</main>
 	);
