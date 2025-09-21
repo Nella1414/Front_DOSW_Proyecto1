@@ -3,6 +3,7 @@ import { Link } from '@heroui/react';
 import { Card, CardBody } from '@heroui/react';
 import { Spacer } from '@heroui/react';
 
+// Metadata que aparece en el <head> de la página
 export function meta() {
 	return [
 		{ title: 'SIRHA - DOSW' },
@@ -10,6 +11,7 @@ export function meta() {
 	];
 }
 
+// Página de inicio - solo tiene el título y un botón para ir al admin
 export default function Home() {
 	return (
 		<div className="w-dvw h-dvh grid place-items-center p-4">
