@@ -1,4 +1,4 @@
-import { index, route, type RouteConfig } from '@react-router/dev/routes';
+import { index, type RouteConfig, route } from '@react-router/dev/routes';
 
 // Configuración de todas las rutas de la app
 // index() es para la ruta raíz (/), route() para rutas específicas
