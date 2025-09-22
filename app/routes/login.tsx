@@ -1,10 +1,15 @@
-import { Button } from '@heroui/react';
-import { Card, CardHeader, CardBody, CardFooter } from '@heroui/react';
-import { Input } from '@heroui/react';
-import { Link } from '@heroui/react';
-import { Form } from '@heroui/react';
-import { Checkbox } from '@heroui/react';
-import { Divider } from '@heroui/react';
+import {
+	Button,
+	Card,
+	CardBody,
+	CardFooter,
+	CardHeader,
+	Checkbox,
+	Divider,
+	Form,
+	Input,
+	Link,
+} from '@heroui/react';
 import { useState } from 'react';
 
 export function meta() {

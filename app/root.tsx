@@ -9,8 +9,8 @@ import {
 
 import type { Route } from './+types/root';
 import './app.css';
-import { Providers } from './providers';
 import { Snippet } from '@heroui/react';
+import { Providers } from './providers';
 
 // Aquí configuramos las fuentes que va a usar toda la app
 // Preconectamos a Google Fonts para que cargue más rápido

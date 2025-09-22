@@ -1,7 +1,4 @@
-import { Button } from '@heroui/react';
-import { Link } from '@heroui/react';
-import { Card, CardBody } from '@heroui/react';
-import { Spacer } from '@heroui/react';
+import { Button, Card, CardBody, Link, Spacer } from '@heroui/react';
 
 // Metadata que aparece en el <head> de la página
 export function meta() {
