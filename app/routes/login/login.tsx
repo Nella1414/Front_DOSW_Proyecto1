@@ -1,7 +1,6 @@
 /** biome-ignore-all lint/a11y/noSvgWithoutTitle: <explanation> */
 import {
 	Button,
-	button,
 	Card,
 	CardBody,
 	CardFooter,
