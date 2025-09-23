@@ -6,4 +6,5 @@ export default [
 	index('routes/home/home.tsx'), // La página principal
 	route('/admin', 'routes/admin/admin.tsx'), // El panel de administración
 	route('/login', 'routes/login/login.tsx'), // La página de inicio de sesión
+	route('/admin-dashboard', 'routes/admin-dashboard/admin-dashboard.tsx'), // El dashboard del admin
 ] satisfies RouteConfig;
