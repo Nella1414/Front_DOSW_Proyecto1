@@ -29,6 +29,10 @@ export const links: Route.LinksFunction = () => [
 
 // Este es el layout base de toda la aplicación
 // Envuelve todo en los providers y configura el HTML básico
+
+// light | dark | theme2light | theme2dark | citrus | corporate
+// earth | cyberpunk | neonInk | forestMist | solarEclipse | retroWave
+// oceanDepths | brand
 export function Layout({ children }: { children: React.ReactNode }) {
 	return (
 		<html lang="en">
@@ -38,7 +42,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
 				<Meta />
 				<Links />
 			</head>
-			<body>
+			<body
+				className="cyberpunk
+			"
+			>
 				{/* Aquí metemos todos los providers (React Query, HeroUI, etc.) */}
 				<Providers>{children}</Providers>
 				<ScrollRestoration />

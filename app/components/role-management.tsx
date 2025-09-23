@@ -146,7 +146,7 @@ export function RoleManagement() {
 
 			{/* Panel que aparece cuando seleccionas un usuario para cambiar su rol */}
 			{selectedUser && (
-				<div className="bg-gray-50 p-4 rounded-lg space-y-4">
+				<div className="bg-default-50 p-4 rounded-lg space-y-4">
 					<h3 className="font-semibold">Asignar nuevo rol</h3>
 					<div className="flex gap-4 items-end">
 						<Select

@@ -1,5 +1,7 @@
+/** biome-ignore-all lint/a11y/noSvgWithoutTitle: <explanation> */
 import {
 	Button,
+	button,
 	Card,
 	CardBody,
 	CardFooter,
@@ -10,7 +12,7 @@ import {
 	Input,
 	Link,
 } from '@heroui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export function meta() {
 	return [
@@ -32,6 +34,7 @@ export default function Login() {
 		setTimeout(() => {
 			console.log('Login attempt:', { email, password });
 			setIsLoading(false);
+
 			// Here you would typically handle the actual authentication
 		}, 2000);
 	};
@@ -45,49 +48,84 @@ export default function Login() {
 			// Here you would typically redirect to Google OAuth
 		}, 1500);
 	};
-
+	useEffect(() => {}, []);
 	return (
-		<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-			<Card className="w-full max-w-md shadow-2xl">
-				<CardHeader className="flex flex-col items-center pb-2">
-					<h1 className="text-3xl font-bold text-gray-800 mb-2">
+		<div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br dark:bg-gradient-to-tl from-content3 to-content1 p-4">
+			<Card className="w-full max-w-md container mx-auto bg-content4 shadow-medium">
+				<CardHeader className="flex flex-col items-center pb-2 mt-5">
+					<Button variant="shadow" color="primary" size="lg" className="mb-2">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke-width="1.5"
+							stroke="currentColor"
+							className="size-10"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5"
+							/>
+						</svg>
+					</Button>
+				</CardHeader>
+				<CardBody className="flex flex-col items-center text-center">
+					<h1 className="text-3xl font-medium items-center text-2xl-900 mb-2">
 						SIRHA - DOSW
 					</h1>
-					<p className="text-gray-600 text-center">
-						Inicia sesión en tu cuenta
+				</CardBody>
+				<CardFooter className="flex justify-center mb-5">
+					<p className="text-small text-default-600">
+						Academic Schedule Reassignment System
+					</p>
+				</CardFooter>
+			</Card>
+			<Card className="w-full max-w-md shadow-medium container mx-auto bg-content4 mt-10">
+				<CardHeader className="flex flex-col items-center pb-2 mt-5">
+					<h1 className="text-2xl font-medium text-default-900 mb-2">
+						Sign In to Your Account!
+					</h1>
+					<p className="text-default-600 text-center">
+						Enter your credentials to access your account
 					</p>
 				</CardHeader>
 
-				<CardBody className="space-y-4">
+				<CardBody className="space-y-5 px-5">
 					<Form onSubmit={handleEmailLogin} className="space-y-4">
 						<Input
 							type="email"
-							label="Correo electrónico"
-							placeholder="tu@email.com"
+							label="Email"
+							placeholder="you@email.com"
 							value={email}
 							onChange={(e) => setEmail(e.target.value)}
 							isRequired
 							size="lg"
-							variant="bordered"
+							color="primary"
+							variant="faded"
 							className="w-full"
 						/>
 
 						<Input
 							type="password"
-							label="Contraseña"
+							label="Password"
 							placeholder="••••••••"
 							value={password}
 							onChange={(e) => setPassword(e.target.value)}
 							isRequired
 							size="lg"
-							variant="bordered"
+							color="primary"
+							variant="faded"
 							className="w-full"
 						/>
 
-						<div className="flex justify-between items-center text-sm">
-							<Checkbox size="sm">Recordarme</Checkbox>
-							<Link href="#" className="text-blue-600 hover:text-blue-800">
-								¿Olvidaste tu contraseña?
+						<div className="flex justify-between items-center text-small w-full">
+							<Checkbox size="sm">Remember me</Checkbox>
+							<Link
+								href="#"
+								className="text-primary-600 hover:text-primary-800"
+							>
+								Forgot your password?
 							</Link>
 						</div>
 
@@ -95,7 +133,7 @@ export default function Login() {
 							type="submit"
 							color="primary"
 							size="lg"
-							className="w-full"
+							className="loginButton w-full"
 							isLoading={isLoading}
 							isDisabled={isLoading}
 						>
@@ -105,7 +143,7 @@ export default function Login() {
 
 					<div className="flex items-center gap-3">
 						<Divider className="flex-1" />
-						<span className="text-sm text-gray-500">O continúa con</span>
+						<span className="text-small text-default-100">O continúa con</span>
 						<Divider className="flex-1" />
 					</div>
 
@@ -113,7 +151,7 @@ export default function Login() {
 						onClick={handleGoogleLogin}
 						variant="bordered"
 						size="lg"
-						className="w-full"
+						className="loginGoogle w-full"
 						isLoading={isLoading}
 						isDisabled={isLoading}
 						startContent={
@@ -147,12 +185,12 @@ export default function Login() {
 					</Button>
 				</CardBody>
 
-				<CardFooter className="flex justify-center">
-					<p className="text-sm text-gray-600">
+				<CardFooter className="flex justify-center mb-5">
+					<p className="text-small text-default-600">
 						¿No tienes cuenta?{' '}
 						<Link
 							href="#"
-							className="text-blue-600 hover:text-blue-800 font-medium"
+							className="text-primary-600 hover:text-primary-800 font-medium"
 						>
 							Regístrate aquí
 						</Link>
