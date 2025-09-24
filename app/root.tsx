@@ -9,7 +9,7 @@ import {
 
 import type { Route } from './+types/root';
 import './app.css';
-import { Button, Select, SelectItem, Snippet } from '@heroui/react';
+import { Select, SelectItem, Snippet } from '@heroui/react';
 import { Providers, themes, useTheme } from './providers';
 
 // Aquí configuramos las fuentes que va a usar toda la app
