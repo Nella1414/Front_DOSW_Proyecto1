@@ -9,8 +9,8 @@ import {
 
 import type { Route } from './+types/root';
 import './app.css';
-import { Snippet } from '@heroui/react';
-import { Providers } from './providers';
+import { Button, Select, SelectItem, Snippet } from '@heroui/react';
+import { Providers, themes, useTheme } from './providers';
 
 // Aquí configuramos las fuentes que va a usar toda la app
 // Preconectamos a Google Fonts para que cargue más rápido
@@ -42,10 +42,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 				<Meta />
 				<Links />
 			</head>
-			<body
-				className="cyberpunk
-			"
-			>
+			<body>
 				{/* Aquí metemos todos los providers (React Query, HeroUI, etc.) */}
 				<Providers>{children}</Providers>
 				<ScrollRestoration />
@@ -57,7 +54,30 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 // El componente principal - básicamente solo renderiza las rutas
 export default function App() {
-	return <Outlet />;
+	const { theme, setTheme } = useTheme();
+
+	return (
+		<>
+			<Select
+				selectedKeys={[theme]}
+				onSelectionChange={(keys) =>
+					setTheme((keys.currentKey as typeof theme) || 'brand')
+				}
+				className="fixed top-4 right-4 z-50 w-[8rem]"
+				classNames={{
+					value: 'capitalize',
+				}}
+				size="sm"
+			>
+				{themes.map((theme) => (
+					<SelectItem key={theme} className="capitalize">
+						{theme}
+					</SelectItem>
+				))}
+			</Select>
+			<Outlet />
+		</>
+	);
 }
 
 // Maneja todos los errores que puedan pasar en la app

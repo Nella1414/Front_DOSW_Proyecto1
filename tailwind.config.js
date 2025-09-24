@@ -20,7 +20,7 @@ module.exports = {
 	plugins: [
 		heroui({
 			themes: {
-				light: {
+				theme2light: {
 					colors: {
 						default: {
 							50: '#f6f5f4',
@@ -128,7 +128,7 @@ module.exports = {
 						overlay: '#000000',
 					},
 				},
-				dark: {
+				theme2dark: {
 					colors: {
 						default: {
 							50: '#100703',
@@ -236,7 +236,7 @@ module.exports = {
 						overlay: '#ffffff',
 					},
 				},
-				theme2light: {
+				light: {
 					colors: {
 						default: {
 							50: '#f1f1f1',
@@ -344,7 +344,7 @@ module.exports = {
 						overlay: '#000000',
 					},
 				},
-				theme2dark: {
+				dark: {
 					colors: {
 						default: {
 							50: '#1d1d1d',
