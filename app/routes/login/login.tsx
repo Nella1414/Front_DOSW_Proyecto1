@@ -32,9 +32,17 @@ export default function Login() {
 		// Simulate login process
 		setTimeout(() => {
 			console.log('Login attempt:', { email, password });
+			
+			// Check for admin credentials
+			if (email === 'du.important@gmail.com' && password === '123456789') {
+				
+				window.location.href = '/admin-dashboard';
+			} else {
+				// Show error for invalid credentials
+				alert('Credenciales inválidas.');
+			}
+			
 			setIsLoading(false);
-
-			// Here you would typically handle the actual authentication
 		}, 2000);
 	};
 
@@ -188,7 +196,7 @@ export default function Login() {
 					<p className="text-small text-default-600">
 						¿No tienes cuenta?{' '}
 						<Link
-							href="#"
+							href="/register"
 							className="text-primary-600 hover:text-primary-800 font-medium"
 						>
 							Regístrate aquí

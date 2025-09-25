@@ -17,7 +17,18 @@ import { useState } from 'react';
 import { mockUsers } from '../lib/api';
 
 // Los tres tipos de roles que puede tener un usuario
-const ROLES = ['estudiante', 'decanatura', 'administrador'];
+// Mapeo de roles: español (display) -> inglés (backend)
+const ROLES = [
+	{ label: 'Estudiante', value: 'STUDENT' },
+	{ label: 'Decanatura', value: 'DEAN' },
+	{ label: 'Administrador', value: 'ADMIN' }
+];
+
+// Función para obtener el label en español del rol
+const getRoleLabel = (roleValue: string) => {
+	const role = ROLES.find(r => r.value === roleValue);
+	return role ? role.label : roleValue;
+};
 
 interface User {
 	id: string;
@@ -43,7 +54,6 @@ export function RoleManagement() {
 	const { data: users = [], isLoading } = useQuery({
 		queryKey: ['users'],
 		queryFn: async () => {
-			// Simula delay de red
 			await new Promise((resolve) => setTimeout(resolve, 500));
 			return mockUsers;
 		},
@@ -52,35 +62,38 @@ export function RoleManagement() {
 	// Mutación para actualizar el rol de un usuario
 	const updateRole = useMutation({
 		mutationFn: async ({ userId, role }: { userId: string; role: string }) => {
-			// Simula delay de red
+			// delay simulado
 			await new Promise((resolve) => setTimeout(resolve, 1000));
 			const user = mockUsers.find((u) => u.id === userId);
 			if (!user) throw new Error('Usuario no encontrado');
+			console.log('Sending to backend:', { userId, role }); 
 			return { name: user.name, role };
 		},
 		onSuccess: (data) => {
-			// Cuando se actualiza exitosamente, muestra mensaje y refresca la lista
-			setSuccess({ user: data.name, role: data.role });
+			setSuccess({ user: data.name, role: getRoleLabel(data.role) });
 			queryClient.invalidateQueries({ queryKey: ['users'] });
 			setSelectedUser('');
 			setNewRole('');
 		},
 	});
 
-	// Filtra usuarios basado en el término de búsqueda (nombre o email)
+	// Filtrar usuarios 
 	const filteredUsers = users.filter(
 		(user: User) =>
 			user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
 			user.email.toLowerCase().includes(searchTerm.toLowerCase()),
 	);
 
-	// Asigna colores diferentes a cada tipo de rol para el Chip
+	// Asigna colores diferentes a cada rol
 	const getRoleColor = (role: string) => {
 		switch (role) {
+			case 'ADMIN':
 			case 'administrador':
 				return 'danger'; // Rojo para admin
+			case 'DEAN':
 			case 'decanatura':
 				return 'warning'; // Amarillo para decanatura
+			case 'STUDENT':
 			case 'estudiante':
 				return 'primary'; // Azul para estudiante
 			default:
@@ -88,7 +101,7 @@ export function RoleManagement() {
 		}
 	};
 
-	// Maneja la actualización del rol cuando se hace clic en "Asignar"
+	// Maneja la actualización del rol cuando se hace clic en Asignar
 	const handleRoleUpdate = () => {
 		if (selectedUser && newRole) {
 			updateRole.mutate({ userId: selectedUser, role: newRole });
@@ -127,7 +140,7 @@ export function RoleManagement() {
 							<TableCell>{user.email}</TableCell>
 							<TableCell>
 								<Chip color={getRoleColor(user.role)} variant="flat">
-									{user.role}
+									{getRoleLabel(user.role)}
 								</Chip>
 							</TableCell>
 							<TableCell>
@@ -144,7 +157,7 @@ export function RoleManagement() {
 				</TableBody>
 			</Table>
 
-			{/* Panel que aparece cuando seleccionas un usuario para cambiar su rol */}
+			{/* Panel que aparece cuando se selecciona un usuario para cambiar su rol */}
 			{selectedUser && (
 				<div className="bg-default-50 p-4 rounded-lg space-y-4">
 					<h3 className="font-semibold">Asignar nuevo rol</h3>
@@ -160,7 +173,7 @@ export function RoleManagement() {
 							className="flex-1"
 						>
 							{ROLES.map((role) => (
-								<SelectItem key={role}>{role}</SelectItem>
+								<SelectItem key={role.value}>{role.label}</SelectItem>
 							))}
 						</Select>
 						<Button

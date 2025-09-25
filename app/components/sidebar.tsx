@@ -9,13 +9,12 @@ import {
 } from '@heroui/react';
 import React from 'react';
 
-// Pequeña función utilitaria para concatenar clases (evita instalar clsx)
+// Función utilitaria para concatenar clases
 function clsx(...classes: Array<string | false | null | undefined>) {
 	return classes.filter(Boolean).join(' ');
 }
 
-// Roles estandarizados internos (en tu app hay mezcla de "estudiante" / "student", etc.)
-// Aquí centralizamos un mapeo para hacer el componente tolerante a ambas nomenclaturas.
+
 export type UserRole = 'student' | 'faculty' | 'admin';
 
 export type CurrentView =
@@ -34,7 +33,7 @@ export interface User {
 	id: string;
 	name: string;
 	email: string;
-	role: UserRole | string; // Permitimos strings para soportar backends con otras etiquetas
+	role: UserRole | string; 
 	studentId?: string;
 	academicStatus?: 'normal' | 'in progress' | 'failed';
 }
@@ -60,10 +59,9 @@ interface NavItemConfig {
 		| 'danger'
 		| 'default';
 	badge?: string | number;
-	moduleToken?: string; // token de módulo (medicine, psychology, etc.) para estilos futuros
+	moduleToken?: string; 
 }
 
-// Iconos simples (placeholder) – puedes reemplazar por un set real (lucide / heroicons)
 const Icon = {
 	Dashboard: () => (
 		<span
@@ -207,7 +205,6 @@ const ROLE_ITEMS: Record<UserRole, NavItemConfig[]> = {
 	],
 };
 
-// Mapea valores alternos (ej. "estudiante") a roles internos
 function normalizeRole(raw: string | undefined): UserRole | null {
 	if (!raw) return null;
 	const r = raw.toLowerCase();
@@ -215,7 +212,7 @@ function normalizeRole(raw: string | undefined): UserRole | null {
 	if (['faculty', 'decanatura', 'profesor', 'docente'].includes(r))
 		return 'faculty';
 	if (['admin', 'administrador', 'administration'].includes(r)) return 'admin';
-	return null; // rol desconocido => sólo items base
+	return null; 
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -355,7 +352,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 	);
 };
 
-// Hook práctico por si quieres reutilizar la navegación fuera del componente
+// Hook práctico para reutilizar la navegación fuera del componente
 export function useSidebarNavigation(user: User | null) {
 	const role = normalizeRole(user?.role);
 	return React.useMemo(() => {
@@ -367,7 +364,6 @@ export function useSidebarNavigation(user: User | null) {
 	}, [role]);
 }
 
-// Ejemplo de skeleton (carga) opcional
 export function SidebarSkeleton() {
 	return (
 		<div className="w-64 h-full border-r border-content3/40 bg-content1 p-4 animate-pulse space-y-4">

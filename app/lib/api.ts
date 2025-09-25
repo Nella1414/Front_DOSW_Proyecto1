@@ -7,25 +7,25 @@ export const mockUsers = [
 		id: '1',
 		name: 'Juan Pérez García',
 		email: 'juan.perez@escuelaing.edu.co',
-		role: 'estudiante',
+		role: 'STUDENT',
 	},
 	{
 		id: '2',
 		name: 'María González López',
 		email: 'maria.gonzalez@escuelaing.edu.co',
-		role: 'decanatura',
+		role: 'DEAN',
 	},
 	{
 		id: '3',
 		name: 'Carlos Rodríguez Silva',
 		email: 'carlos.rodriguez@escuelaing.edu.co',
-		role: 'administrador',
+		role: 'ADMIN',
 	},
 	{
 		id: '4',
 		name: 'Ana Martínez Torres',
 		email: 'ana.martinez@escuelaing.edu.co',
-		role: 'estudiante',
+		role: 'STUDENT',
 	},
 ];
 

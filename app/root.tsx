@@ -9,8 +9,8 @@ import {
 
 import type { Route } from './+types/root';
 import './app.css';
-import { Select, SelectItem, Snippet } from '@heroui/react';
-import { Providers, themes, useTheme } from './providers';
+import { Snippet } from '@heroui/react';
+import { Providers } from './providers';
 
 // Aquí configuramos las fuentes que va a usar toda la app
 // Preconectamos a Google Fonts para que cargue más rápido
@@ -54,30 +54,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 // El componente principal - básicamente solo renderiza las rutas
 export default function App() {
-	const { theme, setTheme } = useTheme();
-
-	return (
-		<>
-			<Select
-				selectedKeys={[theme]}
-				onSelectionChange={(keys) =>
-					setTheme((keys.currentKey as typeof theme) || 'brand')
-				}
-				className="fixed top-4 right-4 z-50 w-[8rem]"
-				classNames={{
-					value: 'capitalize',
-				}}
-				size="sm"
-			>
-				{themes.map((theme) => (
-					<SelectItem key={theme} className="capitalize">
-						{theme}
-					</SelectItem>
-				))}
-			</Select>
-			<Outlet />
-		</>
-	);
+	return <Outlet />;
 }
 
 // Maneja todos los errores que puedan pasar en la app
