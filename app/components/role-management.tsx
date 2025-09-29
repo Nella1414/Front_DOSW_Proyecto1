@@ -17,7 +17,7 @@ import { useState } from 'react';
 import { mockUsers } from '../lib/api';
 
 // Los tres tipos de roles que puede tener un usuario
-// Mapeo de roles: español (display) -> inglés (backend)
+// Mapeo de roles
 const ROLES = [
 	{ label: 'Estudiante', value: 'STUDENT' },
 	{ label: 'Decanatura', value: 'DEAN' },

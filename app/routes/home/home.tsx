@@ -27,6 +27,7 @@ export default function Home() {
 
 				{/* Botones de navegación */}
 				<div className="flex gap-3">
+
 					<Button
 						as={Link}
 						href="/login"

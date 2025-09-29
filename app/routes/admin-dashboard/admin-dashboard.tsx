@@ -17,6 +17,9 @@ import React from 'react';
 import { RoleManagement } from '../../components/role-management';
 import { type CurrentView, Sidebar, type User } from '../../components/sidebar';
 import { StudentRegistration } from '../../components/student-registration';
+import { AcademicSemaphore } from '../../components/academic-semaphore';
+import { PeriodsManagement } from '../../components/periods-management';
+import { StudentSelector } from '../../components/student-selector';
 
 // Usuario simulado (en producción vendrá de auth/context)
 const adminUser: User = {
@@ -282,19 +285,23 @@ export default function AdminDashboardRoute() {
 			break;
 		case 'academic-progress':
 			content = (
-				<SimplePlaceholder
-					title="Progreso Académico"
-					description="Resumen de avance académico por estudiante."
-				/>
+				<div className="space-y-6">
+					<StudentSelector 
+						onSelectStudent={(student) => {
+							// En una implementación real, esto actualizaría el estado
+							console.log('Selected student:', student);
+						}} 
+					/>
+					<AcademicSemaphore 
+						userRole="ADMIN" 
+						studentId="admin-view"
+						targetStudentId="1234567890"
+					/>
+				</div>
 			);
 			break;
 		case 'academic-plan':
-			content = (
-				<SimplePlaceholder
-					title="Plan Académico"
-					description="Visualización y edición del plan académico."
-				/>
-			);
+			content = <PeriodsManagement userRole="ADMIN" />;
 			break;
 		default:
 			content = <SimplePlaceholder title="Vista" />;

@@ -12,6 +12,7 @@ import {
 	Link,
 } from '@heroui/react';
 import { useEffect, useState } from 'react';
+import { DemoCredentials } from '../../components/demo-credentials';
 
 export function meta() {
 	return [
@@ -33,13 +34,16 @@ export default function Login() {
 		setTimeout(() => {
 			console.log('Login attempt:', { email, password });
 			
-			// Check for admin credentials
+			// Check credentials and redirect based on role
 			if (email === 'du.important@gmail.com' && password === '123456789') {
-				
+				// Admin credentials - redirect to admin dashboard
 				window.location.href = '/admin-dashboard';
+			} else if (email === 'juan.perez@escuelaing.edu.co' && password === '123456789') {
+				// Student credentials - redirect to student dashboard
+				window.location.href = '/student-dashboard';
 			} else {
 				// Show error for invalid credentials
-				alert('Credenciales inválidas.');
+				alert('Credenciales inválidas. Verifica tu email y contraseña.');
 			}
 			
 			setIsLoading(false);
@@ -204,6 +208,8 @@ export default function Login() {
 					</p>
 				</CardFooter>
 			</Card>
+			
+			<DemoCredentials />
 		</div>
 	);
 }

@@ -191,6 +191,20 @@ const ROLE_ITEMS: Record<UserRole, NavItemConfig[]> = {
 			moduleToken: 'admin',
 		},
 		{
+			key: 'academic-progress',
+			label: 'Progreso Académico',
+			icon: <Icon.Academic />,
+			color: 'secondary',
+			moduleToken: 'classes',
+		},
+		{
+			key: 'academic-plan',
+			label: 'Períodos Académicos',
+			icon: <Icon.Plan />,
+			color: 'primary',
+			moduleToken: 'medicine',
+		},
+		{
 			key: 'management',
 			label: 'Gestión',
 			icon: <Icon.Management />,
