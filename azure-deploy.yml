@@ -1,5 +1,5 @@
-# Azure Container Apps deployment configuration for SIRHA
-# This file can be used with Azure CLI or Azure DevOps pipelines
+# Kubernetes (AKS) deployment configuration for SIRHA
+# This file can be used with Azure Kubernetes Service (AKS), Azure CLI, or Azure DevOps pipelines
 
 apiVersion: apps/v1
 kind: Deployment
