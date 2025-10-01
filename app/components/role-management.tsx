@@ -21,12 +21,12 @@ import { mockUsers } from '../lib/api';
 const ROLES = [
 	{ label: 'Estudiante', value: 'STUDENT' },
 	{ label: 'Decanatura', value: 'DEAN' },
-	{ label: 'Administrador', value: 'ADMIN' }
+	{ label: 'Administrador', value: 'ADMIN' },
 ];
 
 // Función para obtener el label en español del rol
 const getRoleLabel = (roleValue: string) => {
-	const role = ROLES.find(r => r.value === roleValue);
+	const role = ROLES.find((r) => r.value === roleValue);
 	return role ? role.label : roleValue;
 };
 
@@ -66,7 +66,7 @@ export function RoleManagement() {
 			await new Promise((resolve) => setTimeout(resolve, 1000));
 			const user = mockUsers.find((u) => u.id === userId);
 			if (!user) throw new Error('Usuario no encontrado');
-			console.log('Sending to backend:', { userId, role }); 
+			console.log('Sending to backend:', { userId, role });
 			return { name: user.name, role };
 		},
 		onSuccess: (data) => {
@@ -77,7 +77,7 @@ export function RoleManagement() {
 		},
 	});
 
-	// Filtrar usuarios 
+	// Filtrar usuarios
 	const filteredUsers = users.filter(
 		(user: User) =>
 			user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

@@ -1,10 +1,20 @@
-import { Card, CardBody, CardHeader, Divider, Link, Button } from '@heroui/react';
+import {
+	Button,
+	Card,
+	CardBody,
+	CardHeader,
+	Divider,
+	Link,
+} from '@heroui/react';
 import { StudentRegistration } from '../../components/student-registration';
 
 export function meta() {
 	return [
 		{ title: 'Registro de Estudiantes - SIRHA' },
-		{ name: 'description', content: 'Registro de nuevos estudiantes en el sistema SIRHA' },
+		{
+			name: 'description',
+			content: 'Registro de nuevos estudiantes en el sistema SIRHA',
+		},
 	];
 }
 
@@ -19,8 +29,18 @@ export default function Register() {
 					variant="light"
 					color="primary"
 					startContent={
-						<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+						<svg
+							className="w-4 h-4"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+						>
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth={2}
+								d="M15 19l-7-7 7-7"
+							/>
 						</svg>
 					}
 				>
@@ -60,7 +80,8 @@ export default function Register() {
 							</Link>
 						</p>
 						<p className="text-tiny text-default-500">
-							Al registrarte, aceptas los términos y condiciones del sistema SIRHA
+							Al registrarte, aceptas los términos y condiciones del sistema
+							SIRHA
 						</p>
 					</CardBody>
 				</Card>

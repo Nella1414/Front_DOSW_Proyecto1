@@ -1,16 +1,16 @@
 import {
+	Button,
 	Card,
 	CardBody,
 	CardHeader,
-	Table,
-	TableHeader,
-	TableColumn,
-	TableBody,
-	TableRow,
-	TableCell,
-	Button,
+	Chip,
 	Input,
-	Chip
+	Table,
+	TableBody,
+	TableCell,
+	TableColumn,
+	TableHeader,
+	TableRow,
 } from '@heroui/react';
 import { useState } from 'react';
 
@@ -30,7 +30,7 @@ const mockStudents: Student[] = [
 		email: 'juan.perez@escuelaing.edu.co',
 		code: '1234567890',
 		program: 'Ingeniería de Sistemas',
-		status: 'activo'
+		status: 'activo',
 	},
 	{
 		id: '2',
@@ -38,7 +38,7 @@ const mockStudents: Student[] = [
 		email: 'maria.gonzalez@escuelaing.edu.co',
 		code: '1234567891',
 		program: 'Ingeniería Civil',
-		status: 'activo'
+		status: 'activo',
 	},
 	{
 		id: '3',
@@ -46,7 +46,7 @@ const mockStudents: Student[] = [
 		email: 'carlos.rodriguez@escuelaing.edu.co',
 		code: '1234567892',
 		program: 'Ingeniería de Sistemas',
-		status: 'activo'
+		status: 'activo',
 	},
 	{
 		id: '4',
@@ -54,8 +54,8 @@ const mockStudents: Student[] = [
 		email: 'ana.martinez@escuelaing.edu.co',
 		code: '1234567893',
 		program: 'Ingeniería Biomédica',
-		status: 'graduado'
-	}
+		status: 'graduado',
+	},
 ];
 
 interface StudentSelectorProps {
@@ -65,27 +65,36 @@ interface StudentSelectorProps {
 export function StudentSelector({ onSelectStudent }: StudentSelectorProps) {
 	const [searchTerm, setSearchTerm] = useState('');
 
-	const filteredStudents = mockStudents.filter(student =>
-		student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-		student.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-		student.code.includes(searchTerm)
+	const filteredStudents = mockStudents.filter(
+		(student) =>
+			student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+			student.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+			student.code.includes(searchTerm),
 	);
 
 	const getStatusColor = (status: string) => {
 		switch (status) {
-			case 'activo': return 'success';
-			case 'inactivo': return 'warning';
-			case 'graduado': return 'primary';
-			default: return 'default';
+			case 'activo':
+				return 'success';
+			case 'inactivo':
+				return 'warning';
+			case 'graduado':
+				return 'primary';
+			default:
+				return 'default';
 		}
 	};
 
 	const getStatusLabel = (status: string) => {
 		switch (status) {
-			case 'activo': return 'Activo';
-			case 'inactivo': return 'Inactivo';
-			case 'graduado': return 'Graduado';
-			default: return status;
+			case 'activo':
+				return 'Activo';
+			case 'inactivo':
+				return 'Inactivo';
+			case 'graduado':
+				return 'Graduado';
+			default:
+				return status;
 		}
 	};
 
@@ -126,7 +135,11 @@ export function StudentSelector({ onSelectStudent }: StudentSelectorProps) {
 								<TableCell>{student.code}</TableCell>
 								<TableCell>{student.program}</TableCell>
 								<TableCell>
-									<Chip color={getStatusColor(student.status)} variant="flat" size="sm">
+									<Chip
+										color={getStatusColor(student.status)}
+										variant="flat"
+										size="sm"
+									>
 										{getStatusLabel(student.status)}
 									</Chip>
 								</TableCell>

@@ -14,11 +14,11 @@ import {
 	TableRow,
 } from '@heroui/react';
 import React from 'react';
+import { AcademicSemaphore } from '../../components/academic-semaphore';
+import { PeriodsManagement } from '../../components/periods-management';
 import { RoleManagement } from '../../components/role-management';
 import { type CurrentView, Sidebar, type User } from '../../components/sidebar';
 import { StudentRegistration } from '../../components/student-registration';
-import { AcademicSemaphore } from '../../components/academic-semaphore';
-import { PeriodsManagement } from '../../components/periods-management';
 import { StudentSelector } from '../../components/student-selector';
 
 // Usuario simulado (en producción vendrá de auth/context)
@@ -286,14 +286,14 @@ export default function AdminDashboardRoute() {
 		case 'academic-progress':
 			content = (
 				<div className="space-y-6">
-					<StudentSelector 
+					<StudentSelector
 						onSelectStudent={(student) => {
 							// En una implementación real, esto actualizaría el estado
 							console.log('Selected student:', student);
-						}} 
+						}}
 					/>
-					<AcademicSemaphore 
-						userRole="ADMIN" 
+					<AcademicSemaphore
+						userRole="ADMIN"
 						studentId="admin-view"
 						targetStudentId="1234567890"
 					/>

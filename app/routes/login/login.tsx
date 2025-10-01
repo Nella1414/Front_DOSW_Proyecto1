@@ -33,19 +33,22 @@ export default function Login() {
 		// Simulate login process
 		setTimeout(() => {
 			console.log('Login attempt:', { email, password });
-			
+
 			// Check credentials and redirect based on role
 			if (email === 'du.important@gmail.com' && password === '123456789') {
 				// Admin credentials - redirect to admin dashboard
 				window.location.href = '/admin-dashboard';
-			} else if (email === 'juan.perez@escuelaing.edu.co' && password === '123456789') {
+			} else if (
+				email === 'juan.perez@escuelaing.edu.co' &&
+				password === '123456789'
+			) {
 				// Student credentials - redirect to student dashboard
 				window.location.href = '/student-dashboard';
 			} else {
 				// Show error for invalid credentials
 				alert('Credenciales inválidas. Verifica tu email y contraseña.');
 			}
-			
+
 			setIsLoading(false);
 		}, 2000);
 	};
@@ -208,7 +211,7 @@ export default function Login() {
 					</p>
 				</CardFooter>
 			</Card>
-			
+
 			<DemoCredentials />
 		</div>
 	);

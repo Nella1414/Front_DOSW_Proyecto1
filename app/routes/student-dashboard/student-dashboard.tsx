@@ -8,9 +8,18 @@ import {
 	Spacer,
 } from '@heroui/react';
 import React from 'react';
-import { AcademicSemaphore } from '../../components/academic-semaphore';
 import { AcademicGrid } from '../../components/academic-grid';
+import { AcademicSemaphore } from '../../components/academic-semaphore';
+import {
+	InformativeMessage,
+	SemesterInfo,
+	SemesterSelector,
+	useCurrentPeriod,
+	usePeriodForSemester,
+	useSelectedSemester,
+} from '../../components/informative-message';
 import { type CurrentView, Sidebar, type User } from '../../components/sidebar';
+import { ScheduleGrid } from '../schedule/components/schedule-grid';
 
 // Usuario estudiante simulado
 const studentUser: User = {
@@ -29,6 +38,28 @@ function useStudentViews(initial: CurrentView = 'dashboard') {
 	return { view, navigate };
 }
 
+// Hook para manejar el semestre seleccionado
+function useStudentSemester() {
+	const [selectedSemester, setSelectedSemester] = useSelectedSemester();
+	const currentPeriod = useCurrentPeriod();
+	const semesterPeriod = usePeriodForSemester(selectedSemester);
+
+	const currentYear = new Date().getFullYear();
+	const currentMonth = new Date().getMonth() + 1;
+	const currentSemester = currentMonth <= 6 ? 1 : 2;
+	const isCurrentSemester =
+		selectedSemester.year === currentYear &&
+		selectedSemester.semester === currentSemester;
+
+	return {
+		selectedSemester,
+		setSelectedSemester,
+		currentPeriod,
+		semesterPeriod,
+		isCurrentSemester,
+	};
+}
+
 // Utilidad local
 function clsx(...classes: Array<string | false | null | undefined>) {
 	return classes.filter(Boolean).join(' ');
@@ -38,7 +69,13 @@ function clsx(...classes: Array<string | false | null | undefined>) {
 const StudentStatCard: React.FC<{
 	title: string;
 	value: string | number;
-	color?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'default';
+	color?:
+		| 'primary'
+		| 'secondary'
+		| 'success'
+		| 'warning'
+		| 'danger'
+		| 'default';
 	note?: string;
 }> = ({ title, value, color = 'primary', note }) => {
 	const colorClass =
@@ -72,10 +109,30 @@ const StudentDashboardHome: React.FC = () => {
 		<div className="space-y-6">
 			{/* Estadísticas rápidas */}
 			<div className="flex flex-col sm:flex-row gap-4">
-				<StudentStatCard title="Progreso" value="68%" color="success" note="Avance académico" />
-				<StudentStatCard title="Materias" value="24/43" color="primary" note="Completadas" />
-				<StudentStatCard title="Créditos" value="95/139" color="secondary" note="Obtenidos" />
-				<StudentStatCard title="Promedio" value="3.9" color="warning" note="Acumulado" />
+				<StudentStatCard
+					title="Progreso"
+					value="68%"
+					color="success"
+					note="Avance académico"
+				/>
+				<StudentStatCard
+					title="Materias"
+					value="24/43"
+					color="primary"
+					note="Completadas"
+				/>
+				<StudentStatCard
+					title="Créditos"
+					value="95/139"
+					color="secondary"
+					note="Obtenidos"
+				/>
+				<StudentStatCard
+					title="Promedio"
+					value="3.9"
+					color="warning"
+					note="Acumulado"
+				/>
 			</div>
 
 			{/* Semáforo académico */}
@@ -168,6 +225,12 @@ const SimplePlaceholder: React.FC<{ title: string; description?: string }> = ({
 
 export default function StudentDashboardRoute() {
 	const { view, navigate } = useStudentViews('dashboard');
+	const {
+		selectedSemester,
+		setSelectedSemester,
+		semesterPeriod,
+		isCurrentSemester,
+	} = useStudentSemester();
 
 	let content: React.ReactNode;
 	switch (view) {
@@ -175,7 +238,12 @@ export default function StudentDashboardRoute() {
 			content = <StudentDashboardHome />;
 			break;
 		case 'academic-progress':
-			content = <AcademicSemaphore userRole="STUDENT" studentId={studentUser.studentId} />;
+			content = (
+				<AcademicSemaphore
+					userRole="STUDENT"
+					studentId={studentUser.studentId}
+				/>
+			);
 			break;
 		case 'profile':
 			content = <StudentProfileView user={studentUser} />;
@@ -199,6 +267,34 @@ export default function StudentDashboardRoute() {
 		case 'academic-plan':
 			content = <AcademicGrid />;
 			break;
+		case 'schedule':
+			content = (
+				<div className="space-y-6">
+					<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+						{isCurrentSemester && (
+							<InformativeMessage
+								period={semesterPeriod}
+								onCtaClick={() => {
+									console.log('CTA clicked for period:', semesterPeriod);
+								}}
+							/>
+						)}
+						<SemesterSelector
+							selectedSemester={selectedSemester}
+							onSemesterChange={setSelectedSemester}
+							className="sm:ml-4"
+						/>
+					</div>
+
+					<SemesterInfo semester={selectedSemester} />
+
+					<ScheduleGrid
+						semester={selectedSemester}
+						isCurrentSemester={isCurrentSemester}
+					/>
+				</div>
+			);
+			break;
 		default:
 			content = <SimplePlaceholder title="Vista" />;
 	}
@@ -215,12 +311,16 @@ export default function StudentDashboardRoute() {
 									? 'Mi Dashboard'
 									: view === 'academic-progress'
 										? 'Progreso Académico'
-										: view.replace('-', ' ')}
+										: view === 'schedule'
+											? 'Mi Horario Académico'
+											: view.replace('-', ' ')}
 							</h1>
 							<p className="text-xs text-default-500">
 								{view === 'dashboard'
 									? 'Resumen de tu información académica.'
-									: 'Gestión de la sección seleccionada.'}
+									: view === 'schedule'
+										? 'Consulta tu horario de clases y materias.'
+										: 'Gestión de la sección seleccionada.'}
 							</p>
 						</div>
 						<div className="flex gap-2">
@@ -239,6 +339,14 @@ export default function StudentDashboardRoute() {
 								onPress={() => navigate('academic-progress')}
 							>
 								Mi Progreso
+							</Button>
+							<Button
+								size="sm"
+								variant="flat"
+								color="success"
+								onPress={() => navigate('schedule')}
+							>
+								Mi Horario
 							</Button>
 						</div>
 					</header>

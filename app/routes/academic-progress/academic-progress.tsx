@@ -1,10 +1,13 @@
-import { Card, CardBody, CardHeader, Button, Link } from '@heroui/react';
+import { Button, Card, CardBody, CardHeader, Link } from '@heroui/react';
 import { AcademicSemaphore } from '../../components/academic-semaphore';
 
 export function meta() {
 	return [
 		{ title: 'Progreso Académico - SIRHA' },
-		{ name: 'description', content: 'Visualiza tu progreso académico y estado de materias' },
+		{
+			name: 'description',
+			content: 'Visualiza tu progreso académico y estado de materias',
+		},
 	];
 }
 
@@ -19,8 +22,18 @@ export default function AcademicProgressPage() {
 					variant="light"
 					color="primary"
 					startContent={
-						<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+						<svg
+							className="w-4 h-4"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+						>
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth={2}
+								d="M15 19l-7-7 7-7"
+							/>
 						</svg>
 					}
 				>

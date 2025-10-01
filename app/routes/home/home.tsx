@@ -1,10 +1,13 @@
-import { Button, Card, CardBody, Link, Spacer, Image } from '@heroui/react';
+import { Button, Image, Link } from '@heroui/react';
 
 // Metadata que aparece en el <head> de la página
 export function meta() {
 	return [
 		{ title: 'SIRHA - Sistema Universitario' },
-		{ name: 'description', content: 'Sistema de Reasignación de Horarios Académicos' },
+		{
+			name: 'description',
+			content: 'Sistema de Reasignación de Horarios Académicos',
+		},
 	];
 }
 
@@ -16,9 +19,9 @@ export default function Home() {
 			<header className="flex justify-between items-center px-6 py-3 bg-primary border-b border-gray-200">
 				{/* Logo imagen */}
 				<div className="flex items-center">
-					<Image 
-						src="/logo.jpg" 
-						alt="Logo" 
+					<Image
+						src="/logo.jpg"
+						alt="Logo"
 						width={160}
 						height={67}
 						className="object-cover"
@@ -27,7 +30,6 @@ export default function Home() {
 
 				{/* Botones de navegación */}
 				<div className="flex gap-3">
-
 					<Button
 						as={Link}
 						href="/login"
@@ -65,9 +67,9 @@ export default function Home() {
 
 					{/* Imagen derecha */}
 					<div className="flex-1">
-						<Image 
-							src="/universidad.jpg" 
-							alt="Universidad" 
+						<Image
+							src="/universidad.jpg"
+							alt="Universidad"
 							width={571}
 							height={256}
 							className="object-cover rounded-lg shadow-lg"

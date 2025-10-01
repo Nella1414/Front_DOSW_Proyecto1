@@ -14,7 +14,6 @@ function clsx(...classes: Array<string | false | null | undefined>) {
 	return classes.filter(Boolean).join(' ');
 }
 
-
 export type UserRole = 'student' | 'faculty' | 'admin';
 
 export type CurrentView =
@@ -26,6 +25,7 @@ export type CurrentView =
 	| 'academic-progress'
 	| 'profile'
 	| 'academic-plan'
+	| 'schedule'
 	| 'student-registration'
 	| 'role-management';
 
@@ -33,7 +33,7 @@ export interface User {
 	id: string;
 	name: string;
 	email: string;
-	role: UserRole | string; 
+	role: UserRole | string;
 	studentId?: string;
 	academicStatus?: 'normal' | 'in progress' | 'failed';
 }
@@ -59,7 +59,7 @@ interface NavItemConfig {
 		| 'danger'
 		| 'default';
 	badge?: string | number;
-	moduleToken?: string; 
+	moduleToken?: string;
 }
 
 const Icon = {
@@ -138,6 +138,13 @@ const ROLE_ITEMS: Record<UserRole, NavItemConfig[]> = {
 			label: 'Progreso Académico',
 			icon: <Icon.Academic />,
 			color: 'secondary',
+			moduleToken: 'classes',
+		},
+		{
+			key: 'schedule',
+			label: 'Mi Horario',
+			icon: <Icon.Academic />,
+			color: 'success',
 			moduleToken: 'classes',
 		},
 		{
@@ -226,7 +233,7 @@ function normalizeRole(raw: string | undefined): UserRole | null {
 	if (['faculty', 'decanatura', 'profesor', 'docente'].includes(r))
 		return 'faculty';
 	if (['admin', 'administrador', 'administration'].includes(r)) return 'admin';
-	return null; 
+	return null;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({

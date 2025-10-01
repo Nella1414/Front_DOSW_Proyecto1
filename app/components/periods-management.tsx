@@ -1,23 +1,23 @@
 import {
+	Alert,
 	Button,
 	Card,
 	CardBody,
 	CardHeader,
-	Table,
-	TableHeader,
-	TableColumn,
-	TableBody,
-	TableRow,
-	TableCell,
 	Chip,
-	Modal,
-	ModalContent,
-	ModalHeader,
-	ModalBody,
-	ModalFooter,
 	Input,
-	Alert,
-	useDisclosure
+	Modal,
+	ModalBody,
+	ModalContent,
+	ModalFooter,
+	ModalHeader,
+	Table,
+	TableBody,
+	TableCell,
+	TableColumn,
+	TableHeader,
+	TableRow,
+	useDisclosure,
 } from '@heroui/react';
 import { useForm } from '@tanstack/react-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -38,28 +38,34 @@ const mockPeriods: AcademicPeriod[] = [
 		name: '2024-1',
 		startDate: '2024-02-01',
 		endDate: '2024-06-30',
-		status: 'cerrado'
+		status: 'cerrado',
 	},
 	{
 		id: '2',
 		name: '2024-2',
 		startDate: '2024-08-01',
 		endDate: '2024-12-15',
-		status: 'activo'
+		status: 'activo',
 	},
 	{
 		id: '3',
 		name: '2025-1',
 		startDate: '2025-02-01',
 		endDate: '2025-06-30',
-		status: 'futuro'
-	}
+		status: 'futuro',
+	},
 ];
 
 // FEAT-036 US-0103 – UI Config Periodos
-export function PeriodsManagement({ userRole = 'ADMIN' }: { userRole?: string }) {
+export function PeriodsManagement({
+	userRole = 'ADMIN',
+}: {
+	userRole?: string;
+}) {
 	const { isOpen, onOpen, onClose } = useDisclosure();
-	const [editingPeriod, setEditingPeriod] = useState<AcademicPeriod | null>(null);
+	const [editingPeriod, setEditingPeriod] = useState<AcademicPeriod | null>(
+		null,
+	);
 	const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 	const queryClient = useQueryClient();
 
@@ -76,36 +82,42 @@ export function PeriodsManagement({ userRole = 'ADMIN' }: { userRole?: string })
 	const { data: periods = [], isLoading } = useQuery({
 		queryKey: ['academic-periods'],
 		queryFn: async (): Promise<AcademicPeriod[]> => {
-			await new Promise(resolve => setTimeout(resolve, 500));
+			await new Promise((resolve) => setTimeout(resolve, 500));
 			return mockPeriods;
 		},
 	});
 
 	// Mutación para crear/actualizar período
 	const savePeriodMutation = useMutation({
-		mutationFn: async (period: Omit<AcademicPeriod, 'id'> & { id?: string }) => {
-			await new Promise(resolve => setTimeout(resolve, 1000));
-			
+		mutationFn: async (
+			period: Omit<AcademicPeriod, 'id'> & { id?: string },
+		) => {
+			await new Promise((resolve) => setTimeout(resolve, 1000));
+
 			// Validaciones del backend simuladas
-			const existingPeriod = mockPeriods.find(p => p.name === period.name && p.id !== period.id);
+			const existingPeriod = mockPeriods.find(
+				(p) => p.name === period.name && p.id !== period.id,
+			);
 			if (existingPeriod) {
 				throw new Error('Ya existe un período con ese nombre');
 			}
 
 			// Validar fechas
 			if (new Date(period.startDate) >= new Date(period.endDate)) {
-				throw new Error('La fecha de inicio debe ser anterior a la fecha de fin');
+				throw new Error(
+					'La fecha de inicio debe ser anterior a la fecha de fin',
+				);
 			}
 
 			// Validar solapamientos
-			const hasOverlap = mockPeriods.some(p => {
+			const hasOverlap = mockPeriods.some((p) => {
 				if (p.id === period.id) return false;
 				const pStart = new Date(p.startDate);
 				const pEnd = new Date(p.endDate);
 				const newStart = new Date(period.startDate);
 				const newEnd = new Date(period.endDate);
-				
-				return (newStart <= pEnd && newEnd >= pStart);
+
+				return newStart <= pEnd && newEnd >= pStart;
 			});
 
 			if (hasOverlap) {
@@ -124,7 +136,7 @@ export function PeriodsManagement({ userRole = 'ADMIN' }: { userRole?: string })
 	// Mutación para eliminar período
 	const deletePeriodMutation = useMutation({
 		mutationFn: async (id: string) => {
-			await new Promise(resolve => setTimeout(resolve, 500));
+			await new Promise((resolve) => setTimeout(resolve, 500));
 			return id;
 		},
 		onSuccess: () => {
@@ -144,7 +156,10 @@ export function PeriodsManagement({ userRole = 'ADMIN' }: { userRole?: string })
 			const periodData = {
 				...value,
 				id: editingPeriod?.id,
-				status: getStatusFromDates(value.startDate, value.endDate) as 'activo' | 'cerrado' | 'futuro'
+				status: getStatusFromDates(value.startDate, value.endDate) as
+					| 'activo'
+					| 'cerrado'
+					| 'futuro',
 			};
 			savePeriodMutation.mutate(periodData);
 		},
@@ -164,19 +179,27 @@ export function PeriodsManagement({ userRole = 'ADMIN' }: { userRole?: string })
 	// Colores para estados
 	const getStatusColor = (status: string) => {
 		switch (status) {
-			case 'activo': return 'success';
-			case 'cerrado': return 'default';
-			case 'futuro': return 'primary';
-			default: return 'default';
+			case 'activo':
+				return 'success';
+			case 'cerrado':
+				return 'default';
+			case 'futuro':
+				return 'primary';
+			default:
+				return 'default';
 		}
 	};
 
 	const getStatusLabel = (status: string) => {
 		switch (status) {
-			case 'activo': return 'Activo';
-			case 'cerrado': return 'Cerrado';
-			case 'futuro': return 'Futuro';
-			default: return status;
+			case 'activo':
+				return 'Activo';
+			case 'cerrado':
+				return 'Cerrado';
+			case 'futuro':
+				return 'Futuro';
+			default:
+				return status;
 		}
 	};
 
@@ -208,7 +231,9 @@ export function PeriodsManagement({ userRole = 'ADMIN' }: { userRole?: string })
 				<CardHeader className="flex justify-between">
 					<div>
 						<h3 className="text-lg font-semibold">Períodos Académicos</h3>
-						<p className="text-sm text-default-500">Gestión de períodos académicos del sistema</p>
+						<p className="text-sm text-default-500">
+							Gestión de períodos académicos del sistema
+						</p>
 					</div>
 					<Button color="primary" onPress={handleNew}>
 						Nuevo Período
@@ -227,8 +252,12 @@ export function PeriodsManagement({ userRole = 'ADMIN' }: { userRole?: string })
 							{periods.map((period) => (
 								<TableRow key={period.id}>
 									<TableCell className="font-medium">{period.name}</TableCell>
-									<TableCell>{new Date(period.startDate).toLocaleDateString()}</TableCell>
-									<TableCell>{new Date(period.endDate).toLocaleDateString()}</TableCell>
+									<TableCell>
+										{new Date(period.startDate).toLocaleDateString()}
+									</TableCell>
+									<TableCell>
+										{new Date(period.endDate).toLocaleDateString()}
+									</TableCell>
 									<TableCell>
 										<Chip color={getStatusColor(period.status)} variant="flat">
 											{getStatusLabel(period.status)}
@@ -273,7 +302,12 @@ export function PeriodsManagement({ userRole = 'ADMIN' }: { userRole?: string })
 			{/* Modal para crear/editar período */}
 			<Modal isOpen={isOpen} onClose={onClose} size="lg">
 				<ModalContent>
-					<form onSubmit={(e) => { e.preventDefault(); form.handleSubmit(); }}>
+					<form
+						onSubmit={(e) => {
+							e.preventDefault();
+							form.handleSubmit();
+						}}
+					>
 						<ModalHeader>
 							{editingPeriod ? 'Editar Período' : 'Nuevo Período'}
 						</ModalHeader>
