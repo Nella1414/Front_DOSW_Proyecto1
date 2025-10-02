@@ -158,7 +158,9 @@ export function StudentRegistration() {
 							isRequired
 						>
 							{CAREERS.map((career) => (
-								<SelectItem key={career}>{career}</SelectItem>
+								<SelectItem className="text-default-900" key={career}>
+									{career}
+								</SelectItem>
 							))}
 						</Select>
 					)}

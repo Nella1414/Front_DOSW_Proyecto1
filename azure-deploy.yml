@@ -1,0 +1,47 @@
+# Azure Container Apps deployment configuration for SIRHA
+# This file can be used with Azure CLI or Azure DevOps pipelines
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sirha-frontend
+  labels:
+    app: sirha-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sirha-frontend
+  template:
+    metadata:
+      labels:
+        app: sirha-frontend
+    spec:
+      containers:
+      - name: sirha-frontend
+        image: sirha-frontend:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: NODE_ENV
+          value: "production"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sirha-frontend-service
+spec:
+  selector:
+    app: sirha-frontend
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 3000
+  type: LoadBalancer

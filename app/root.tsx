@@ -1,7 +1,6 @@
 import {
 	isRouteErrorResponse,
 	Links,
-	Meta,
 	Outlet,
 	Scripts,
 	ScrollRestoration,
@@ -29,13 +28,17 @@ export const links: Route.LinksFunction = () => [
 
 // Este es el layout base de toda la aplicación
 // Envuelve todo en los providers y configura el HTML básico
+
+// light | dark | theme2light | theme2dark | citrus | corporate
+// earth | cyberpunk | neonInk | forestMist | solarEclipse | retroWave
+// oceanDepths | brand
 export function Layout({ children }: { children: React.ReactNode }) {
 	return (
 		<html lang="en">
 			<head>
 				<meta charSet="utf-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
-				<Meta />
+				<title>DOSW - Sistema de Gestión Académica</title>
 				<Links />
 			</head>
 			<body>

@@ -85,3 +85,31 @@ This template comes with [Tailwind CSS](https://tailwindcss.com/) already config
 ---
 
 Built with ❤️ using React Router.
+
+## Scaffolding
+This project was scaffolded using [Create React Router](https://create-react-router.dev/).
+```
+├── README.md
+├── package.json
+├── pnpm-lock.yaml
+├── public/
+│   └── favicon.ico
+├── app/
+│   ├── components/
+│   │   ├── role-management.tsx
+│   │   ├── sidebar.tsx
+│   │   └── student-registration.tsx
+│   ├── routes/
+│   │   ├── admin/
+│   │   │   └── admin.tsx
+│   │   ├── admin-dashboard/
+│   │   │   └── admin-dashboard.tsx
+│   │   ├── home/
+│   │   │   └── home.tsx
+│   │   └── login/
+│   │       └── login.tsx
+│   ├── root.tsx
+│   ├── app.css
+│   └── providers.tsx
+│   └── routes.ts
+└── vite.config.ts

@@ -1,14 +1,14 @@
 import { Card, CardBody, CardHeader, Tab, Tabs } from '@heroui/react';
-import { RoleManagement } from '../components/RoleManagement';
-import { StudentRegistration } from '../components/StudentRegistration';
+import { RoleManagement } from '../../components/role-management';
+import { StudentRegistration } from '../../components/student-registration';
 
 // Página principal del panel de administración
 // Tiene dos pestañas: una para registrar estudiantes y otra para manejar roles
 export default function AdminPage() {
 	return (
-		<div className="min-h-screen bg-gray-50 p-6">
+		<div className="min-h-screen bg-default-50 p-6">
 			<div className="max-w-6xl mx-auto">
-				<h1 className="text-3xl font-bold text-gray-900 mb-8">
+				<h1 className="text-3xl font-bold text-default-900 mb-8">
 					SIRHA - Panel de Administración
 				</h1>
 
