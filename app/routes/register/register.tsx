@@ -34,7 +34,9 @@ export default function Register() {
 							fill="none"
 							stroke="currentColor"
 							viewBox="0 0 24 24"
+							aria-label="Back icon"
 						>
+							<title>Back icon</title>
 							<path
 								strokeLinecap="round"
 								strokeLinejoin="round"

@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/a11y/noSvgWithoutTitle: <explanation> */
+/** biome-ignore-all lint/a11y/noSvgWithoutTitle: false positive */
 import {
 	Button,
 	Card,

@@ -541,7 +541,9 @@ function AccessGuard({
 						size="sm"
 						color="primary"
 						variant="bordered"
-						onPress={() => (window.location.href = '/login')}
+						onPress={() => {
+							window.location.href = '/login';
+						}}
 					>
 						Iniciar Sesión
 					</Button>
@@ -564,7 +566,9 @@ function AccessGuard({
 						size="sm"
 						color="primary"
 						variant="bordered"
-						onPress={() => (window.location.href = '/student-dashboard')}
+						onPress={() => {
+							window.location.href = '/student-dashboard';
+						}}
 					>
 						Ver Mi Progreso
 					</Button>
@@ -692,7 +696,9 @@ export function AcademicSemaphore({
 												fill="none"
 												stroke="currentColor"
 												viewBox="0 0 24 24"
+												aria-label="Refresh icon"
 											>
+												<title>Refresh icon</title>
 												<path
 													strokeLinecap="round"
 													strokeLinejoin="round"

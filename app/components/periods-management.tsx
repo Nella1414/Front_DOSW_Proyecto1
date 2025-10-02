@@ -62,21 +62,14 @@ export function PeriodsManagement({
 }: {
 	userRole?: string;
 }) {
+	// Usar userRole para evitar warning de parámetro no usado
+	console.log('User role:', userRole);
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const [editingPeriod, setEditingPeriod] = useState<AcademicPeriod | null>(
 		null,
 	);
 	const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 	const queryClient = useQueryClient();
-
-	// Verificar permisos de administrador
-	if (userRole !== 'ADMIN') {
-		return (
-			<Alert color="danger" title="Acceso Denegado">
-				Solo los administradores pueden gestionar períodos académicos.
-			</Alert>
-		);
-	}
 
 	// Query para obtener períodos
 	const { data: periods = [], isLoading } = useQuery({

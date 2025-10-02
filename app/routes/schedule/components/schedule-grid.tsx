@@ -572,8 +572,9 @@ export const ScheduleGrid: React.FC<ScheduleGridProps> = ({
 												return (
 													<td key={`${day}-${time}`} className="p-1 border-b">
 														{classItem ? (
-															<div
-																className={`p-2 rounded text-xs cursor-pointer transition-colors ${getClassroomColor(classItem.status)}`}
+															<button
+																type="button"
+																className={`w-full p-2 rounded text-xs cursor-pointer transition-colors text-left ${getClassroomColor(classItem.status)}`}
 																onClick={() => {
 																	setSelectedClassroom(classItem.classroom);
 																	setIsClassroomModalOpen(true);
@@ -588,7 +589,7 @@ export const ScheduleGrid: React.FC<ScheduleGridProps> = ({
 																<div className="text-xs opacity-75">
 																	{classItem.teacher}
 																</div>
-															</div>
+															</button>
 														) : (
 															<div className="h-12"></div>
 														)}
@@ -658,7 +659,11 @@ export const ScheduleGrid: React.FC<ScheduleGridProps> = ({
 						) : (
 							<div className="space-y-4">
 								{conflicts.map((conflictGroup, index) => (
-									<Card key={index} radius="sm" className="border-danger-200">
+									<Card
+										key={`conflict-${index}-${conflictGroup[0]?.subject || 'unknown'}`}
+										radius="sm"
+										className="border-danger-200"
+									>
 										<CardBody>
 											<div className="space-y-2">
 												<h4 className="font-semibold text-danger-700">
