@@ -213,7 +213,7 @@ export function SemesterSelector({
 						onSemesterChange(semester);
 					}
 				}}
-				className="min-w-[200px]"
+				className="w-[200px]"
 			>
 				{semesters.map((semester) => (
 					<SelectItem key={semester.label}>{semester.label}</SelectItem>

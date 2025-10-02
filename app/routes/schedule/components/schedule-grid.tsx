@@ -1,5 +1,4 @@
 import {
-	Badge,
 	Button,
 	Card,
 	CardBody,
@@ -335,26 +334,7 @@ const fetchSchedule = async (
 	};
 };
 
-const detectConflicts = (items: ScheduleItem[]): ScheduleItem[][] => {
-	const conflicts: ScheduleItem[][] = [];
-	const timeMap = new Map<string, ScheduleItem[]>();
-
-	items.forEach((item) => {
-		const key = `${item.day}-${item.startTime}`;
-		if (!timeMap.has(key)) {
-			timeMap.set(key, []);
-		}
-		timeMap.get(key)?.push(item);
-	});
-
-	timeMap.forEach((items) => {
-		if (items.length > 1) {
-			conflicts.push(items);
-		}
-	});
-
-	return conflicts;
-};
+// Función de detección de conflictos removida - no se usa en inscripción
 
 export const ScheduleGrid: React.FC<ScheduleGridProps> = ({
 	semester,
@@ -366,11 +346,11 @@ export const ScheduleGrid: React.FC<ScheduleGridProps> = ({
 	const [selectedClassroom, setSelectedClassroom] =
 		useState<ClassroomDetail | null>(null);
 	const [isClassroomModalOpen, setIsClassroomModalOpen] = useState(false);
-	const [isConflictsModalOpen, setIsConflictsModalOpen] = useState(false);
+	// Estado de modal de conflictos removido
 	const [hasNoHistoricalRecords, setHasNoHistoricalRecords] = useState(false);
 
-	const conflicts = scheduleData ? detectConflicts(scheduleData.items) : [];
-	const totalConflicts = conflicts.length;
+	// Conflictos removidos - no se validan en inscripción
+	const totalConflicts = 0;
 
 	useEffect(() => {
 		const loadSchedule = async () => {
@@ -500,24 +480,7 @@ export const ScheduleGrid: React.FC<ScheduleGridProps> = ({
 						<p className="text-sm text-default-500">{scheduleData.week}</p>
 					</div>
 					<div className="flex items-center gap-2">
-						{totalConflicts > 0 && (
-							<Badge
-								content={totalConflicts}
-								color="danger"
-								placement="top-right"
-								className="cursor-pointer"
-								onClick={() => setIsConflictsModalOpen(true)}
-							>
-								<Button
-									size="sm"
-									variant="flat"
-									color="danger"
-									onPress={() => setIsConflictsModalOpen(true)}
-								>
-									Conflictos de Horario
-								</Button>
-							</Badge>
-						)}
+						{/* Botón de conflictos removido */}
 						<Button
 							size="sm"
 							variant="flat"
@@ -643,58 +606,7 @@ export const ScheduleGrid: React.FC<ScheduleGridProps> = ({
 				</ModalContent>
 			</Modal>
 
-			<Modal
-				isOpen={isConflictsModalOpen}
-				onClose={() => setIsConflictsModalOpen(false)}
-				placement="center"
-				size="2xl"
-			>
-				<ModalContent>
-					<ModalHeader>Conflictos de Horario</ModalHeader>
-					<ModalBody>
-						{conflicts.length === 0 ? (
-							<p className="text-center text-default-500 py-4">
-								No se encontraron conflictos de horario.
-							</p>
-						) : (
-							<div className="space-y-4">
-								{conflicts.map((conflictGroup, index) => (
-									<Card
-										key={`conflict-${index}-${conflictGroup[0]?.subject || 'unknown'}`}
-										radius="sm"
-										className="border-danger-200"
-									>
-										<CardBody>
-											<div className="space-y-2">
-												<h4 className="font-semibold text-danger-700">
-													Conflicto {index + 1}: {conflictGroup[0].day}{' '}
-													{conflictGroup[0].startTime}
-												</h4>
-												{conflictGroup.map((item) => (
-													<div
-														key={item.id}
-														className="flex justify-between items-center p-2 bg-danger-50 rounded"
-													>
-														<div>
-															<span className="font-medium">
-																{item.subject}
-															</span>{' '}
-															- {item.group}
-														</div>
-														<div className="text-sm text-danger-600">
-															{item.classroom.name} - {item.teacher}
-														</div>
-													</div>
-												))}
-											</div>
-										</CardBody>
-									</Card>
-								))}
-							</div>
-						)}
-					</ModalBody>
-				</ModalContent>
-			</Modal>
+			{/* Modal de conflictos removido */}
 		</div>
 	);
 };

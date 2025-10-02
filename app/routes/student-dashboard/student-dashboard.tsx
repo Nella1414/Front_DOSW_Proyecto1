@@ -19,7 +19,7 @@ import {
 	useSelectedSemester,
 } from '../../components/informative-message';
 import { type CurrentView, Sidebar, type User } from '../../components/sidebar';
-import { ScheduleGrid } from '../schedule/components/schedule-grid';
+import { AcademicSchedule } from '../../components/academic-schedule';
 
 // Usuario estudiante simulado
 const studentUser: User = {
@@ -279,19 +279,17 @@ export default function StudentDashboardRoute() {
 								}}
 							/>
 						)}
-						<SemesterSelector
-							selectedSemester={selectedSemester}
-							onSemesterChange={setSelectedSemester}
-							className="sm:ml-4"
-						/>
+						<div className="sm:ml-4 min-w-[200px]">
+							<SemesterSelector
+								selectedSemester={selectedSemester}
+								onSemesterChange={setSelectedSemester}
+							/>
+						</div>
 					</div>
 
 					<SemesterInfo semester={selectedSemester} />
 
-					<ScheduleGrid
-						semester={selectedSemester}
-						isCurrentSemester={isCurrentSemester}
-					/>
+					<AcademicSchedule />
 				</div>
 			);
 			break;
