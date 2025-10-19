@@ -9,6 +9,7 @@ import {
 } from '@heroui/react';
 import React from 'react';
 import { AcademicGrid } from '../../components/academic-grid';
+import { AcademicSchedule } from '../../components/academic-schedule';
 import { AcademicSemaphore } from '../../components/academic-semaphore';
 import {
 	InformativeMessage,
@@ -18,9 +19,8 @@ import {
 	usePeriodForSemester,
 	useSelectedSemester,
 } from '../../components/informative-message';
-import { type CurrentView, Sidebar, type User } from '../../components/sidebar';
-import { AcademicSchedule } from '../../components/academic-schedule';
 import { CreateRequestView } from '../../components/schedule-change-request/create-request-view';
+import { type CurrentView, Sidebar, type User } from '../../components/sidebar';
 
 // Usuario estudiante simulado
 const studentUser: User = {
@@ -337,6 +337,8 @@ export default function StudentDashboardRoute() {
 										strokeLinecap="round"
 										strokeLinejoin="round"
 										className="w-4 h-4"
+										role="img"
+										aria-label="Home icon"
 									>
 										<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
 										<polyline points="9 22 9 12 15 12 15 22" />
@@ -360,6 +362,8 @@ export default function StudentDashboardRoute() {
 										strokeLinecap="round"
 										strokeLinejoin="round"
 										className="w-4 h-4"
+										role="img"
+										aria-label="Academic progress icon"
 									>
 										<path d="M3 3v18h18" />
 										<path d="m19 9-5 5-4-4-3 3" />
@@ -383,6 +387,8 @@ export default function StudentDashboardRoute() {
 										strokeLinecap="round"
 										strokeLinejoin="round"
 										className="w-4 h-4"
+										role="img"
+										aria-label="Schedule icon"
 									>
 										<circle cx="12" cy="12" r="10" />
 										<polyline points="12 6 12 12 16 14" />

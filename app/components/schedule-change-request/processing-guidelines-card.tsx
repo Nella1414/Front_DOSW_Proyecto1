@@ -1,5 +1,5 @@
 import { Card, CardBody, CardHeader, Divider } from '@heroui/react';
-import React from 'react';
+import type React from 'react';
 
 export const ProcessingGuidelinesCard: React.FC = () => {
 	return (
@@ -13,6 +13,8 @@ export const ProcessingGuidelinesCard: React.FC = () => {
 						strokeWidth={1.5}
 						stroke="currentColor"
 						className="w-5 h-5"
+						role="img"
+						aria-label="Clock icon"
 					>
 						<path
 							strokeLinecap="round"
@@ -38,7 +40,9 @@ export const ProcessingGuidelinesCard: React.FC = () => {
 				<div className="flex gap-3">
 					<div className="w-2 h-2 rounded-full bg-success mt-1.5 flex-shrink-0" />
 					<div>
-						<p className="text-sm font-semibold mb-1">Criterios de Aprobación</p>
+						<p className="text-sm font-semibold mb-1">
+							Criterios de Aprobación
+						</p>
 						<p className="text-xs text-default-500">
 							Progreso académico y razones válidas
 						</p>

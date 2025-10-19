@@ -73,7 +73,8 @@ const Icon = {
 			strokeLinecap="round"
 			strokeLinejoin="round"
 			className="w-5 h-5"
-			aria-hidden
+			role="img"
+			aria-label="Dashboard icon"
 		>
 			<rect width="7" height="9" x="3" y="3" rx="1" />
 			<rect width="7" height="5" x="14" y="3" rx="1" />
@@ -91,7 +92,8 @@ const Icon = {
 			strokeLinecap="round"
 			strokeLinejoin="round"
 			className="w-5 h-5"
-			aria-hidden
+			role="img"
+			aria-label="Requests icon"
 		>
 			<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
 			<polyline points="14 2 14 8 20 8" />
@@ -110,7 +112,8 @@ const Icon = {
 			strokeLinecap="round"
 			strokeLinejoin="round"
 			className="w-5 h-5"
-			aria-hidden
+			role="img"
+			aria-label="Create icon"
 		>
 			<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
 			<polyline points="14 2 14 8 20 8" />
@@ -128,7 +131,8 @@ const Icon = {
 			strokeLinecap="round"
 			strokeLinejoin="round"
 			className="w-5 h-5"
-			aria-hidden
+			role="img"
+			aria-label="Management icon"
 		>
 			<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
 			<circle cx="12" cy="12" r="3" />
@@ -144,7 +148,8 @@ const Icon = {
 			strokeLinecap="round"
 			strokeLinejoin="round"
 			className="w-5 h-5"
-			aria-hidden
+			role="img"
+			aria-label="Reports icon"
 		>
 			<path d="M3 3v18h18" />
 			<path d="m19 9-5 5-4-4-3 3" />
@@ -160,7 +165,8 @@ const Icon = {
 			strokeLinecap="round"
 			strokeLinejoin="round"
 			className="w-5 h-5"
-			aria-hidden
+			role="img"
+			aria-label="Academic icon"
 		>
 			<path d="M22 10v6M2 10l10-5 10 5-10 5z" />
 			<path d="M6 12v5c3 3 9 3 12 0v-5" />
@@ -176,7 +182,8 @@ const Icon = {
 			strokeLinecap="round"
 			strokeLinejoin="round"
 			className="w-5 h-5"
-			aria-hidden
+			role="img"
+			aria-label="Profile icon"
 		>
 			<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
 			<circle cx="12" cy="7" r="4" />
@@ -192,7 +199,8 @@ const Icon = {
 			strokeLinecap="round"
 			strokeLinejoin="round"
 			className="w-5 h-5"
-			aria-hidden
+			role="img"
+			aria-label="Plan icon"
 		>
 			<rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
 			<line x1="16" x2="16" y1="2" y2="6" />
@@ -210,7 +218,8 @@ const Icon = {
 			strokeLinecap="round"
 			strokeLinejoin="round"
 			className="w-5 h-5"
-			aria-hidden
+			role="img"
+			aria-label="Students icon"
 		>
 			<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
 			<circle cx="9" cy="7" r="4" />
@@ -228,7 +237,8 @@ const Icon = {
 			strokeLinecap="round"
 			strokeLinejoin="round"
 			className="w-5 h-5"
-			aria-hidden
+			role="img"
+			aria-label="Roles icon"
 		>
 			<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
 			<path d="M19 10v2a7 7 0 0 1-14 0v-2" />
@@ -245,7 +255,8 @@ const Icon = {
 			strokeLinecap="round"
 			strokeLinejoin="round"
 			className="w-5 h-5"
-			aria-hidden
+			role="img"
+			aria-label="Schedule icon"
 		>
 			<circle cx="12" cy="12" r="10" />
 			<polyline points="12 6 12 12 16 14" />
@@ -445,6 +456,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
 												strokeLinecap="round"
 												strokeLinejoin="round"
 												className="w-3 h-3"
+												role="img"
+												aria-label={
+													role === 'admin'
+														? 'Admin role icon'
+														: role === 'faculty'
+															? 'Faculty role icon'
+															: 'Student role icon'
+												}
 											>
 												{role === 'admin' ? (
 													<>

@@ -105,10 +105,10 @@ export function PeriodsManagement({
 			// Validar solapamientos - ajustar para evitar falsos positivos por zona horaria
 			const hasOverlap = mockPeriods.some((p) => {
 				if (p.id === period.id) return false;
-				const pStart = new Date(p.startDate + 'T00:00:00');
-				const pEnd = new Date(p.endDate + 'T23:59:59');
-				const newStart = new Date(period.startDate + 'T00:00:00');
-				const newEnd = new Date(period.endDate + 'T23:59:59');
+				const pStart = new Date(`${p.startDate}T00:00:00`);
+				const pEnd = new Date(`${p.endDate}T23:59:59`);
+				const newStart = new Date(`${period.startDate}T00:00:00`);
+				const newEnd = new Date(`${period.endDate}T23:59:59`);
 
 				return newStart < pEnd && newEnd > pStart;
 			});

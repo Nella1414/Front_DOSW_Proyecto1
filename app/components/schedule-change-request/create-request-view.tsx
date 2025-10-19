@@ -1,13 +1,23 @@
 import { Button, Card, CardBody, CardHeader, Divider } from '@heroui/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import React from 'react';
+import React, { useId } from 'react';
 import { GroupDetailsCard } from './group-details-card';
 import { ProcessingGuidelinesCard } from './processing-guidelines-card';
 import { RequestConfirmationModal } from './request-confirmation-modal';
 import type { FormData } from './types';
-import { calculateCapacityStatus, clsx, mockGroups, mockSubjects } from './utils';
+import {
+	calculateCapacityStatus,
+	clsx,
+	mockGroups,
+	mockSubjects,
+} from './utils';
 
 export const CreateRequestView: React.FC = () => {
+	// Generate unique IDs for form elements
+	const subjectSelectId = useId();
+	const groupToSelectId = useId();
+	const reasonTextareaId = useId();
+
 	const [formData, setFormData] = React.useState<FormData>({
 		subject: '',
 		groupTo: '',
@@ -188,6 +198,8 @@ export const CreateRequestView: React.FC = () => {
 									strokeWidth={1.5}
 									stroke="currentColor"
 									className="w-6 h-6 text-primary"
+									role="img"
+									aria-label="Formulario de solicitud"
 								>
 									<path
 										strokeLinecap="round"
@@ -220,6 +232,8 @@ export const CreateRequestView: React.FC = () => {
 											strokeWidth={1.5}
 											stroke="currentColor"
 											className="w-5 h-5 text-primary flex-shrink-0 mt-0.5"
+											role="img"
+											aria-label="Información importante"
 										>
 											<path
 												strokeLinecap="round"
@@ -232,11 +246,11 @@ export const CreateRequestView: React.FC = () => {
 												Importante:
 											</p>
 											<p className="text-primary-600">
-												Los cambios de horario solo se permiten durante las primeras
-												dos semanas del semestre. Las solicitudes deben enviarse con
-												al menos 48 horas de anticipación. No se pueden solicitar
-												cambios para materias canceladas o grupos que hayan alcanzado
-												su capacidad máxima.
+												Los cambios de horario solo se permiten durante las
+												primeras dos semanas del semestre. Las solicitudes deben
+												enviarse con al menos 48 horas de anticipación. No se
+												pueden solicitar cambios para materias canceladas o
+												grupos que hayan alcanzado su capacidad máxima.
 											</p>
 										</div>
 									</div>
@@ -256,15 +270,23 @@ export const CreateRequestView: React.FC = () => {
 									<div className="space-y-4">
 										{/* Materia - Siempre visible */}
 										<div>
-											<label className="text-sm font-medium mb-2 block">
+											<label
+												htmlFor={subjectSelectId}
+												className="text-sm font-medium mb-2 block"
+											>
 												Materia <span className="text-danger">*</span>
 											</label>
 											<select
+												id={subjectSelectId}
 												value={formData.subject}
-												onChange={(e) => handleChange('subject', e.target.value)}
+												onChange={(e) =>
+													handleChange('subject', e.target.value)
+												}
 												className={clsx(
 													'w-full px-3 py-2 rounded-lg border bg-default-100 text-sm',
-													errors.subject ? 'border-danger' : 'border-default-200',
+													errors.subject
+														? 'border-danger'
+														: 'border-default-200',
 												)}
 											>
 												<option value="">Selecciona la materia</option>
@@ -276,7 +298,9 @@ export const CreateRequestView: React.FC = () => {
 												))}
 											</select>
 											{errors.subject && (
-												<p className="text-xs text-danger mt-1">{errors.subject}</p>
+												<p className="text-xs text-danger mt-1">
+													{errors.subject}
+												</p>
 											)}
 											<p className="text-xs text-default-400 mt-1">
 												Solo puedes cambiar de grupo dentro de la misma materia
@@ -300,33 +324,42 @@ export const CreateRequestView: React.FC = () => {
 														animate={{ opacity: 1, x: 0 }}
 														transition={{ duration: 0.3, delay: 0.1 }}
 													>
-													<label className="text-sm font-medium mb-2 block">
-														Grupo Destino <span className="text-danger">*</span>
-													</label>
-													<select
-														value={formData.groupTo}
-														onChange={(e) => handleChange('groupTo', e.target.value)}
-														className={clsx(
-															'w-full px-3 py-2 rounded-lg border bg-default-100 text-sm',
-															errors.groupTo
-																? 'border-danger'
-																: 'border-default-200',
-														)}
-													>
-														<option value="">Selecciona el grupo destino</option>
-														{mockGroups.map((group) => (
-															<option key={group.id} value={group.id}>
-																{group.name} - {group.schedule} (
-																{group.currentEnrollments}/{group.maxStudents}{' '}
-																estudiantes)
+														<label
+															htmlFor={groupToSelectId}
+															className="text-sm font-medium mb-2 block"
+														>
+															Grupo Destino{' '}
+															<span className="text-danger">*</span>
+														</label>
+														<select
+															id={groupToSelectId}
+															value={formData.groupTo}
+															onChange={(e) =>
+																handleChange('groupTo', e.target.value)
+															}
+															className={clsx(
+																'w-full px-3 py-2 rounded-lg border bg-default-100 text-sm',
+																errors.groupTo
+																	? 'border-danger'
+																	: 'border-default-200',
+															)}
+														>
+															<option value="">
+																Selecciona el grupo destino
 															</option>
-														))}
-													</select>
-													{errors.groupTo && (
-														<p className="text-xs text-danger mt-1">
-															{errors.groupTo}
-														</p>
-													)}
+															{mockGroups.map((group) => (
+																<option key={group.id} value={group.id}>
+																	{group.name} - {group.schedule} (
+																	{group.currentEnrollments}/{group.maxStudents}{' '}
+																	estudiantes)
+																</option>
+															))}
+														</select>
+														{errors.groupTo && (
+															<p className="text-xs text-danger mt-1">
+																{errors.groupTo}
+															</p>
+														)}
 													</motion.div>
 
 													<Divider className="my-4" />
@@ -337,32 +370,44 @@ export const CreateRequestView: React.FC = () => {
 														animate={{ opacity: 1, x: 0 }}
 														transition={{ duration: 0.3, delay: 0.2 }}
 													>
-													<label className="text-sm font-medium mb-2 block">
-														Motivo del Cambio <span className="text-danger">*</span>
-													</label>
-													<textarea
-														value={formData.reason}
-														onChange={(e) => handleChange('reason', e.target.value)}
-														placeholder="Por favor explica por qué necesitas este cambio de horario..."
-														className={clsx(
-															'w-full px-3 py-2 rounded-lg border bg-default-100 text-sm min-h-[100px] resize-none',
-															errors.reason ? 'border-danger' : 'border-default-200',
-														)}
-													/>
-													<div className="flex justify-between items-center mt-1">
-														{errors.reason ? (
-															<p className="text-xs text-danger">{errors.reason}</p>
-														) : (
-															<p className="text-xs text-default-400">
-																Proporciona un motivo claro para tu solicitud. Razones
-																comunes incluyen conflictos de horario, problemas de
-																transporte o compromisos laborales.
-															</p>
-														)}
-														<span className="text-xs text-default-400 ml-2">
-															{formData.reason.length}/500
-														</span>
-													</div>
+														<label
+															htmlFor={reasonTextareaId}
+															className="text-sm font-medium mb-2 block"
+														>
+															Motivo del Cambio{' '}
+															<span className="text-danger">*</span>
+														</label>
+														<textarea
+															id={reasonTextareaId}
+															value={formData.reason}
+															onChange={(e) =>
+																handleChange('reason', e.target.value)
+															}
+															placeholder="Por favor explica por qué necesitas este cambio de horario..."
+															className={clsx(
+																'w-full px-3 py-2 rounded-lg border bg-default-100 text-sm min-h-[100px] resize-none',
+																errors.reason
+																	? 'border-danger'
+																	: 'border-default-200',
+															)}
+														/>
+														<div className="flex justify-between items-center mt-1">
+															{errors.reason ? (
+																<p className="text-xs text-danger">
+																	{errors.reason}
+																</p>
+															) : (
+																<p className="text-xs text-default-400">
+																	Proporciona un motivo claro para tu solicitud.
+																	Razones comunes incluyen conflictos de
+																	horario, problemas de transporte o compromisos
+																	laborales.
+																</p>
+															)}
+															<span className="text-xs text-default-400 ml-2">
+																{formData.reason.length}/500
+															</span>
+														</div>
 													</motion.div>
 
 													{/* Botón de envío */}
@@ -377,9 +422,13 @@ export const CreateRequestView: React.FC = () => {
 															size="lg"
 															className="w-full mt-4"
 															isLoading={isSubmitting}
-															isDisabled={!isFormValid || isSubmitting || hasSubmitted}
+															isDisabled={
+																!isFormValid || isSubmitting || hasSubmitted
+															}
 														>
-															{isSubmitting ? 'Enviando...' : 'Enviar Solicitud'}
+															{isSubmitting
+																? 'Enviando...'
+																: 'Enviar Solicitud'}
 														</Button>
 													</motion.div>
 												</motion.div>

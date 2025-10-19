@@ -350,7 +350,7 @@ export const ScheduleGrid: React.FC<ScheduleGridProps> = ({
 	const [hasNoHistoricalRecords, setHasNoHistoricalRecords] = useState(false);
 
 	// Conflictos removidos - no se validan en inscripción
-	const totalConflicts = 0;
+	const _totalConflicts = 0;
 
 	useEffect(() => {
 		const loadSchedule = async () => {

@@ -1,5 +1,5 @@
 import { Card, CardBody, CardHeader, Chip, Divider } from '@heroui/react';
-import React from 'react';
+import type React from 'react';
 import type { CapacityStatus, Group } from './types';
 import { clsx } from './utils';
 
@@ -40,7 +40,11 @@ export const GroupDetailsCard: React.FC<GroupDetailsCardProps> = ({
 					<div className="flex items-center gap-4">
 						{/* Círculo de progreso */}
 						<div className="relative w-20 h-20 flex-shrink-0">
-							<svg className="w-20 h-20 transform -rotate-90">
+							<svg
+								className="w-20 h-20 transform -rotate-90"
+								role="img"
+								aria-label="Indicador de capacidad del grupo"
+							>
 								{/* Círculo de fondo */}
 								<circle
 									cx="40"
@@ -135,6 +139,8 @@ export const GroupDetailsCard: React.FC<GroupDetailsCardProps> = ({
 												? 'text-danger'
 												: 'text-warning',
 										)}
+										role="img"
+										aria-label="Advertencia de capacidad"
 									>
 										<path
 											strokeLinecap="round"
