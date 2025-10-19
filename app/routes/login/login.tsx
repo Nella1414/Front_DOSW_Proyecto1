@@ -11,7 +11,7 @@ import {
 	Input,
 	Link,
 } from '@heroui/react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DemoCredentials } from '../../components/demo-credentials';
 
 export function meta() {
@@ -37,6 +37,12 @@ export default function Login() {
 			// Check credentials and redirect based on role
 			if (email === 'du.important@gmail.com' && password === '123456789') {
 				// Admin credentials - redirect to admin dashboard
+				window.location.href = '/admin-dashboard';
+			} else if (
+				email === 'decano@escuelaing.edu.co' &&
+				password === '123456789'
+			) {
+				// Faculty/Decano credentials - redirect to admin dashboard
 				window.location.href = '/admin-dashboard';
 			} else if (
 				email === 'juan.perez@escuelaing.edu.co' &&

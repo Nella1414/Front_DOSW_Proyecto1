@@ -64,64 +64,192 @@ interface NavItemConfig {
 
 const Icon = {
 	Dashboard: () => (
-		<span
-			className="w-4 h-4 inline-block rounded-sm bg-primary/40"
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth={2}
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			className="w-5 h-5"
 			aria-hidden
-		/>
+		>
+			<rect width="7" height="9" x="3" y="3" rx="1" />
+			<rect width="7" height="5" x="14" y="3" rx="1" />
+			<rect width="7" height="9" x="14" y="12" rx="1" />
+			<rect width="7" height="5" x="3" y="16" rx="1" />
+		</svg>
 	),
 	Requests: () => (
-		<span
-			className="w-4 h-4 inline-block rounded-sm bg-secondary/50"
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth={2}
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			className="w-5 h-5"
 			aria-hidden
-		/>
+		>
+			<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+			<polyline points="14 2 14 8 20 8" />
+			<line x1="16" x2="8" y1="13" y2="13" />
+			<line x1="16" x2="8" y1="17" y2="17" />
+			<polyline points="10 9 9 9 8 9" />
+		</svg>
 	),
 	Create: () => (
-		<span
-			className="w-4 h-4 inline-block rounded-sm bg-success/60"
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth={2}
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			className="w-5 h-5"
 			aria-hidden
-		/>
+		>
+			<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+			<polyline points="14 2 14 8 20 8" />
+			<line x1="12" x2="12" y1="18" y2="12" />
+			<line x1="9" x2="15" y1="15" y2="15" />
+		</svg>
 	),
 	Management: () => (
-		<span
-			className="w-4 h-4 inline-block rounded-sm bg-warning/60"
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth={2}
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			className="w-5 h-5"
 			aria-hidden
-		/>
+		>
+			<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+			<circle cx="12" cy="12" r="3" />
+		</svg>
 	),
 	Reports: () => (
-		<span
-			className="w-4 h-4 inline-block rounded-sm bg-danger/50"
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth={2}
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			className="w-5 h-5"
 			aria-hidden
-		/>
+		>
+			<path d="M3 3v18h18" />
+			<path d="m19 9-5 5-4-4-3 3" />
+		</svg>
 	),
 	Academic: () => (
-		<span
-			className="w-4 h-4 inline-block rounded-sm bg-info-500/60"
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth={2}
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			className="w-5 h-5"
 			aria-hidden
-		/>
+		>
+			<path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+			<path d="M6 12v5c3 3 9 3 12 0v-5" />
+		</svg>
 	),
 	Profile: () => (
-		<span
-			className="w-4 h-4 inline-block rounded-sm bg-default-400"
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth={2}
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			className="w-5 h-5"
 			aria-hidden
-		/>
+		>
+			<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+			<circle cx="12" cy="7" r="4" />
+		</svg>
 	),
 	Plan: () => (
-		<span
-			className="w-4 h-4 inline-block rounded-sm bg-medicine-500"
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth={2}
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			className="w-5 h-5"
 			aria-hidden
-		/>
+		>
+			<rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+			<line x1="16" x2="16" y1="2" y2="6" />
+			<line x1="8" x2="8" y1="2" y2="6" />
+			<line x1="3" x2="21" y1="10" y2="10" />
+		</svg>
 	),
 	Students: () => (
-		<span
-			className="w-4 h-4 inline-block rounded-sm bg-rooms-500"
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth={2}
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			className="w-5 h-5"
 			aria-hidden
-		/>
+		>
+			<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+			<circle cx="9" cy="7" r="4" />
+			<path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+			<path d="M16 3.13a4 4 0 0 1 0 7.75" />
+		</svg>
 	),
 	Roles: () => (
-		<span
-			className="w-4 h-4 inline-block rounded-sm bg-admin-500"
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth={2}
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			className="w-5 h-5"
 			aria-hidden
-		/>
+		>
+			<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+			<path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+			<path d="M12 19v3" />
+		</svg>
+	),
+	Schedule: () => (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth={2}
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			className="w-5 h-5"
+			aria-hidden
+		>
+			<circle cx="12" cy="12" r="10" />
+			<polyline points="12 6 12 12 16 14" />
+		</svg>
 	),
 };
 
@@ -143,8 +271,8 @@ const ROLE_ITEMS: Record<UserRole, NavItemConfig[]> = {
 		{
 			key: 'schedule',
 			label: 'Mi Horario',
-			icon: <Icon.Academic />,
-			color: 'success',
+			icon: <Icon.Schedule />,
+			color: 'primary',
 			moduleToken: 'classes',
 		},
 		{
@@ -307,8 +435,38 @@ export const Sidebar: React.FC<SidebarProps> = ({
 													? 'warning'
 													: 'primary'
 										}
+										startContent={
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												strokeWidth={2}
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												className="w-3 h-3"
+											>
+												{role === 'admin' ? (
+													<>
+														<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+														<path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+														<path d="M12 19v3" />
+													</>
+												) : role === 'faculty' ? (
+													<>
+														<path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+														<path d="M6 12v5c3 3 9 3 12 0v-5" />
+													</>
+												) : (
+													<>
+														<path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+														<path d="M6 12v5c3 3 9 3 12 0v-5" />
+													</>
+												)}
+											</svg>
+										}
 									>
-										{role}
+										{role === 'student' ? 'estudiante' : role}
 									</Chip>
 								)}
 							</div>
