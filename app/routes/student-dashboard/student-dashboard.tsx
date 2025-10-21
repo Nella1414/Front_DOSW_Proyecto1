@@ -9,6 +9,7 @@ import {
 } from '@heroui/react';
 import React from 'react';
 import { AcademicGrid } from '../../components/academic-grid';
+import { AcademicSchedule } from '../../components/academic-schedule';
 import { AcademicSemaphore } from '../../components/academic-semaphore';
 import {
 	InformativeMessage,
@@ -19,7 +20,6 @@ import {
 	useSelectedSemester,
 } from '../../components/informative-message';
 import { type CurrentView, Sidebar, type User } from '../../components/sidebar';
-import { AcademicSchedule } from '../../components/academic-schedule';
 
 // Usuario estudiante simulado
 const studentUser: User = {
