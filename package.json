@@ -6,13 +6,19 @@
 		"build": "react-router build",
 		"dev": "react-router dev",
 		"start": "react-router-serve ./build/server/index.js",
-		"typecheck": "react-router typegen && tsc",
+		"type-check": "react-router typegen && tsc",
 		"lint": "biome check .",
-		"format": "biome check --write ."
+		"format": "biome check --write .",
+		"prepare": "husky"
 	},
 	"dependencies": {
+		"@heroui/react": "^2.8.4",
 		"@react-router/node": "^7.7.1",
 		"@react-router/serve": "^7.7.1",
+		"@tanstack/react-form": "^1.21.1",
+		"@tanstack/react-query": "^5.89.0",
+		"axios": "^1.12.2",
+		"framer-motion": "^12.23.13",
 		"isbot": "^5.1.27",
 		"react": "^19.1.0",
 		"react-dom": "^19.1.0",
@@ -20,11 +26,14 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.2.4",
+		"@commitlint/cli": "^19.8.1",
+		"@commitlint/config-conventional": "^19.8.1",
 		"@react-router/dev": "^7.7.1",
 		"@tailwindcss/vite": "^4.1.4",
 		"@types/node": "^20",
 		"@types/react": "^19.1.2",
 		"@types/react-dom": "^19.1.2",
+		"husky": "^9.1.7",
 		"tailwindcss": "^4.1.4",
 		"typescript": "^5.8.3",
 		"vite": "^6.3.3",
@@ -32,6 +41,7 @@
 	},
 	"pnpm": {
 		"onlyBuiltDependencies": [
+			"@heroui/shared-utils",
 			"@tailwindcss/oxide",
 			"esbuild"
 		]
