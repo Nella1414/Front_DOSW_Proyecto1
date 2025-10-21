@@ -27,6 +27,7 @@ jobs:
         run: |
           npm install
           corepack enable pnpm
+          pnpm install react-router-serve
           pnpm run build
 
       - name: Upload artifact for deployment job
@@ -64,4 +65,5 @@ jobs:
           package: .
 
           
+
 
