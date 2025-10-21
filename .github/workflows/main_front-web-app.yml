@@ -60,7 +60,7 @@ jobs:
         working-directory: ./deployment
         run: |
           corepack enable pnpm
-          pnpm install --prod --frozen-lockfile
+          pnpm install --prod --frozen-lockfile --ignore-scripts
 
       - name: Create web.config for Azure
         run: |
