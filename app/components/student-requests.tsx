@@ -935,6 +935,28 @@ function RequestStatusHistoryView({ request }: { request: StudentRequest }) {
 		});
 	};
 
+	// Función para calcular tiempo transcurrido entre dos fechas
+	const getTimeDifference = (startDate: string, endDate: string): string => {
+		const start = new Date(startDate);
+		const end = new Date(endDate);
+		const diffMs = end.getTime() - start.getTime();
+
+		const diffMinutes = Math.floor(diffMs / (1000 * 60));
+		const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+		const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+		if (diffDays > 0) {
+			return `${diffDays} día${diffDays !== 1 ? 's' : ''}`;
+		}
+		if (diffHours > 0) {
+			return `${diffHours} hora${diffHours !== 1 ? 's' : ''}`;
+		}
+		if (diffMinutes > 0) {
+			return `${diffMinutes} minuto${diffMinutes !== 1 ? 's' : ''}`;
+		}
+		return 'menos de 1 minuto';
+	};
+
 	// ⭐ ORDEN CRONOLÓGICO: Más reciente primero
 	const sortedHistory = [...request.statusHistory].reverse();
 
@@ -952,22 +974,75 @@ function RequestStatusHistoryView({ request }: { request: StudentRequest }) {
 				</p>
 			</div>
 
+			{/* Resumen visual del timeline */}
+			{sortedHistory.length > 1 && (
+				<Card
+					shadow="sm"
+					className="bg-gradient-to-r from-primary/5 to-secondary/5"
+				>
+					<CardBody className="p-3">
+						<div className="flex items-center justify-between gap-2 flex-wrap">
+							<div className="text-xs text-default-600">
+								<span className="font-semibold">📊 Resumen del Timeline:</span>{' '}
+								La solicitud ha pasado por {sortedHistory.length} estados
+							</div>
+							<div className="flex items-center gap-1">
+								{sortedHistory
+									.slice()
+									.reverse()
+									.map((item, idx) => (
+										<Tooltip
+											key={item.id}
+											content={`${getStatusLabel(item.status)} - ${formatDate(item.changedAt)}`}
+											size="sm"
+										>
+											<div
+												className={`w-8 h-8 rounded-full flex items-center justify-center text-xs border-2 border-white ${
+													idx === sortedHistory.length - 1
+														? 'bg-primary shadow-md scale-110'
+														: 'bg-default-200 opacity-60'
+												}`}
+											>
+												{getStatusIcon(item.status)}
+											</div>
+										</Tooltip>
+									))}
+							</div>
+						</div>
+					</CardBody>
+				</Card>
+			)}
+
 			{/* Detectar historial mínimo */}
 			<EmptyHistoryMessage request={request} />
 
 			{/* Timeline de estados - ORDEN CRONOLÓGICO INVERSO */}
-			<div className="space-y-4 pl-4 border-l-2 border-default-200">
+			<div className="space-y-4 pl-4 border-l-2 border-primary/40">
 				{sortedHistory.map((historyItem, index) => {
 					const isExpanded = expandedItems.has(historyItem.id);
 					const isLatest = index === 0;
 					const hasComment = Boolean(historyItem.comment);
+					const previousItem =
+						index < sortedHistory.length - 1 ? sortedHistory[index + 1] : null;
+					const timeDiff = previousItem
+						? getTimeDifference(previousItem.changedAt, historyItem.changedAt)
+						: null;
 
 					return (
 						<div key={historyItem.id} className="relative pl-6">
+							{/* Tiempo transcurrido desde el estado anterior */}
+							{timeDiff && (
+								<div className="absolute -left-[60px] top-0 text-xs text-default-400 italic w-12 text-right">
+									+{timeDiff}
+								</div>
+							)}
+
 							{/* Punto en la línea de tiempo con icono */}
 							<div
-								className={`absolute -left-[13px] top-1 w-6 h-6 rounded-full border-2 border-white flex items-center justify-center text-xs ${
-									isLatest ? 'bg-primary shadow-md' : 'bg-default-300 shadow-sm'
+								className={`absolute -left-[13px] top-1 w-6 h-6 rounded-full border-2 border-white flex items-center justify-center text-xs transition-all ${
+									isLatest
+										? 'bg-primary shadow-lg scale-110 animate-pulse'
+										: 'bg-default-300 shadow-sm opacity-70'
 								}`}
 								title={isLatest ? 'Estado actual' : 'Estado anterior'}
 							>
@@ -977,7 +1052,11 @@ function RequestStatusHistoryView({ request }: { request: StudentRequest }) {
 							{/* Card con información del cambio */}
 							<Card
 								shadow="sm"
-								className={`${isLatest ? 'border-2 border-primary' : ''}`}
+								className={`transition-all ${
+									isLatest
+										? 'border-2 border-primary shadow-md opacity-100'
+										: 'opacity-75 hover:opacity-100'
+								}`}
 							>
 								<CardBody className="p-3 space-y-2">
 									{/* Cabecera del estado */}
@@ -992,7 +1071,12 @@ function RequestStatusHistoryView({ request }: { request: StudentRequest }) {
 												{getStatusLabel(historyItem.status)}
 											</Chip>
 											{isLatest && (
-												<Chip size="sm" color="primary" variant="dot">
+												<Chip
+													size="sm"
+													color="primary"
+													variant="dot"
+													className="animate-pulse"
+												>
 													Estado Actual
 												</Chip>
 											)}
@@ -1004,7 +1088,7 @@ function RequestStatusHistoryView({ request }: { request: StudentRequest }) {
 
 									{/* Actor del cambio */}
 									<div className="flex items-center gap-2 text-xs">
-										<span className="text-default-500">Modificado por:</span>
+										<span className="text-default-500">👤 Modificado por:</span>
 										<span className="font-medium text-default-700">
 											{historyItem.changedBy}
 										</span>
@@ -1016,6 +1100,17 @@ function RequestStatusHistoryView({ request }: { request: StudentRequest }) {
 											<p className="text-xs text-default-700 italic">
 												💬 "{historyItem.comment}"
 											</p>
+										</div>
+									)}
+
+									{/* Tiempo transcurrido desde estado anterior */}
+									{timeDiff && (
+										<div className="flex items-center gap-2 text-xs text-default-500 bg-default-50 rounded px-2 py-1">
+											<span>⏱️</span>
+											<span>
+												Transcurrieron <strong>{timeDiff}</strong> desde el
+												estado anterior
+											</span>
 										</div>
 									)}
 
@@ -1038,11 +1133,11 @@ function RequestStatusHistoryView({ request }: { request: StudentRequest }) {
 
 									{/* Detalles expandibles */}
 									{isExpanded && (
-										<div className="mt-3 pt-3 border-t border-default-200 space-y-2">
+										<div className="mt-3 pt-3 border-t border-default-200 space-y-3">
 											<div className="grid grid-cols-2 gap-3 text-xs">
 												<div>
 													<p className="text-default-500 font-medium">
-														ID de cambio:
+														🆔 ID de cambio:
 													</p>
 													<p className="font-mono text-default-700">
 														{historyItem.id}
@@ -1050,7 +1145,7 @@ function RequestStatusHistoryView({ request }: { request: StudentRequest }) {
 												</div>
 												<div>
 													<p className="text-default-500 font-medium">
-														Fecha completa:
+														📅 Fecha completa:
 													</p>
 													<p className="text-default-700">
 														{formatDateDetailed(historyItem.changedAt)}
@@ -1058,9 +1153,19 @@ function RequestStatusHistoryView({ request }: { request: StudentRequest }) {
 												</div>
 											</div>
 
-											<div className="bg-default-50 rounded-lg p-2 mt-2">
+											{/* Tiempo transcurrido detallado */}
+											{timeDiff && (
+												<div className="bg-primary/5 border border-primary/20 rounded-lg p-2">
+													<p className="text-xs text-default-600">
+														<strong>⏱️ Duración del estado anterior:</strong>{' '}
+														{timeDiff}
+													</p>
+												</div>
+											)}
+
+											<div className="bg-default-50 rounded-lg p-2">
 												<p className="text-xs text-default-600">
-													<strong>Contexto:</strong>{' '}
+													<strong>📝 Contexto:</strong>{' '}
 													{hasComment
 														? 'Este cambio incluye comentarios del responsable que explican la razón de la transición.'
 														: 'Este cambio fue registrado automáticamente por el sistema.'}
@@ -1068,13 +1173,37 @@ function RequestStatusHistoryView({ request }: { request: StudentRequest }) {
 											</div>
 
 											{/* Indicador de posición en el historial */}
-											<div className="flex items-center gap-2 text-xs text-default-500">
-												<span>📍</span>
-												<span>
-													Cambio #{sortedHistory.length - index} de{' '}
-													{sortedHistory.length}
-												</span>
+											<div className="flex items-center justify-between text-xs">
+												<div className="flex items-center gap-2 text-default-500">
+													<span>📍</span>
+													<span>
+														Cambio #{sortedHistory.length - index} de{' '}
+														{sortedHistory.length}
+													</span>
+												</div>
+												{isLatest && (
+													<Chip size="sm" color="primary" variant="flat">
+														Último cambio
+													</Chip>
+												)}
 											</div>
+
+											{/* Estadísticas del timeline */}
+											{isLatest && (
+												<div className="bg-success/5 border border-success/20 rounded-lg p-2">
+													<p className="text-xs text-success-700">
+														✨ <strong>Estado actual alcanzado:</strong>{' '}
+														{new Date(historyItem.changedAt).toLocaleDateString(
+															'es-CO',
+															{
+																day: 'numeric',
+																month: 'long',
+																year: 'numeric',
+															},
+														)}
+													</p>
+												</div>
+											)}
 										</div>
 									)}
 								</CardBody>
