@@ -2,7 +2,6 @@
 	"name": "temp",
 	"private": true,
 	"type": "module",
-	"main": "server.mjs",
 	"scripts": {
 		"build": "react-router build",
 		"dev": "react-router dev",

@@ -57,21 +57,9 @@ jobs:
           cp server.mjs deployment/
           cp index.js deployment/
 
-      - name: Generate package-lock.json for Azure (Oryx doesn't support pnpm)
+      - name: Generate package-lock.json for Azure (Oryx uses npm)
         working-directory: ./deployment
-        run: |
-          npm install --package-lock-only
-          
-      - name: Install production dependencies for Azure
-        working-directory: ./deployment
-        run: |
-          npm ci --omit=dev
-          
-      - name: Create Oryx-compatible node_modules archive
-        working-directory: ./deployment
-        run: |
-          tar -czf node_modules.tar.gz node_modules/
-          rm -rf node_modules/
+        run: npm install --package-lock-only
 
       - name: Create web.config for Azure
         run: |
