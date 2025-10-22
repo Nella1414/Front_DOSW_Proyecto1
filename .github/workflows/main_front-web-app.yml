@@ -55,6 +55,8 @@ jobs:
           cp -r build deployment/
           cp package.json deployment/
           cp pnpm-lock.yaml deployment/
+          cp server.mjs deployment/
+          cp index.js deployment/
 
       - name: Install production dependencies in deployment
         working-directory: ./deployment
@@ -69,13 +71,13 @@ jobs:
           <configuration>
             <system.webServer>
               <handlers>
-                <add name="iisnode" path="build/server/index.js" verb="*" modules="iisnode"/>
+                <add name="iisnode" path="server.mjs" verb="*" modules="iisnode"/>
               </handlers>
               <rewrite>
                 <rules>
                   <rule name="DynamicContent">
                     <match url="/*" />
-                    <action type="Rewrite" url="build/server/index.js"/>
+                    <action type="Rewrite" url="server.mjs"/>
                   </rule>
                 </rules>
               </rewrite>
