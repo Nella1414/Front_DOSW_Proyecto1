@@ -19,6 +19,9 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 COPY --from=production-dependencies-env /app/node_modules ./node_modules
 COPY --from=build-env /app/build ./build
+# Copy the entry point files required for the start script
+COPY index.js ./
+COPY server.mjs ./
 RUN npm install -g pnpm
 # Expose the port (Azure will set PORT env var dynamically)
 EXPOSE 3000
