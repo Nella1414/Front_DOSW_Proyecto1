@@ -52,7 +52,8 @@ az containerapp create \
   --cpu 0.5 \
   --memory 1Gi \
   --min-replicas 1 \
-  --max-replicas 3
+  --max-replicas 3 \
+  --env-vars NODE_ENV=production
 
 # Step 6: Get the application URL
 echo "✅ Deployment completed!"

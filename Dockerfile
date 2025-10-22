@@ -20,4 +20,8 @@ COPY package.json pnpm-lock.yaml ./
 COPY --from=production-dependencies-env /app/node_modules ./node_modules
 COPY --from=build-env /app/build ./build
 RUN npm install -g pnpm
+# Expose the port (Azure will set PORT env var dynamically)
+EXPOSE 3000
+# Set HOST to 0.0.0.0 to listen on all network interfaces
+ENV HOST=0.0.0.0
 CMD ["pnpm", "start"]

@@ -2,6 +2,7 @@ import type { Config } from '@react-router/dev/config';
 
 export default {
 	// Config options...
-	// Server-side render by default, to enable SPA mode set this to `false`
-	ssr: false,
+	// Enable server-side rendering for production deployment
+	// SSR provides better SEO, performance, and handles routing correctly on Azure
+	ssr: true,
 } satisfies Config;
