@@ -23,7 +23,13 @@ import { useEffect, useRef, useState } from 'react';
 // Tipos de datos para solicitudes
 export interface RequestStatusHistory {
 	id: string;
-	status: 'PENDING' | 'IN_REVIEW' | 'APPROVED' | 'REJECTED' | 'CANCELED';
+	status:
+		| 'PENDING'
+		| 'IN_REVIEW'
+		| 'WAITING_INFO'
+		| 'APPROVED'
+		| 'REJECTED'
+		| 'CANCELED';
 	changedBy: string;
 	changedAt: string;
 	comment?: string;
@@ -45,7 +51,13 @@ export interface StudentRequest {
 	type: string;
 	description: string;
 	createdAt: string;
-	currentStatus: 'PENDING' | 'IN_REVIEW' | 'APPROVED' | 'REJECTED' | 'CANCELED';
+	currentStatus:
+		| 'PENDING'
+		| 'IN_REVIEW'
+		| 'WAITING_INFO'
+		| 'APPROVED'
+		| 'REJECTED'
+		| 'CANCELED';
 	statusHistory: RequestStatusHistory[];
 	studentId: string;
 	// Nuevos campos para detalles de la solicitud
@@ -217,6 +229,55 @@ const mockRequests: StudentRequest[] = [
 			},
 		],
 	},
+	{
+		id: '5',
+		radicado: 'RAD-2024-005',
+		type: 'Cambio de Grupo',
+		description: 'Solicitud de cambio de grupo en Bases de Datos',
+		createdAt: '2024-10-21T13:30:00Z',
+		currentStatus: 'WAITING_INFO',
+		studentId: '1234567890',
+		fromSubject: 'Bases de Datos - Grupo 01',
+		toSubject: 'Bases de Datos - Grupo 03',
+		studentObservations:
+			'Solicito el cambio debido a un conflicto de horarios con mi trabajo de medio tiempo.',
+		priority: 'MEDIUM',
+		contactEmail: 'estudiante@example.com',
+		contactPhone: '+57 300 123 4567',
+		assignedProgram: {
+			name: 'Ingeniería de Sistemas',
+			reason:
+				'Tu solicitud fue asignada a Ingeniería de Sistemas porque los cambios de grupo entre materias del programa son gestionados por la coordinación del mismo.',
+			email: 'sistemas@universidad.edu.co',
+			phone: '+57 (1) 234 5678 ext. 101',
+			officeHours: 'Lunes a Viernes: 8:00 AM - 5:00 PM',
+			location: 'Edificio de Ingenierías, Piso 3, Oficina 301',
+		},
+		statusHistory: [
+			{
+				id: 'h8',
+				status: 'PENDING',
+				changedBy: 'Sistema',
+				changedAt: '2024-10-21T13:30:00Z',
+				comment: 'Solicitud creada',
+			},
+			{
+				id: 'h9',
+				status: 'IN_REVIEW',
+				changedBy: 'Coordinación Sistemas',
+				changedAt: '2024-10-21T16:45:00Z',
+				comment: 'Solicitud en revisión inicial',
+			},
+			{
+				id: 'h10',
+				status: 'WAITING_INFO',
+				changedBy: 'Coordinación Sistemas',
+				changedAt: '2024-10-22T10:15:00Z',
+				comment:
+					'Necesitamos que adjuntes la carta de tu empleador certificando tu horario laboral para validar el conflicto de horarios mencionado.',
+			},
+		],
+	},
 ];
 
 // Función para obtener solicitudes (simula API)
@@ -350,6 +411,8 @@ function RequestCurrentStatusView({
 				return 'warning';
 			case 'IN_REVIEW':
 				return 'primary';
+			case 'WAITING_INFO':
+				return 'secondary';
 			case 'APPROVED':
 				return 'success';
 			case 'REJECTED':
@@ -367,6 +430,8 @@ function RequestCurrentStatusView({
 				return 'Pendiente';
 			case 'IN_REVIEW':
 				return 'En Revisión';
+			case 'WAITING_INFO':
+				return 'Esperando Información';
 			case 'APPROVED':
 				return 'Aprobada';
 			case 'REJECTED':
@@ -384,6 +449,8 @@ function RequestCurrentStatusView({
 				return '⏳';
 			case 'IN_REVIEW':
 				return '🔍';
+			case 'WAITING_INFO':
+				return '📝';
 			case 'APPROVED':
 				return '✅';
 			case 'REJECTED':
@@ -437,13 +504,63 @@ function RequestCurrentStatusView({
 		request.statusHistory[request.statusHistory.length - 1]?.changedAt ||
 		request.createdAt;
 
-	// Determinar acciones disponibles según el estado
-	const canCancel =
-		request.currentStatus === 'PENDING' ||
-		request.currentStatus === 'IN_REVIEW';
-	const canProvideInfo =
-		request.currentStatus === 'IN_REVIEW' ||
-		request.currentStatus === 'REJECTED';
+	// ⚡ LÓGICA DE BOTONES SEGÚN ESTADO
+	// Define qué acciones están disponibles para cada estado
+	const actionsByStatus = {
+		PENDING: {
+			canApprove: true,
+			canReject: true,
+			canRequestInfo: true,
+			canCancel: true,
+			canProvideInfo: false,
+			canDownload: false,
+		},
+		IN_REVIEW: {
+			canApprove: true,
+			canReject: true,
+			canRequestInfo: true,
+			canCancel: true,
+			canProvideInfo: false,
+			canDownload: false,
+		},
+		WAITING_INFO: {
+			canApprove: true,
+			canReject: true,
+			canRequestInfo: false,
+			canCancel: false,
+			canProvideInfo: true,
+			canDownload: false,
+		},
+		APPROVED: {
+			canApprove: false,
+			canReject: false,
+			canRequestInfo: false,
+			canCancel: false,
+			canProvideInfo: false,
+			canDownload: true,
+		},
+		REJECTED: {
+			canApprove: false,
+			canReject: false,
+			canRequestInfo: false,
+			canCancel: false,
+			canProvideInfo: false,
+			canDownload: false,
+		},
+		CANCELED: {
+			canApprove: false,
+			canReject: false,
+			canRequestInfo: false,
+			canCancel: false,
+			canProvideInfo: false,
+			canDownload: false,
+		},
+	};
+
+	const currentActions =
+		actionsByStatus[request.currentStatus as keyof typeof actionsByStatus] ||
+		actionsByStatus.PENDING;
+
 	const isFinalized =
 		request.currentStatus === 'APPROVED' ||
 		request.currentStatus === 'REJECTED' ||
@@ -731,24 +848,122 @@ function RequestCurrentStatusView({
 				<CardBody className="space-y-4">
 					{/* Botones de acción según estado */}
 					<div className="flex flex-wrap gap-3">
-						{canCancel && (
-							<Button color="danger" variant="bordered" size="md">
-								🚫 Cancelar Solicitud
-							</Button>
+						{/* Botón Aprobar - Solo para administradores/revisores */}
+						{currentActions.canApprove ? (
+							<Tooltip
+								content="Aprobar la solicitud después de revisión"
+								placement="top"
+							>
+								<Button color="success" variant="solid" size="md">
+									✅ Aprobar
+								</Button>
+							</Tooltip>
+						) : (
+							<Tooltip
+								content={`No disponible en estado ${getStatusLabel(request.currentStatus)}`}
+								placement="top"
+								color="danger"
+							>
+								<Button color="success" variant="bordered" size="md" isDisabled>
+									✅ Aprobar
+								</Button>
+							</Tooltip>
 						)}
 
-						{canProvideInfo && (
-							<Button color="primary" variant="solid" size="md">
-								📎 Proporcionar Información
-							</Button>
+						{/* Botón Rechazar - Solo para administradores/revisores */}
+						{currentActions.canReject ? (
+							<Tooltip
+								content="Rechazar la solicitud con comentarios"
+								placement="top"
+							>
+								<Button color="danger" variant="solid" size="md">
+									❌ Rechazar
+								</Button>
+							</Tooltip>
+						) : (
+							<Tooltip
+								content={`No disponible en estado ${getStatusLabel(request.currentStatus)}`}
+								placement="top"
+								color="danger"
+							>
+								<Button color="danger" variant="bordered" size="md" isDisabled>
+									❌ Rechazar
+								</Button>
+							</Tooltip>
 						)}
 
-						{isFinalized && (
-							<Button color="success" variant="bordered" size="md" isDisabled>
-								✅ Solicitud Finalizada
-							</Button>
+						{/* Botón Solicitar Información */}
+						{currentActions.canRequestInfo ? (
+							<Tooltip
+								content="Solicitar información adicional al estudiante"
+								placement="top"
+							>
+								<Button color="warning" variant="bordered" size="md">
+									� Solicitar Información
+								</Button>
+							</Tooltip>
+						) : (
+							!currentActions.canProvideInfo && (
+								<Tooltip
+									content={
+										isFinalized
+											? 'La solicitud ya está finalizada'
+											: request.currentStatus === 'WAITING_INFO'
+												? 'Ya se solicitó información, esperando respuesta'
+												: 'Esta acción no está disponible'
+									}
+									placement="top"
+									color="warning"
+								>
+									<Button
+										color="warning"
+										variant="bordered"
+										size="md"
+										isDisabled
+									>
+										📝 Solicitar Información
+									</Button>
+								</Tooltip>
+							)
 						)}
 
+						{/* Botón Proporcionar Información - Solo para estudiantes */}
+						{currentActions.canProvideInfo && (
+							<Tooltip
+								content="Proporcionar la información solicitada"
+								placement="top"
+							>
+								<Button color="primary" variant="solid" size="md">
+									📎 Proporcionar Información
+								</Button>
+							</Tooltip>
+						)}
+
+						{/* Botón Cancelar Solicitud */}
+						{currentActions.canCancel ? (
+							<Tooltip
+								content="Cancelar esta solicitud permanentemente"
+								placement="top"
+							>
+								<Button color="danger" variant="light" size="md">
+									🚫 Cancelar Solicitud
+								</Button>
+							</Tooltip>
+						) : (
+							isFinalized && (
+								<Tooltip
+									content="No se puede cancelar una solicitud finalizada"
+									placement="top"
+									color="danger"
+								>
+									<Button color="danger" variant="light" size="md" isDisabled>
+										🚫 Cancelar Solicitud
+									</Button>
+								</Tooltip>
+							)
+						)}
+
+						{/* Botón Ver Historial Completo */}
 						{onViewHistory && (
 							<Button
 								color="primary"
@@ -760,9 +975,27 @@ function RequestCurrentStatusView({
 							</Button>
 						)}
 
-						<Button color="default" variant="light" size="md">
-							📥 Descargar Comprobante
-						</Button>
+						{/* Botón Descargar Comprobante */}
+						{currentActions.canDownload ? (
+							<Tooltip
+								content="Descargar comprobante de aprobación"
+								placement="top"
+							>
+								<Button color="default" variant="solid" size="md">
+									📥 Descargar Comprobante
+								</Button>
+							</Tooltip>
+						) : (
+							<Tooltip
+								content="El comprobante estará disponible cuando la solicitud sea aprobada"
+								placement="top"
+								color="warning"
+							>
+								<Button color="default" variant="light" size="md" isDisabled>
+									📥 Descargar Comprobante
+								</Button>
+							</Tooltip>
+						)}
 					</div>
 
 					{/* Información de contacto */}
@@ -820,6 +1053,16 @@ function RequestCurrentStatusView({
 						</Alert>
 					)}
 
+					{request.currentStatus === 'WAITING_INFO' && (
+						<Alert color="secondary" variant="flat">
+							<p className="text-xs">
+								📝 Se ha solicitado información adicional para procesar tu
+								solicitud. Por favor, proporciona los datos requeridos usando el
+								botón de arriba para que podamos continuar con la revisión.
+							</p>
+						</Alert>
+					)}
+
 					{request.currentStatus === 'APPROVED' && (
 						<Alert color="success" variant="flat">
 							<p className="text-xs">
@@ -835,6 +1078,15 @@ function RequestCurrentStatusView({
 								❌ Tu solicitud ha sido rechazada. Revisa los comentarios en el
 								historial para conocer las razones. Si tienes dudas, contacta al
 								responsable.
+							</p>
+						</Alert>
+					)}
+
+					{request.currentStatus === 'CANCELED' && (
+						<Alert color="default" variant="flat">
+							<p className="text-xs">
+								🚫 Esta solicitud ha sido cancelada. Si necesitas realizar el
+								mismo trámite, deberás crear una nueva solicitud.
 							</p>
 						</Alert>
 					)}
@@ -856,6 +1108,8 @@ function RequestStatusHistoryView({ request }: { request: StudentRequest }) {
 				return 'warning';
 			case 'IN_REVIEW':
 				return 'primary';
+			case 'WAITING_INFO':
+				return 'secondary';
 			case 'APPROVED':
 				return 'success';
 			case 'REJECTED':
@@ -873,6 +1127,8 @@ function RequestStatusHistoryView({ request }: { request: StudentRequest }) {
 				return 'Pendiente';
 			case 'IN_REVIEW':
 				return 'En Revisión';
+			case 'WAITING_INFO':
+				return 'Esperando Información';
 			case 'APPROVED':
 				return 'Aprobada';
 			case 'REJECTED':
@@ -890,6 +1146,8 @@ function RequestStatusHistoryView({ request }: { request: StudentRequest }) {
 				return '⏳';
 			case 'IN_REVIEW':
 				return '🔍';
+			case 'WAITING_INFO':
+				return '📝';
 			case 'APPROVED':
 				return '✅';
 			case 'REJECTED':
@@ -1243,6 +1501,8 @@ export function StudentRequests({
 				return 'warning';
 			case 'IN_REVIEW':
 				return 'primary';
+			case 'WAITING_INFO':
+				return 'secondary';
 			case 'APPROVED':
 				return 'success';
 			case 'REJECTED':
@@ -1260,6 +1520,8 @@ export function StudentRequests({
 				return 'Pendiente';
 			case 'IN_REVIEW':
 				return 'En Revisión';
+			case 'WAITING_INFO':
+				return 'Esperando Información';
 			case 'APPROVED':
 				return 'Aprobada';
 			case 'REJECTED':
