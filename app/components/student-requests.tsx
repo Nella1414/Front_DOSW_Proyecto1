@@ -250,8 +250,10 @@ function EmptyHistoryMessage({ request }: { request: StudentRequest }) {
 	);
 }
 
-// Componente para mostrar el historial de estados
+// Componente para mostrar el historial de estados (Vista detallada expandible)
 function RequestStatusHistoryView({ request }: { request: StudentRequest }) {
+	const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+
 	const getStatusColor = (
 		status: string,
 	): 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' => {
@@ -288,6 +290,23 @@ function RequestStatusHistoryView({ request }: { request: StudentRequest }) {
 		}
 	};
 
+	const getStatusIcon = (status: string): string => {
+		switch (status) {
+			case 'PENDING':
+				return '⏳';
+			case 'IN_REVIEW':
+				return '🔍';
+			case 'APPROVED':
+				return '✅';
+			case 'REJECTED':
+				return '❌';
+			case 'CANCELED':
+				return '🚫';
+			default:
+				return '📋';
+		}
+	};
+
 	const formatDate = (dateString: string) => {
 		return new Date(dateString).toLocaleString('es-CO', {
 			year: 'numeric',
@@ -298,53 +317,177 @@ function RequestStatusHistoryView({ request }: { request: StudentRequest }) {
 		});
 	};
 
+	const formatDateDetailed = (dateString: string) => {
+		return new Date(dateString).toLocaleString('es-CO', {
+			weekday: 'long',
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric',
+			hour: '2-digit',
+			minute: '2-digit',
+			second: '2-digit',
+		});
+	};
+
+	const toggleExpanded = (itemId: string) => {
+		setExpandedItems((prev) => {
+			const newSet = new Set(prev);
+			if (newSet.has(itemId)) {
+				newSet.delete(itemId);
+			} else {
+				newSet.add(itemId);
+			}
+			return newSet;
+		});
+	};
+
+	// ⭐ ORDEN CRONOLÓGICO: Más reciente primero
+	const sortedHistory = [...request.statusHistory].reverse();
+
 	return (
-		<div className="space-y-3">
-			<h4 className="text-sm font-semibold text-default-700">
-				Historial de Estados
-			</h4>
+		<div className="space-y-4">
+			<div className="flex items-center justify-between">
+				<h4 className="text-sm font-semibold text-default-700 flex items-center gap-2">
+					📜 Historial de Estados
+					<Chip size="sm" variant="flat" color="default">
+						{sortedHistory.length} cambio{sortedHistory.length !== 1 ? 's' : ''}
+					</Chip>
+				</h4>
+				<p className="text-xs text-default-400">
+					{sortedHistory.length > 1 ? 'Más reciente primero' : ''}
+				</p>
+			</div>
 
 			{/* Detectar historial mínimo */}
 			<EmptyHistoryMessage request={request} />
 
-			{/* Timeline de estados */}
-			<div className="space-y-3 pl-4 border-l-2 border-default-200">
-				{request.statusHistory.map((historyItem, index) => (
-					<div key={historyItem.id} className="relative pl-6">
-						{/* Punto en la línea de tiempo */}
-						<div
-							className={`absolute -left-[9px] top-1 w-4 h-4 rounded-full border-2 border-white ${
-								index === request.statusHistory.length - 1
-									? 'bg-primary'
-									: 'bg-default-300'
-							}`}
-						/>
+			{/* Timeline de estados - ORDEN CRONOLÓGICO INVERSO */}
+			<div className="space-y-4 pl-4 border-l-2 border-default-200">
+				{sortedHistory.map((historyItem, index) => {
+					const isExpanded = expandedItems.has(historyItem.id);
+					const isLatest = index === 0;
+					const hasComment = Boolean(historyItem.comment);
 
-						<div className="space-y-1">
-							<div className="flex items-center gap-2">
-								<Chip
-									size="sm"
-									color={getStatusColor(historyItem.status)}
-									variant="flat"
-								>
-									{getStatusLabel(historyItem.status)}
-								</Chip>
-								<span className="text-xs text-default-400">
-									{formatDate(historyItem.changedAt)}
-								</span>
+					return (
+						<div key={historyItem.id} className="relative pl-6">
+							{/* Punto en la línea de tiempo con icono */}
+							<div
+								className={`absolute -left-[13px] top-1 w-6 h-6 rounded-full border-2 border-white flex items-center justify-center text-xs ${
+									isLatest ? 'bg-primary shadow-md' : 'bg-default-300 shadow-sm'
+								}`}
+								title={isLatest ? 'Estado actual' : 'Estado anterior'}
+							>
+								{getStatusIcon(historyItem.status)}
 							</div>
-							<p className="text-xs text-default-600">
-								Por:{' '}
-								<span className="font-medium">{historyItem.changedBy}</span>
-							</p>
-							{historyItem.comment && (
-								<p className="text-xs text-default-500 italic">
-									"{historyItem.comment}"
-								</p>
-							)}
+
+							{/* Card con información del cambio */}
+							<Card
+								shadow="sm"
+								className={`${isLatest ? 'border-2 border-primary' : ''}`}
+							>
+								<CardBody className="p-3 space-y-2">
+									{/* Cabecera del estado */}
+									<div className="flex items-start justify-between gap-2">
+										<div className="flex items-center gap-2 flex-wrap">
+											<Chip
+												size="sm"
+												color={getStatusColor(historyItem.status)}
+												variant="flat"
+												className="font-medium"
+											>
+												{getStatusLabel(historyItem.status)}
+											</Chip>
+											{isLatest && (
+												<Chip size="sm" color="primary" variant="dot">
+													Estado Actual
+												</Chip>
+											)}
+										</div>
+										<span className="text-xs text-default-400 whitespace-nowrap">
+											{formatDate(historyItem.changedAt)}
+										</span>
+									</div>
+
+									{/* Actor del cambio */}
+									<div className="flex items-center gap-2 text-xs">
+										<span className="text-default-500">Modificado por:</span>
+										<span className="font-medium text-default-700">
+											{historyItem.changedBy}
+										</span>
+									</div>
+
+									{/* Comentario (si existe) */}
+									{historyItem.comment && (
+										<div className="bg-default-100 rounded-lg p-2">
+											<p className="text-xs text-default-700 italic">
+												💬 "{historyItem.comment}"
+											</p>
+										</div>
+									)}
+
+									{/* Botón para expandir detalles */}
+									<Button
+										size="sm"
+										variant="light"
+										className="w-full mt-1"
+										onPress={() => toggleExpanded(historyItem.id)}
+										endContent={
+											<span className="text-default-400">
+												{isExpanded ? '▲' : '▼'}
+											</span>
+										}
+									>
+										<span className="text-xs">
+											{isExpanded ? 'Ocultar detalles' : 'Ver más detalles'}
+										</span>
+									</Button>
+
+									{/* Detalles expandibles */}
+									{isExpanded && (
+										<div className="mt-3 pt-3 border-t border-default-200 space-y-2">
+											<div className="grid grid-cols-2 gap-3 text-xs">
+												<div>
+													<p className="text-default-500 font-medium">
+														ID de cambio:
+													</p>
+													<p className="font-mono text-default-700">
+														{historyItem.id}
+													</p>
+												</div>
+												<div>
+													<p className="text-default-500 font-medium">
+														Fecha completa:
+													</p>
+													<p className="text-default-700">
+														{formatDateDetailed(historyItem.changedAt)}
+													</p>
+												</div>
+											</div>
+
+											<div className="bg-default-50 rounded-lg p-2 mt-2">
+												<p className="text-xs text-default-600">
+													<strong>Contexto:</strong>{' '}
+													{hasComment
+														? 'Este cambio incluye comentarios del responsable que explican la razón de la transición.'
+														: 'Este cambio fue registrado automáticamente por el sistema.'}
+												</p>
+											</div>
+
+											{/* Indicador de posición en el historial */}
+											<div className="flex items-center gap-2 text-xs text-default-500">
+												<span>📍</span>
+												<span>
+													Cambio #{sortedHistory.length - index} de{' '}
+													{sortedHistory.length}
+												</span>
+											</div>
+										</div>
+									)}
+								</CardBody>
+							</Card>
 						</div>
-					</div>
-				))}
+					);
+				})}
 			</div>
 		</div>
 	);
