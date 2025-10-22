@@ -53,18 +53,25 @@ jobs:
         run: |
           mkdir -p deployment
           cp -r build deployment/
-          cp -r node_modules deployment/
           cp package.json deployment/
-          cp pnpm-lock.yaml deployment/
           cp server.mjs deployment/
           cp index.js deployment/
 
-      - name: Create .deployment file to skip Oryx build
+      - name: Generate package-lock.json for Azure (Oryx doesn't support pnpm)
+        working-directory: ./deployment
         run: |
-          cat > deployment/.deployment << 'EOF'
-          [config]
-          SCM_DO_BUILD_DURING_DEPLOYMENT=false
-          EOF
+          npm install --package-lock-only
+          
+      - name: Install production dependencies for Azure
+        working-directory: ./deployment
+        run: |
+          npm ci --omit=dev
+          
+      - name: Create Oryx-compatible node_modules archive
+        working-directory: ./deployment
+        run: |
+          tar -czf node_modules.tar.gz node_modules/
+          rm -rf node_modules/
 
       - name: Create web.config for Azure
         run: |
