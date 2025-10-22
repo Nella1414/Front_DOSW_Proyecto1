@@ -5,6 +5,7 @@
 	"main": "index.js",
 	"scripts": {
 		"build": "react-router build",
+		"build:azure": "echo 'Build already completed in GitHub Actions'",
 		"dev": "react-router dev",
 		"start": "node index.js",
 		"type-check": "react-router typegen && tsc",
