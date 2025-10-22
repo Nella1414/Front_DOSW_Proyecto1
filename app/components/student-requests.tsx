@@ -29,6 +29,16 @@ export interface RequestStatusHistory {
 	comment?: string;
 }
 
+// Información del programa asignado
+export interface AssignedProgram {
+	name: string;
+	reason: string; // Razón del ruteo en lenguaje claro
+	email: string;
+	phone: string;
+	officeHours: string;
+	location?: string;
+}
+
 export interface StudentRequest {
 	id: string;
 	radicado: string;
@@ -45,6 +55,8 @@ export interface StudentRequest {
 	priority?: 'LOW' | 'MEDIUM' | 'HIGH'; // Prioridad asignada
 	contactEmail?: string; // Email de contacto
 	contactPhone?: string; // Teléfono de contacto
+	// Información de ruteo
+	assignedProgram?: AssignedProgram; // Programa al que fue asignada la solicitud
 }
 
 // Mock data - simula solicitudes del estudiante
@@ -64,6 +76,15 @@ const mockRequests: StudentRequest[] = [
 		priority: 'HIGH',
 		contactEmail: 'estudiante@example.com',
 		contactPhone: '+57 300 123 4567',
+		assignedProgram: {
+			name: 'Ingeniería de Sistemas',
+			reason:
+				'Esta solicitud fue asignada a Ingeniería de Sistemas porque la materia Cálculo Vectorial pertenece al plan de estudios de este programa.',
+			email: 'sistemas@universidad.edu.co',
+			phone: '+57 (1) 234 5678 ext. 101',
+			officeHours: 'Lunes a Viernes: 8:00 AM - 5:00 PM',
+			location: 'Edificio de Ingenierías, Piso 3, Oficina 301',
+		},
 		statusHistory: [
 			{
 				id: 'h1',
@@ -103,6 +124,16 @@ const mockRequests: StudentRequest[] = [
 		priority: 'MEDIUM',
 		contactEmail: 'estudiante@example.com',
 		contactPhone: '+57 300 123 4567',
+		assignedProgram: {
+			name: 'Servicios Generales',
+			reason:
+				'Tu solicitud fue dirigida a Servicios Generales porque las reservas de aulas y espacios comunes son gestionadas por esta dependencia.',
+			email: 'servicios@universidad.edu.co',
+			phone: '+57 (1) 234 5678 ext. 200',
+			officeHours:
+				'Lunes a Viernes: 7:00 AM - 6:00 PM, Sábados: 8:00 AM - 12:00 PM',
+			location: 'Edificio Administrativo, Piso 1, Oficina 105',
+		},
 		statusHistory: [
 			{
 				id: 'h4',
@@ -128,6 +159,15 @@ const mockRequests: StudentRequest[] = [
 		priority: 'HIGH',
 		contactEmail: 'estudiante@example.com',
 		contactPhone: '+57 300 123 4567',
+		assignedProgram: {
+			name: 'Registro Académico',
+			reason:
+				'Esta solicitud se envió a Registro Académico porque todas las homologaciones de materias requieren validación de contenidos y aprobación oficial por parte de esta oficina.',
+			email: 'registro@universidad.edu.co',
+			phone: '+57 (1) 234 5678 ext. 150',
+			officeHours: 'Lunes a Viernes: 8:00 AM - 4:00 PM',
+			location: 'Edificio Administrativo, Piso 2, Oficina 201',
+		},
 		statusHistory: [
 			{
 				id: 'h5',
@@ -159,6 +199,15 @@ const mockRequests: StudentRequest[] = [
 		priority: 'LOW',
 		contactEmail: 'estudiante@example.com',
 		contactPhone: '+57 300 123 4567',
+		assignedProgram: {
+			name: 'Secretaría Académica',
+			reason:
+				'Tu solicitud fue asignada a Secretaría Académica porque la expedición de certificados y documentos oficiales es responsabilidad de esta área.',
+			email: 'secretaria@universidad.edu.co',
+			phone: '+57 (1) 234 5678 ext. 120',
+			officeHours: 'Lunes a Viernes: 8:00 AM - 4:00 PM',
+			location: 'Edificio Administrativo, Piso 1, Ventanilla 3',
+		},
 		statusHistory: [
 			{
 				id: 'h7',
@@ -540,6 +589,136 @@ function RequestCurrentStatusView({
 					)}
 				</CardBody>
 			</Card>
+
+			{/* Información de Ruteo - Programa Asignado */}
+			{request.assignedProgram && (
+				<Card shadow="sm" className="border border-primary/30 bg-primary/5">
+					<CardHeader>
+						<div className="flex items-center gap-2">
+							<h3 className="text-lg font-semibold flex items-center gap-2">
+								🎯 Programa Asignado
+							</h3>
+							<Tooltip
+								content={
+									<div className="px-1 py-2 max-w-xs">
+										<div className="text-xs font-bold mb-1">
+											¿Por qué fue asignada aquí?
+										</div>
+										<div className="text-xs">
+											{request.assignedProgram.reason}
+										</div>
+									</div>
+								}
+								placement="right"
+								color="primary"
+							>
+								<Button
+									isIconOnly
+									size="sm"
+									variant="light"
+									className="min-w-6 w-6 h-6"
+								>
+									<span className="text-primary text-lg">ℹ️</span>
+								</Button>
+							</Tooltip>
+						</div>
+					</CardHeader>
+					<Divider />
+					<CardBody className="space-y-4">
+						{/* Nombre del programa con tooltip */}
+						<div>
+							<div className="flex items-center gap-2 mb-2">
+								<p className="text-sm font-semibold text-primary-600">
+									{request.assignedProgram.name}
+								</p>
+								<Chip size="sm" variant="flat" color="primary">
+									Responsable
+								</Chip>
+							</div>
+							<Alert color="primary" variant="flat" className="text-xs">
+								<p className="font-medium mb-1">📍 Razón de la asignación:</p>
+								<p>{request.assignedProgram.reason}</p>
+							</Alert>
+						</div>
+
+						<Divider />
+
+						{/* Información de contacto completa */}
+						<div>
+							<p className="text-sm font-semibold text-default-700 mb-3">
+								📞 Información de Contacto
+							</p>
+							<div className="space-y-3">
+								{/* Email */}
+								<div className="flex items-start gap-3">
+									<span className="text-lg">📧</span>
+									<div className="flex-1">
+										<p className="text-xs text-default-500 mb-1">
+											Correo Electrónico
+										</p>
+										<a
+											href={`mailto:${request.assignedProgram.email}`}
+											className="text-sm text-primary hover:underline font-medium"
+										>
+											{request.assignedProgram.email}
+										</a>
+									</div>
+								</div>
+
+								{/* Teléfono */}
+								<div className="flex items-start gap-3">
+									<span className="text-lg">📱</span>
+									<div className="flex-1">
+										<p className="text-xs text-default-500 mb-1">Teléfono</p>
+										<a
+											href={`tel:${request.assignedProgram.phone.replace(/[^0-9+]/g, '')}`}
+											className="text-sm text-primary hover:underline font-medium"
+										>
+											{request.assignedProgram.phone}
+										</a>
+									</div>
+								</div>
+
+								{/* Horarios de atención */}
+								<div className="flex items-start gap-3">
+									<span className="text-lg">🕒</span>
+									<div className="flex-1">
+										<p className="text-xs text-default-500 mb-1">
+											Horarios de Atención
+										</p>
+										<p className="text-sm text-default-700 font-medium">
+											{request.assignedProgram.officeHours}
+										</p>
+									</div>
+								</div>
+
+								{/* Ubicación física */}
+								{request.assignedProgram.location && (
+									<div className="flex items-start gap-3">
+										<span className="text-lg">📍</span>
+										<div className="flex-1">
+											<p className="text-xs text-default-500 mb-1">
+												Ubicación Física
+											</p>
+											<p className="text-sm text-default-700 font-medium">
+												{request.assignedProgram.location}
+											</p>
+										</div>
+									</div>
+								)}
+							</div>
+						</div>
+
+						{/* Mensaje informativo */}
+						<Alert color="default" variant="bordered" className="text-xs">
+							💡 Si tienes preguntas sobre tu solicitud, puedes contactar
+							directamente a {request.assignedProgram.name} usando cualquiera de
+							los medios de contacto anteriores durante los horarios de
+							atención.
+						</Alert>
+					</CardBody>
+				</Card>
+			)}
 
 			{/* Acciones disponibles */}
 			<Card shadow="sm" className="border border-primary/20">
@@ -1059,6 +1238,7 @@ export function StudentRequests({
 						<TableColumn>TIPO</TableColumn>
 						<TableColumn>DESCRIPCIÓN</TableColumn>
 						<TableColumn>FECHA CREACIÓN</TableColumn>
+						<TableColumn>PROGRAMA ASIGNADO</TableColumn>
 						<TableColumn>ESTADO ACTUAL</TableColumn>
 						<TableColumn>ACCIONES</TableColumn>
 					</TableHeader>
@@ -1074,6 +1254,42 @@ export function StudentRequests({
 								</TableCell>
 								<TableCell className="text-sm">
 									{new Date(request.createdAt).toLocaleDateString('es-CO')}
+								</TableCell>
+								<TableCell>
+									{request.assignedProgram ? (
+										<Tooltip
+											content={
+												<div className="px-1 py-2 max-w-sm">
+													<div className="text-xs font-bold mb-2">
+														🎯 {request.assignedProgram.name}
+													</div>
+													<div className="text-xs mb-2">
+														{request.assignedProgram.reason}
+													</div>
+													<Divider className="my-2" />
+													<div className="text-xs space-y-1">
+														<p>📧 {request.assignedProgram.email}</p>
+														<p>📱 {request.assignedProgram.phone}</p>
+													</div>
+												</div>
+											}
+											placement="left"
+											color="primary"
+										>
+											<Chip
+												size="sm"
+												variant="flat"
+												color="primary"
+												className="cursor-help"
+											>
+												{request.assignedProgram.name}
+											</Chip>
+										</Tooltip>
+									) : (
+										<Chip size="sm" variant="flat" color="default">
+											Sin asignar
+										</Chip>
+									)}
 								</TableCell>
 								<TableCell>
 									<Chip
