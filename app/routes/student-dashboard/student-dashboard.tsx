@@ -9,6 +9,7 @@ import {
 } from '@heroui/react';
 import React from 'react';
 import { AcademicGrid } from '../../components/academic-grid';
+import { AcademicSchedule } from '../../components/academic-schedule';
 import { AcademicSemaphore } from '../../components/academic-semaphore';
 import {
 	InformativeMessage,
@@ -19,7 +20,7 @@ import {
 	useSelectedSemester,
 } from '../../components/informative-message';
 import { type CurrentView, Sidebar, type User } from '../../components/sidebar';
-import { AcademicSchedule } from '../../components/academic-schedule';
+import { StudentRequests } from '../../components/student-requests';
 
 // Usuario estudiante simulado
 const studentUser: User = {
@@ -249,12 +250,7 @@ export default function StudentDashboardRoute() {
 			content = <StudentProfileView user={studentUser} />;
 			break;
 		case 'requests':
-			content = (
-				<SimplePlaceholder
-					title="Mis Solicitudes"
-					description="Historial de solicitudes realizadas."
-				/>
-			);
+			content = <StudentRequests studentId={studentUser.studentId} />;
 			break;
 		case 'create-request':
 			content = (
