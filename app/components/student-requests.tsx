@@ -38,6 +38,13 @@ export interface StudentRequest {
 	currentStatus: 'PENDING' | 'IN_REVIEW' | 'APPROVED' | 'REJECTED' | 'CANCELED';
 	statusHistory: RequestStatusHistory[];
 	studentId: string;
+	// Nuevos campos para detalles de la solicitud
+	fromSubject?: string; // De qué materia/grupo
+	toSubject?: string; // A qué materia/grupo
+	studentObservations?: string; // Observaciones del estudiante
+	priority?: 'LOW' | 'MEDIUM' | 'HIGH'; // Prioridad asignada
+	contactEmail?: string; // Email de contacto
+	contactPhone?: string; // Teléfono de contacto
 }
 
 // Mock data - simula solicitudes del estudiante
@@ -50,6 +57,13 @@ const mockRequests: StudentRequest[] = [
 		createdAt: '2024-10-15T10:30:00Z',
 		currentStatus: 'APPROVED',
 		studentId: '1234567890',
+		fromSubject: 'Cálculo Vectorial - Grupo 01',
+		toSubject: 'N/A',
+		studentObservations:
+			'Solicito la cancelación debido a dificultades personales que afectan mi rendimiento académico. Planeo retomar la materia el próximo semestre.',
+		priority: 'HIGH',
+		contactEmail: 'estudiante@example.com',
+		contactPhone: '+57 300 123 4567',
 		statusHistory: [
 			{
 				id: 'h1',
@@ -82,6 +96,13 @@ const mockRequests: StudentRequest[] = [
 		createdAt: '2024-10-20T15:45:00Z',
 		currentStatus: 'PENDING',
 		studentId: '1234567890',
+		fromSubject: 'N/A',
+		toSubject: 'Aula 301 - Edificio A',
+		studentObservations:
+			'Necesitamos el aula para trabajar en nuestro proyecto final de Desarrollo de Software. Somos un grupo de 5 personas.',
+		priority: 'MEDIUM',
+		contactEmail: 'estudiante@example.com',
+		contactPhone: '+57 300 123 4567',
 		statusHistory: [
 			{
 				id: 'h4',
@@ -100,6 +121,13 @@ const mockRequests: StudentRequest[] = [
 		createdAt: '2024-10-18T11:00:00Z',
 		currentStatus: 'IN_REVIEW',
 		studentId: '1234567890',
+		fromSubject: 'Programación Avanzada - Universidad XYZ',
+		toSubject: 'Programación Orientada a Objetos - Grupo 02',
+		studentObservations:
+			'Cursé esta materia en mi universidad anterior con una calificación de 4.5. Adjunto certificado de notas y programa académico.',
+		priority: 'HIGH',
+		contactEmail: 'estudiante@example.com',
+		contactPhone: '+57 300 123 4567',
 		statusHistory: [
 			{
 				id: 'h5',
@@ -124,6 +152,13 @@ const mockRequests: StudentRequest[] = [
 		createdAt: '2024-10-22T09:00:00Z',
 		currentStatus: 'PENDING',
 		studentId: '1234567890',
+		fromSubject: 'N/A',
+		toSubject: 'N/A',
+		studentObservations:
+			'Requiero el certificado para aplicar a una beca internacional. Necesito que incluya todas las materias cursadas hasta la fecha.',
+		priority: 'LOW',
+		contactEmail: 'estudiante@example.com',
+		contactPhone: '+57 300 123 4567',
 		statusHistory: [
 			{
 				id: 'h7',
@@ -247,6 +282,386 @@ function EmptyHistoryMessage({ request }: { request: StudentRequest }) {
 				</p>
 			</div>
 		</Alert>
+	);
+}
+
+// Componente para vista detallada del estado actual de la solicitud
+function RequestCurrentStatusView({
+	request,
+	onViewHistory,
+}: {
+	request: StudentRequest;
+	onViewHistory?: () => void;
+}) {
+	const getStatusColor = (
+		status: string,
+	): 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' => {
+		switch (status) {
+			case 'PENDING':
+				return 'warning';
+			case 'IN_REVIEW':
+				return 'primary';
+			case 'APPROVED':
+				return 'success';
+			case 'REJECTED':
+				return 'danger';
+			case 'CANCELED':
+				return 'default';
+			default:
+				return 'default';
+		}
+	};
+
+	const getStatusLabel = (status: string): string => {
+		switch (status) {
+			case 'PENDING':
+				return 'Pendiente';
+			case 'IN_REVIEW':
+				return 'En Revisión';
+			case 'APPROVED':
+				return 'Aprobada';
+			case 'REJECTED':
+				return 'Rechazada';
+			case 'CANCELED':
+				return 'Cancelada';
+			default:
+				return status;
+		}
+	};
+
+	const getStatusIcon = (status: string): string => {
+		switch (status) {
+			case 'PENDING':
+				return '⏳';
+			case 'IN_REVIEW':
+				return '🔍';
+			case 'APPROVED':
+				return '✅';
+			case 'REJECTED':
+				return '❌';
+			case 'CANCELED':
+				return '🚫';
+			default:
+				return '📋';
+		}
+	};
+
+	const getPriorityColor = (
+		priority?: string,
+	): 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' => {
+		switch (priority) {
+			case 'HIGH':
+				return 'danger';
+			case 'MEDIUM':
+				return 'warning';
+			case 'LOW':
+				return 'success';
+			default:
+				return 'default';
+		}
+	};
+
+	const getPriorityLabel = (priority?: string): string => {
+		switch (priority) {
+			case 'HIGH':
+				return '🔴 Alta';
+			case 'MEDIUM':
+				return '🟡 Media';
+			case 'LOW':
+				return '🟢 Baja';
+			default:
+				return 'No asignada';
+		}
+	};
+
+	const formatDate = (dateString: string) => {
+		return new Date(dateString).toLocaleString('es-CO', {
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric',
+			hour: '2-digit',
+			minute: '2-digit',
+		});
+	};
+
+	const lastUpdate =
+		request.statusHistory[request.statusHistory.length - 1]?.changedAt ||
+		request.createdAt;
+
+	// Determinar acciones disponibles según el estado
+	const canCancel =
+		request.currentStatus === 'PENDING' ||
+		request.currentStatus === 'IN_REVIEW';
+	const canProvideInfo =
+		request.currentStatus === 'IN_REVIEW' ||
+		request.currentStatus === 'REJECTED';
+	const isFinalized =
+		request.currentStatus === 'APPROVED' ||
+		request.currentStatus === 'REJECTED' ||
+		request.currentStatus === 'CANCELED';
+
+	return (
+		<div className="space-y-6">
+			{/* Header con información clave */}
+			<Card shadow="md" className="border-2 border-primary">
+				<CardBody className="p-6">
+					<div className="space-y-4">
+						{/* Radicado prominente y estado */}
+						<div className="flex items-start justify-between gap-4 flex-wrap">
+							<div className="space-y-2">
+								<div className="flex items-center gap-3">
+									<span className="text-3xl">
+										{getStatusIcon(request.currentStatus)}
+									</span>
+									<div>
+										<p className="text-xs text-default-500 font-medium">
+											RADICADO
+										</p>
+										<h1 className="text-2xl md:text-3xl font-bold text-primary font-mono">
+											{request.radicado}
+										</h1>
+									</div>
+								</div>
+								<Chip
+									size="lg"
+									color={getStatusColor(request.currentStatus)}
+									variant="flat"
+									className="font-semibold"
+								>
+									{getStatusLabel(request.currentStatus)}
+								</Chip>
+							</div>
+
+							{/* Prioridad */}
+							{request.priority && (
+								<div className="text-right">
+									<p className="text-xs text-default-500 mb-1">PRIORIDAD</p>
+									<Chip
+										size="md"
+										color={getPriorityColor(request.priority)}
+										variant="bordered"
+									>
+										{getPriorityLabel(request.priority)}
+									</Chip>
+								</div>
+							)}
+						</div>
+
+						<Divider />
+
+						{/* Fechas */}
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+							<div>
+								<p className="text-xs text-default-500 font-medium mb-1">
+									📅 Fecha de Creación
+								</p>
+								<p className="text-sm font-medium text-default-700">
+									{formatDate(request.createdAt)}
+								</p>
+							</div>
+							<div>
+								<p className="text-xs text-default-500 font-medium mb-1">
+									🔄 Última Actualización
+								</p>
+								<p className="text-sm font-medium text-default-700">
+									{formatDate(lastUpdate)}
+								</p>
+							</div>
+						</div>
+					</div>
+				</CardBody>
+			</Card>
+
+			{/* Detalles de la solicitud */}
+			<Card shadow="sm">
+				<CardHeader>
+					<h3 className="text-lg font-semibold flex items-center gap-2">
+						📋 Detalles de la Solicitud
+					</h3>
+				</CardHeader>
+				<Divider />
+				<CardBody className="space-y-4">
+					{/* Tipo de solicitud */}
+					<div>
+						<p className="text-xs text-default-500 font-medium mb-1">
+							Tipo de Solicitud
+						</p>
+						<p className="text-base font-semibold text-default-800">
+							{request.type}
+						</p>
+					</div>
+
+					{/* Descripción */}
+					<div>
+						<p className="text-xs text-default-500 font-medium mb-1">
+							Descripción
+						</p>
+						<p className="text-sm text-default-700">{request.description}</p>
+					</div>
+
+					{/* De qué a qué (si aplica) */}
+					{(request.fromSubject || request.toSubject) && (
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+							{request.fromSubject && request.fromSubject !== 'N/A' && (
+								<div>
+									<p className="text-xs text-default-500 font-medium mb-1">
+										📚 De
+									</p>
+									<p className="text-sm text-default-700 font-medium">
+										{request.fromSubject}
+									</p>
+								</div>
+							)}
+							{request.toSubject && request.toSubject !== 'N/A' && (
+								<div>
+									<p className="text-xs text-default-500 font-medium mb-1">
+										📚 A
+									</p>
+									<p className="text-sm text-default-700 font-medium">
+										{request.toSubject}
+									</p>
+								</div>
+							)}
+						</div>
+					)}
+
+					{/* Observaciones del estudiante */}
+					{request.studentObservations && (
+						<div>
+							<p className="text-xs text-default-500 font-medium mb-2">
+								💭 Observaciones del Estudiante
+							</p>
+							<div className="bg-default-100 rounded-lg p-3">
+								<p className="text-sm text-default-700 italic">
+									"{request.studentObservations}"
+								</p>
+							</div>
+						</div>
+					)}
+				</CardBody>
+			</Card>
+
+			{/* Acciones disponibles */}
+			<Card shadow="sm" className="border border-primary/20">
+				<CardHeader>
+					<h3 className="text-lg font-semibold flex items-center gap-2">
+						⚡ Acciones Disponibles
+					</h3>
+				</CardHeader>
+				<Divider />
+				<CardBody className="space-y-4">
+					{/* Botones de acción según estado */}
+					<div className="flex flex-wrap gap-3">
+						{canCancel && (
+							<Button color="danger" variant="bordered" size="md">
+								🚫 Cancelar Solicitud
+							</Button>
+						)}
+
+						{canProvideInfo && (
+							<Button color="primary" variant="solid" size="md">
+								📎 Proporcionar Información
+							</Button>
+						)}
+
+						{isFinalized && (
+							<Button color="success" variant="bordered" size="md" isDisabled>
+								✅ Solicitud Finalizada
+							</Button>
+						)}
+
+						{onViewHistory && (
+							<Button
+								color="primary"
+								variant="flat"
+								size="md"
+								onPress={onViewHistory}
+							>
+								📜 Ver Historial Completo
+							</Button>
+						)}
+
+						<Button color="default" variant="light" size="md">
+							📥 Descargar Comprobante
+						</Button>
+					</div>
+
+					{/* Información de contacto */}
+					{(request.contactEmail || request.contactPhone) && (
+						<>
+							<Divider />
+							<div>
+								<p className="text-sm font-semibold text-default-700 mb-3">
+									📞 ¿Necesitas más información?
+								</p>
+								<div className="space-y-2">
+									{request.contactEmail && (
+										<div className="flex items-center gap-2 text-sm">
+											<span className="text-default-500">📧 Email:</span>
+											<a
+												href={`mailto:${request.contactEmail}`}
+												className="text-primary hover:underline"
+											>
+												{request.contactEmail}
+											</a>
+										</div>
+									)}
+									{request.contactPhone && (
+										<div className="flex items-center gap-2 text-sm">
+											<span className="text-default-500">📱 Teléfono:</span>
+											<a
+												href={`tel:${request.contactPhone}`}
+												className="text-primary hover:underline"
+											>
+												{request.contactPhone}
+											</a>
+										</div>
+									)}
+								</div>
+							</div>
+						</>
+					)}
+
+					{/* Mensajes según estado */}
+					{request.currentStatus === 'PENDING' && (
+						<Alert color="warning" variant="flat">
+							<p className="text-xs">
+								⏳ Tu solicitud está pendiente de revisión. Normalmente este
+								proceso toma entre 2-3 días hábiles.
+							</p>
+						</Alert>
+					)}
+
+					{request.currentStatus === 'IN_REVIEW' && (
+						<Alert color="primary" variant="flat">
+							<p className="text-xs">
+								🔍 Tu solicitud está siendo revisada por el personal
+								correspondiente. Te notificaremos cualquier actualización.
+							</p>
+						</Alert>
+					)}
+
+					{request.currentStatus === 'APPROVED' && (
+						<Alert color="success" variant="flat">
+							<p className="text-xs">
+								✅ ¡Felicitaciones! Tu solicitud ha sido aprobada. Puedes
+								descargar el comprobante usando el botón de arriba.
+							</p>
+						</Alert>
+					)}
+
+					{request.currentStatus === 'REJECTED' && (
+						<Alert color="danger" variant="flat">
+							<p className="text-xs">
+								❌ Tu solicitud ha sido rechazada. Revisa los comentarios en el
+								historial para conocer las razones. Si tienes dudas, contacta al
+								responsable.
+							</p>
+						</Alert>
+					)}
+				</CardBody>
+			</Card>
+		</div>
 	);
 }
 
@@ -672,11 +1087,22 @@ export function StudentRequests({
 								<TableCell>
 									<Accordion isCompact>
 										<AccordionItem
-											key="details"
+											key="current-status"
+											aria-label="Ver detalles"
+											title={
+												<span className="text-xs text-primary font-medium">
+													👁️ Ver Detalles
+												</span>
+											}
+										>
+											<RequestCurrentStatusView request={request} />
+										</AccordionItem>
+										<AccordionItem
+											key="history"
 											aria-label="Ver historial"
 											title={
-												<span className="text-xs text-primary">
-													Ver historial
+												<span className="text-xs text-secondary font-medium">
+													📜 Ver Historial
 												</span>
 											}
 										>
