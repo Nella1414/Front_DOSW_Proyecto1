@@ -61,6 +61,13 @@ jobs:
         working-directory: ./deployment
         run: npm install --package-lock-only
 
+      - name: Ensure Azure build is enabled
+        run: |
+          cat > deployment/.deployment << 'EOF'
+          [config]
+          SCM_DO_BUILD_DURING_DEPLOYMENT=true
+          EOF
+
       - name: Create web.config for Azure
         run: |
           cat > deployment/web.config << 'EOF'
