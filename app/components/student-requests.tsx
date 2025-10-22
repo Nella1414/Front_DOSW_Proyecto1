@@ -403,6 +403,33 @@ function RequestCurrentStatusView({
 	request: StudentRequest;
 	onViewHistory?: () => void;
 }) {
+	const [copiedRadicado, setCopiedRadicado] = useState(false);
+
+	// Función para copiar radicado al portapapeles
+	const handleCopyRadicado = async () => {
+		try {
+			await navigator.clipboard.writeText(request.radicado);
+			setCopiedRadicado(true);
+			setTimeout(() => setCopiedRadicado(false), 2000);
+		} catch (_err) {
+			// Fallback para navegadores antiguos o móviles
+			const textArea = document.createElement('textarea');
+			textArea.value = request.radicado;
+			textArea.style.position = 'fixed';
+			textArea.style.left = '-999999px';
+			document.body.appendChild(textArea);
+			textArea.select();
+			try {
+				document.execCommand('copy');
+				setCopiedRadicado(true);
+				setTimeout(() => setCopiedRadicado(false), 2000);
+			} catch (e) {
+				console.error('Error en fallback de copiar:', e);
+			}
+			document.body.removeChild(textArea);
+		}
+	};
+
 	const getStatusColor = (
 		status: string,
 	): 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' => {
@@ -572,7 +599,7 @@ function RequestCurrentStatusView({
 			<Card shadow="md" className="border-2 border-primary">
 				<CardBody className="p-6">
 					<div className="space-y-4">
-						{/* Radicado prominente y estado */}
+						{/* Radicado prominente con botón de copiar */}
 						<div className="flex items-start justify-between gap-4 flex-wrap">
 							<div className="space-y-2">
 								<div className="flex items-center gap-3">
@@ -583,9 +610,35 @@ function RequestCurrentStatusView({
 										<p className="text-xs text-default-500 font-medium">
 											RADICADO
 										</p>
-										<h1 className="text-2xl md:text-3xl font-bold text-primary font-mono">
-											{request.radicado}
-										</h1>
+										<div className="flex items-center gap-2">
+											<Tooltip
+												content="Usa este número para consultar tu solicitud"
+												placement="bottom"
+											>
+												<h1 className="text-2xl md:text-3xl font-bold text-primary font-mono cursor-help">
+													{request.radicado}
+												</h1>
+											</Tooltip>
+											<Tooltip
+												content={
+													copiedRadicado ? '¡Copiado!' : 'Copiar radicado'
+												}
+												placement="right"
+												color={copiedRadicado ? 'success' : 'default'}
+											>
+												<Button
+													isIconOnly
+													size="sm"
+													variant={copiedRadicado ? 'solid' : 'light'}
+													color={copiedRadicado ? 'success' : 'default'}
+													onPress={handleCopyRadicado}
+													className="transition-all text-lg"
+													aria-label="Copiar radicado"
+												>
+													{copiedRadicado ? '✓' : '📋'}
+												</Button>
+											</Tooltip>
+										</div>
 									</div>
 								</div>
 								<Chip
@@ -596,8 +649,7 @@ function RequestCurrentStatusView({
 								>
 									{getStatusLabel(request.currentStatus)}
 								</Chip>
-							</div>
-
+							</div>{' '}
 							{/* Prioridad */}
 							{request.priority && (
 								<div className="text-right">
@@ -1474,6 +1526,67 @@ function RequestStatusHistoryView({ request }: { request: StudentRequest }) {
 	);
 }
 
+// Componente para mostrar radicado con funcionalidad de copiado
+function RadicadoCell({ radicado }: { radicado: string }) {
+	const [copied, setCopied] = useState(false);
+
+	const handleCopy = async (e: React.MouseEvent) => {
+		e.stopPropagation(); // Evita que se expanda el accordion
+		try {
+			await navigator.clipboard.writeText(radicado);
+			setCopied(true);
+			setTimeout(() => setCopied(false), 2000);
+		} catch (_err) {
+			// Fallback para navegadores antiguos o móviles
+			const textArea = document.createElement('textarea');
+			textArea.value = radicado;
+			textArea.style.position = 'fixed';
+			textArea.style.left = '-999999px';
+			document.body.appendChild(textArea);
+			textArea.select();
+			try {
+				document.execCommand('copy');
+				setCopied(true);
+				setTimeout(() => setCopied(false), 2000);
+			} catch (e) {
+				console.error('Error al copiar:', e);
+			}
+			document.body.removeChild(textArea);
+		}
+	};
+
+	return (
+		<div className="flex items-center gap-2">
+			<Tooltip
+				content="Usa este número para consultar tu solicitud"
+				placement="top"
+			>
+				<span className="font-mono text-xs font-semibold cursor-help">
+					{radicado}
+				</span>
+			</Tooltip>
+			<Tooltip
+				content={copied ? '¡Copiado!' : 'Copiar'}
+				placement="right"
+				color={copied ? 'success' : 'default'}
+			>
+				<button
+					type="button"
+					onClick={handleCopy}
+					className={`p-1 rounded transition-all text-sm ${
+						copied
+							? 'bg-success text-white'
+							: 'hover:bg-default-100 text-default-400 hover:text-default-600'
+					}`}
+					aria-label="Copiar radicado"
+				>
+					{copied ? '✓' : '📋'}
+				</button>
+			</Tooltip>
+		</div>
+	);
+}
+
 // Componente principal
 export function StudentRequests({
 	studentId = '1234567890',
@@ -1636,8 +1749,8 @@ export function StudentRequests({
 					<TableBody>
 						{requests.map((request) => (
 							<TableRow key={request.id}>
-								<TableCell className="font-mono text-xs">
-									{request.radicado}
+								<TableCell>
+									<RadicadoCell radicado={request.radicado} />
 								</TableCell>
 								<TableCell className="font-medium">{request.type}</TableCell>
 								<TableCell className="max-w-xs truncate">
