@@ -111,8 +111,12 @@ const mockScheduleData: ScheduleData = {
 };
 
 export function AcademicSchedule() {
-	const [scheduleData, setScheduleData] = useState<ScheduleData>(mockScheduleData);
-	const [selectedSlot, setSelectedSlot] = useState<{day: string; time: string} | null>(null);
+	const [scheduleData, setScheduleData] =
+		useState<ScheduleData>(mockScheduleData);
+	const [selectedSlot, setSelectedSlot] = useState<{
+		day: string;
+		time: string;
+	} | null>(null);
 	const [newClass, setNewClass] = useState({
 		subject: '',
 		teacher: '',
@@ -141,7 +145,7 @@ export function AcademicSchedule() {
 			notes: newClass.notes,
 		};
 
-		setScheduleData(prev => ({
+		setScheduleData((prev) => ({
 			...prev,
 			[selectedSlot.day]: {
 				...prev[selectedSlot.day],
@@ -166,14 +170,18 @@ export function AcademicSchedule() {
 							<div className="grid grid-cols-7 border border-default-200 rounded-lg overflow-hidden">
 								{/* Header Row */}
 								<div className="bg-default-100 p-3 border-r border-default-200 flex items-center justify-center">
-									<span className="text-sm font-medium text-default-700">Horario</span>
+									<span className="text-sm font-medium text-default-700">
+										Horario
+									</span>
 								</div>
 								{DAYS.map((day) => (
 									<div
 										key={day}
 										className="bg-default-100 p-3 border-r border-default-200 last:border-r-0 flex items-center justify-center"
 									>
-										<span className="text-sm font-medium text-default-700">{day}</span>
+										<span className="text-sm font-medium text-default-700">
+											{day}
+										</span>
 									</div>
 								))}
 
@@ -185,9 +193,11 @@ export function AcademicSchedule() {
 											key={`time-${timeSlot}`}
 											className="bg-default-50 p-3 border-r border-t border-default-200 flex items-center justify-end pr-4"
 										>
-											<span className="text-xs font-medium text-default-600">{timeSlot}</span>
+											<span className="text-xs font-medium text-default-600">
+												{timeSlot}
+											</span>
 										</div>
-										
+
 										{/* Day Cells */}
 										{DAYS.map((day) => {
 											const classBlock = scheduleData[day]?.[timeSlot];
@@ -242,26 +252,34 @@ export function AcademicSchedule() {
 							label="Nombre de la Materia"
 							placeholder="Ej: Cálculo Diferencial"
 							value={newClass.subject}
-							onChange={(e) => setNewClass(prev => ({ ...prev, subject: e.target.value }))}
+							onChange={(e) =>
+								setNewClass((prev) => ({ ...prev, subject: e.target.value }))
+							}
 							isRequired
 						/>
 						<Input
 							label="Profesor"
 							placeholder="Ej: Dr. García"
 							value={newClass.teacher}
-							onChange={(e) => setNewClass(prev => ({ ...prev, teacher: e.target.value }))}
+							onChange={(e) =>
+								setNewClass((prev) => ({ ...prev, teacher: e.target.value }))
+							}
 						/>
 						<Input
 							label="Aula/Salón"
 							placeholder="Ej: A-101"
 							value={newClass.classroom}
-							onChange={(e) => setNewClass(prev => ({ ...prev, classroom: e.target.value }))}
+							onChange={(e) =>
+								setNewClass((prev) => ({ ...prev, classroom: e.target.value }))
+							}
 						/>
 						<Textarea
 							label="Notas (Opcional)"
 							placeholder="Información adicional..."
 							value={newClass.notes}
-							onChange={(e) => setNewClass(prev => ({ ...prev, notes: e.target.value }))}
+							onChange={(e) =>
+								setNewClass((prev) => ({ ...prev, notes: e.target.value }))
+							}
 							rows={3}
 						/>
 					</ModalBody>
