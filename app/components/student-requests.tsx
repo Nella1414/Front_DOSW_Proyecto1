@@ -1353,6 +1353,84 @@ function RequestStatusHistoryView({ request }: { request: StudentRequest }) {
 			{/* Detectar historial mínimo */}
 			<EmptyHistoryMessage request={request} />
 
+			{/* Historial de asignación de radicado y prioridad */}
+			<div className="mb-6 space-y-3">
+				<h4 className="text-sm font-semibold text-default-700">
+					📋 Metadata de la Solicitud
+				</h4>
+
+				{/* Radicado asignado */}
+				<Card className="shadow-sm border-l-4 border-l-primary">
+					<CardBody className="py-3 px-4">
+						<div className="flex items-start gap-3">
+							<div className="text-2xl">📋</div>
+							<div className="flex-1">
+								<div className="text-sm font-semibold text-default-700">
+									Radicado asignado
+								</div>
+								<div className="text-sm text-default-600 mt-1">
+									<span className="font-mono font-semibold">
+										{request.radicado}
+									</span>{' '}
+									asignado el {formatDateDetailed(request.createdAt)}
+								</div>
+								<div className="text-xs text-default-400 mt-1">
+									El radicado es el identificador único de esta solicitud
+								</div>
+							</div>
+						</div>
+					</CardBody>
+				</Card>
+
+				{/* Prioridad calculada */}
+				{request.priority && (
+					<Card className="shadow-sm border-l-4 border-l-warning">
+						<CardBody className="py-3 px-4">
+							<div className="flex items-start gap-3">
+								<div className="text-2xl">🎯</div>
+								<div className="flex-1">
+									<div className="text-sm font-semibold text-default-700">
+										Prioridad calculada
+									</div>
+									<div className="text-sm text-default-600 mt-1 flex items-center gap-2">
+										<span>Prioridad:</span>
+										<Chip
+											color={
+												request.priority === 'HIGH'
+													? 'danger'
+													: request.priority === 'MEDIUM'
+														? 'warning'
+														: 'success'
+											}
+											size="sm"
+											variant="flat"
+										>
+											{request.priority === 'HIGH'
+												? '🔴 Alta'
+												: request.priority === 'MEDIUM'
+													? '🟡 Media'
+													: '🟢 Baja'}
+										</Chip>
+										<span className="text-xs">
+											el {formatDateDetailed(request.createdAt)}
+										</span>
+									</div>
+									<div className="text-xs text-default-400 mt-1">
+										{request.priority === 'HIGH'
+											? 'Alta prioridad: requiere atención inmediata'
+											: request.priority === 'MEDIUM'
+												? 'Prioridad media: atención en orden normal'
+												: 'Baja prioridad: puede procesarse con mayor flexibilidad'}
+									</div>
+								</div>
+							</div>
+						</CardBody>
+					</Card>
+				)}
+			</div>
+
+			<Divider className="my-6" />
+
 			{/* Timeline de estados - ORDEN CRONOLÓGICO INVERSO */}
 			<div className="space-y-4 pl-4 border-l-2 border-primary/40">
 				{sortedHistory.map((historyItem, index) => {
