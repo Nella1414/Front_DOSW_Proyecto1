@@ -517,6 +517,19 @@ function RequestCurrentStatusView({
 		}
 	};
 
+	const getPriorityTooltip = (priority?: string): string => {
+		switch (priority) {
+			case 'HIGH':
+				return 'Alta prioridad: Solicitudes urgentes que requieren atención inmediata (ej: cancelaciones cerca del límite de fecha, casos especiales)';
+			case 'MEDIUM':
+				return 'Prioridad media: Solicitudes importantes con tiempo razonable de respuesta (mayoría de casos)';
+			case 'LOW':
+				return 'Baja prioridad: Solicitudes informativas o con tiempo flexible de respuesta';
+			default:
+				return 'La prioridad se asigna automáticamente según el tipo de solicitud y el tiempo disponible para procesarla';
+		}
+	};
+
 	const formatDate = (dateString: string) => {
 		return new Date(dateString).toLocaleString('es-CO', {
 			year: 'numeric',
@@ -654,19 +667,33 @@ function RequestCurrentStatusView({
 							{request.priority && (
 								<div className="text-right">
 									<p className="text-xs text-default-500 mb-1">PRIORIDAD</p>
-									<Chip
-										size="md"
+									<Tooltip
+										content={
+											<div className="px-1 py-2 max-w-sm">
+												<p className="text-xs font-bold mb-1">
+													{getPriorityLabel(request.priority)}
+												</p>
+												<p className="text-xs">
+													{getPriorityTooltip(request.priority)}
+												</p>
+											</div>
+										}
+										placement="left"
 										color={getPriorityColor(request.priority)}
-										variant="bordered"
 									>
-										{getPriorityLabel(request.priority)}
-									</Chip>
+										<Chip
+											size="md"
+											color={getPriorityColor(request.priority)}
+											variant="bordered"
+											className="cursor-help"
+										>
+											{getPriorityLabel(request.priority)}
+										</Chip>
+									</Tooltip>
 								</div>
 							)}
-						</div>
-
+						</div>{' '}
 						<Divider />
-
 						{/* Fechas */}
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 							<div>
@@ -1587,6 +1614,82 @@ function RadicadoCell({ radicado }: { radicado: string }) {
 	);
 }
 
+// Componente para mostrar prioridad con tooltip explicativo
+function PriorityCell({ priority }: { priority?: string }) {
+	const getPriorityColor = (
+		p?: string,
+	): 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' => {
+		switch (p) {
+			case 'HIGH':
+				return 'danger';
+			case 'MEDIUM':
+				return 'warning';
+			case 'LOW':
+				return 'success';
+			default:
+				return 'default';
+		}
+	};
+
+	const getPriorityLabel = (p?: string): string => {
+		switch (p) {
+			case 'HIGH':
+				return '🔴 Alta';
+			case 'MEDIUM':
+				return '🟡 Media';
+			case 'LOW':
+				return '🟢 Baja';
+			default:
+				return 'Sin asignar';
+		}
+	};
+
+	const getPriorityTooltip = (p?: string): string => {
+		switch (p) {
+			case 'HIGH':
+				return 'Alta prioridad: Solicitudes urgentes que requieren atención inmediata (ej: cancelaciones cerca del límite de fecha, casos especiales)';
+			case 'MEDIUM':
+				return 'Prioridad media: Solicitudes importantes con tiempo razonable de respuesta (mayoría de casos)';
+			case 'LOW':
+				return 'Baja prioridad: Solicitudes informativas o con tiempo flexible de respuesta';
+			default:
+				return 'La prioridad se asigna automáticamente según el tipo de solicitud y el tiempo disponible para procesarla';
+		}
+	};
+
+	if (!priority) {
+		return (
+			<Tooltip content={getPriorityTooltip()} placement="top">
+				<Chip size="sm" variant="flat" color="default" className="cursor-help">
+					{getPriorityLabel()}
+				</Chip>
+			</Tooltip>
+		);
+	}
+
+	return (
+		<Tooltip
+			content={
+				<div className="px-1 py-2 max-w-xs">
+					<p className="text-xs font-bold mb-1">{getPriorityLabel(priority)}</p>
+					<p className="text-xs">{getPriorityTooltip(priority)}</p>
+				</div>
+			}
+			placement="top"
+			color={getPriorityColor(priority)}
+		>
+			<Chip
+				size="sm"
+				variant="flat"
+				color={getPriorityColor(priority)}
+				className="cursor-help"
+			>
+				{getPriorityLabel(priority)}
+			</Chip>
+		</Tooltip>
+	);
+}
+
 // Componente principal
 export function StudentRequests({
 	studentId = '1234567890',
@@ -1743,6 +1846,7 @@ export function StudentRequests({
 						<TableColumn>DESCRIPCIÓN</TableColumn>
 						<TableColumn>FECHA CREACIÓN</TableColumn>
 						<TableColumn>PROGRAMA ASIGNADO</TableColumn>
+						<TableColumn>PRIORIDAD</TableColumn>
 						<TableColumn>ESTADO ACTUAL</TableColumn>
 						<TableColumn>ACCIONES</TableColumn>
 					</TableHeader>
@@ -1758,6 +1862,9 @@ export function StudentRequests({
 								</TableCell>
 								<TableCell className="text-sm">
 									{new Date(request.createdAt).toLocaleDateString('es-CO')}
+								</TableCell>
+								<TableCell>
+									<PriorityCell priority={request.priority} />
 								</TableCell>
 								<TableCell>
 									{request.assignedProgram ? (
