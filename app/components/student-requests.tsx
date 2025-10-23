@@ -1,6 +1,4 @@
 import {
-	Accordion,
-	AccordionItem,
 	Alert,
 	Button,
 	Card,
@@ -8,6 +6,10 @@ import {
 	CardHeader,
 	Chip,
 	Divider,
+	Modal,
+	ModalBody,
+	ModalContent,
+	ModalHeader,
 	Spinner,
 	Table,
 	TableBody,
@@ -16,6 +18,7 @@ import {
 	TableHeader,
 	TableRow,
 	Tooltip,
+	useDisclosure,
 } from '@heroui/react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
@@ -1774,6 +1777,21 @@ export function StudentRequests({
 }: {
 	studentId?: string;
 }) {
+	// Estados para modales
+	const {
+		isOpen: isDetailsOpen,
+		onOpen: onDetailsOpen,
+		onClose: onDetailsClose,
+	} = useDisclosure();
+	const {
+		isOpen: isHistoryOpen,
+		onOpen: onHistoryOpen,
+		onClose: onHistoryClose,
+	} = useDisclosure();
+	const [selectedRequest, setSelectedRequest] = useState<StudentRequest | null>(
+		null,
+	);
+
 	const {
 		data: requests,
 		isLoading,
@@ -1990,30 +2008,36 @@ export function StudentRequests({
 									</Chip>
 								</TableCell>
 								<TableCell>
-									<Accordion isCompact>
-										<AccordionItem
-											key="current-status"
-											aria-label="Ver detalles"
-											title={
-												<span className="text-xs text-primary font-medium">
-													👁️ Ver Detalles
-												</span>
-											}
-										>
-											<RequestCurrentStatusView request={request} />
-										</AccordionItem>
-										<AccordionItem
-											key="history"
-											aria-label="Ver historial"
-											title={
-												<span className="text-xs text-secondary font-medium">
-													📜 Ver Historial
-												</span>
-											}
-										>
-											<RequestStatusHistoryView request={request} />
-										</AccordionItem>
-									</Accordion>
+									<div className="flex gap-2">
+										<Tooltip content="Ver detalles">
+											<Button
+												size="sm"
+												variant="flat"
+												color="primary"
+												isIconOnly
+												onPress={() => {
+													setSelectedRequest(request);
+													onDetailsOpen();
+												}}
+											>
+												👁️
+											</Button>
+										</Tooltip>
+										<Tooltip content="Ver historial">
+											<Button
+												size="sm"
+												variant="flat"
+												color="secondary"
+												isIconOnly
+												onPress={() => {
+													setSelectedRequest(request);
+													onHistoryOpen();
+												}}
+											>
+												📜
+											</Button>
+										</Tooltip>
+									</div>
 								</TableCell>
 							</TableRow>
 						))}
@@ -2073,6 +2097,60 @@ export function StudentRequests({
 					</div>
 				</CardBody>
 			</Card>
+
+			{/* Modal de Detalles */}
+			<Modal
+				isOpen={isDetailsOpen}
+				onClose={onDetailsClose}
+				size="3xl"
+				scrollBehavior="inside"
+			>
+				<ModalContent>
+					<ModalHeader className="flex flex-col gap-1">
+						<div className="flex items-center gap-2">
+							<span>👁️</span>
+							<span>Detalles de la Solicitud</span>
+						</div>
+						{selectedRequest && (
+							<p className="text-sm font-normal text-default-500">
+								{selectedRequest.radicado} - {selectedRequest.description}
+							</p>
+						)}
+					</ModalHeader>
+					<ModalBody>
+						{selectedRequest && (
+							<RequestCurrentStatusView request={selectedRequest} />
+						)}
+					</ModalBody>
+				</ModalContent>
+			</Modal>
+
+			{/* Modal de Historial */}
+			<Modal
+				isOpen={isHistoryOpen}
+				onClose={onHistoryClose}
+				size="3xl"
+				scrollBehavior="inside"
+			>
+				<ModalContent>
+					<ModalHeader className="flex flex-col gap-1">
+						<div className="flex items-center gap-2">
+							<span>📜</span>
+							<span>Historial de Estados</span>
+						</div>
+						{selectedRequest && (
+							<p className="text-sm font-normal text-default-500">
+								{selectedRequest.radicado} - {selectedRequest.description}
+							</p>
+						)}
+					</ModalHeader>
+					<ModalBody>
+						{selectedRequest && (
+							<RequestStatusHistoryView request={selectedRequest} />
+						)}
+					</ModalBody>
+				</ModalContent>
+			</Modal>
 		</div>
 	);
 }
