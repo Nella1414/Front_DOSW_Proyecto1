@@ -1,12 +1,15 @@
 {
-    "buildCommand": "pnpm run build",
-    "outputDirectory": "build/client",
-    "installCommand": "pnpm install",
-    "framework": null,
-    "rewrites": [
-        {
-            "source": "/(.*)",
-            "destination": "/index.html"
-        }
-    ]
+	"buildCommand": "pnpm run build",
+	"installCommand": "pnpm install",
+	"framework": null,
+	"routes": [
+		{
+			"src": "/assets/(.*)",
+			"dest": "/build/client/assets/$1"
+		},
+		{
+			"src": "/(.*)",
+			"dest": "/api/index.js"
+		}
+	]
 }
