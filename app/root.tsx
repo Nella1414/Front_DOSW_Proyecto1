@@ -10,6 +10,7 @@ import {
 import type { Route } from './+types/root';
 import './app.css';
 import { Snippet } from '@heroui/react';
+import type React from 'react';
 import { Providers } from './providers';
 
 // Aquí configuramos las fuentes que va a usar toda la app
@@ -43,7 +44,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 				<Links />
 			</head>
 			<body>
-				{children}
+				<Providers>{children}</Providers>
 				<ScrollRestoration />
 				<Scripts />
 			</body>
@@ -53,11 +54,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 // El componente principal - básicamente solo renderiza las rutas
 export default function App() {
-	return (
-		<Providers>
-			<Outlet />
-		</Providers>
-	);
+	return <Outlet />;
 }
 
 // Maneja todos los errores que puedan pasar en la app

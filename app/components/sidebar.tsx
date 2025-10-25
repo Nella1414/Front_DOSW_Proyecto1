@@ -287,12 +287,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
 					<div className="flex items-center gap-3">
 						<Avatar
 							name={user.name}
-							className="h-10 w-10 text-xs font-medium bg-primary/20 text-primary-600"
+							className="h-10 w-10 text-sm font-semibold bg-primary/20 text-primary-600"
 						/>
 						{!collapsed && (
 							<div className="min-w-0">
-								<p className="text-sm font-medium truncate">{user.name}</p>
-								<p className="text-xs text-default-500 truncate">
+								<p className="text-base font-semibold truncate text-default-900">
+									{user.name}
+								</p>
+								<p className="text-sm text-default-600 truncate">
 									{user.email}
 								</p>
 								{role && (
@@ -307,6 +309,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
 													? 'warning'
 													: 'primary'
 										}
+										classNames={{
+											content: 'font-medium text-xs',
+										}}
 									>
 										{role}
 									</Chip>
@@ -329,10 +334,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
 									onClick={() => onNavigate(item.key)}
 									aria-current={active ? 'page' : undefined}
 									className={clsx(
-										'group w-full flex items-center gap-3 rounded-md px-3 py-2 text-left text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-focus',
+										'group w-full flex items-center gap-3 rounded-md px-3 py-2.5 text-left text-base font-semibold transition-colors outline-none focus-visible:ring-2 focus-visible:ring-focus',
 										active
 											? 'bg-primary text-primary-foreground shadow-sm'
-											: 'text-default-600 hover:bg-content2 hover:text-default-900',
+											: 'text-default-700 hover:bg-content2 hover:text-default-900',
 									)}
 								>
 									{item.icon}

@@ -16,6 +16,7 @@ import {
 import React from 'react';
 import { AcademicSemaphore } from '../../components/academic-semaphore';
 import { PeriodsManagement } from '../../components/periods-management';
+import { Reports } from '../../components/reports';
 import { RoleManagement } from '../../components/role-management';
 import { type CurrentView, Sidebar, type User } from '../../components/sidebar';
 import { StudentRegistration } from '../../components/student-registration';
@@ -65,15 +66,15 @@ const StatCard: React.FC<{
 						? 'text-warning'
 						: color === 'danger'
 							? 'text-danger'
-							: 'text-default-700';
+							: 'text-default-900';
 	return (
 		<Card className="min-w-[160px] flex-1" radius="sm" shadow="sm">
 			<CardBody className="gap-1 py-4">
-				<p className="text-xs text-default-500 font-medium tracking-wide uppercase">
+				<p className="text-sm text-default-700 font-bold tracking-wide uppercase">
 					{title}
 				</p>
-				<p className={clsx('text-2xl font-semibold', colorClass)}>{value}</p>
-				{note && <p className="text-[11px] text-default-400">{note}</p>}
+				<p className={clsx('text-3xl font-bold', colorClass)}>{value}</p>
+				{note && <p className="text-sm text-default-600 font-medium">{note}</p>}
 			</CardBody>
 		</Card>
 	);
@@ -105,8 +106,10 @@ const DashboardHome: React.FC = () => {
 			</div>
 			<Card shadow="sm" radius="sm">
 				<CardHeader className="flex flex-col items-start gap-1">
-					<h2 className="text-lg font-semibold">Actividad reciente</h2>
-					<p className="text-xs text-default-500">
+					<h2 className="text-xl font-bold text-default-900">
+						Actividad reciente
+					</h2>
+					<p className="text-sm text-default-700">
 						Resumen de las últimas acciones del sistema
 					</p>
 				</CardHeader>
@@ -116,6 +119,10 @@ const DashboardHome: React.FC = () => {
 						aria-label="Actividad reciente"
 						removeWrapper
 						className="min-w-[560px]"
+						classNames={{
+							th: 'text-sm font-bold',
+							td: 'text-base',
+						}}
 					>
 						<TableHeader>
 							<TableColumn>FECHA</TableColumn>
@@ -155,9 +162,13 @@ const DashboardHome: React.FC = () => {
 								},
 							].map((r) => (
 								<TableRow key={r.id}>
-									<TableCell className="text-xs">{r.d}</TableCell>
-									<TableCell className="text-sm font-medium">{r.act}</TableCell>
-									<TableCell className="text-xs text-default-500">
+									<TableCell className="text-sm font-medium text-default-700">
+										{r.d}
+									</TableCell>
+									<TableCell className="text-base font-semibold text-default-900">
+										{r.act}
+									</TableCell>
+									<TableCell className="text-sm text-default-600">
 										{r.u}
 									</TableCell>
 									<TableCell>
@@ -191,24 +202,27 @@ const ProfileView: React.FC<{ user: User }> = ({ user }) => (
 	<Card radius="sm" shadow="sm">
 		<CardHeader>
 			<div>
-				<h2 className="text-lg font-semibold">Perfil</h2>
-				<p className="text-xs text-default-500">
+				<h2 className="text-xl font-bold text-default-900">Perfil</h2>
+				<p className="text-sm text-default-700">
 					Información básica del administrador
 				</p>
 			</div>
 		</CardHeader>
 		<Divider />
-		<CardBody className="space-y-2 text-sm">
+		<CardBody className="space-y-2 text-base">
 			<p>
-				<span className="font-medium">Nombre:</span> {user.name}
+				<span className="font-bold text-default-900">Nombre:</span>{' '}
+				<span className="text-default-700">{user.name}</span>
 			</p>
 			<p>
-				<span className="font-medium">Correo:</span> {user.email}
+				<span className="font-bold text-default-900">Correo:</span>{' '}
+				<span className="text-default-700">{user.email}</span>
 			</p>
 			<p>
-				<span className="font-medium">Rol:</span> {user.role}
+				<span className="font-bold text-default-900">Rol:</span>{' '}
+				<span className="text-default-700">{user.role}</span>
 			</p>
-			<Button size="sm" color="primary" variant="flat" className="mt-2 w-fit">
+			<Button size="md" color="primary" variant="flat" className="mt-2 w-fit">
 				Editar perfil
 			</Button>
 		</CardBody>
@@ -222,11 +236,11 @@ const SimplePlaceholder: React.FC<{ title: string; description?: string }> = ({
 }) => (
 	<Card radius="sm" shadow="sm">
 		<CardHeader>
-			<h2 className="text-lg font-semibold">{title}</h2>
+			<h2 className="text-xl font-bold text-default-900">{title}</h2>
 		</CardHeader>
 		<Divider />
 		<CardBody>
-			<p className="text-sm text-default-600">
+			<p className="text-base text-default-700">
 				{description ||
 					'Sección en construcción. Próximamente funcionalidades completas.'}
 			</p>
@@ -276,12 +290,7 @@ export default function AdminDashboardRoute() {
 			);
 			break;
 		case 'reports':
-			content = (
-				<SimplePlaceholder
-					title="Reportes"
-					description="Generación y descarga de reportes analíticos."
-				/>
-			);
+			content = <Reports />;
 			break;
 		case 'academic-progress':
 			content = (
@@ -314,12 +323,12 @@ export default function AdminDashboardRoute() {
 				<div className="max-w-7xl mx-auto">
 					<header className="flex flex-col gap-2 mb-6 sm:flex-row sm:items-center sm:justify-between">
 						<div>
-							<h1 className="text-2xl font-semibold tracking-tight">
+							<h1 className="text-3xl font-bold tracking-tight text-default-900">
 								{view === 'dashboard'
 									? 'Panel Administrativo'
 									: view.replace('-', ' ')}
 							</h1>
-							<p className="text-xs text-default-500">
+							<p className="text-base text-default-700 mt-1">
 								{view === 'dashboard'
 									? 'Resumen general del sistema y métricas principales.'
 									: 'Gestión de la sección seleccionada.'}
@@ -327,7 +336,7 @@ export default function AdminDashboardRoute() {
 						</div>
 						<div className="flex gap-2">
 							<Button
-								size="sm"
+								size="md"
 								variant="flat"
 								color="secondary"
 								onPress={() => navigate('dashboard')}
@@ -335,7 +344,7 @@ export default function AdminDashboardRoute() {
 								Inicio
 							</Button>
 							<Button
-								size="sm"
+								size="md"
 								variant="flat"
 								color="primary"
 								onPress={() => navigate('reports')}

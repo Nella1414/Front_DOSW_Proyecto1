@@ -207,7 +207,7 @@ export function AcademicSchedule() {
 													className="border-r border-t border-default-200 last:border-r-0 min-h-[80px] p-1"
 												>
 													{classBlock ? (
-														<div className="h-full bg-red-500 text-white rounded-md p-2 shadow-sm flex flex-col justify-center">
+														<div className="h-full bg-primary text-primary-foreground rounded-md p-2 shadow-sm flex flex-col justify-center">
 															<div className="text-xs font-bold leading-tight mb-1">
 																{classBlock.subject}
 															</div>

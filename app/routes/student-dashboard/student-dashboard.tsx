@@ -89,15 +89,15 @@ const StudentStatCard: React.FC<{
 						? 'text-warning'
 						: color === 'danger'
 							? 'text-danger'
-							: 'text-default-700';
+							: 'text-default-900';
 	return (
 		<Card className="min-w-[160px] flex-1" radius="sm" shadow="sm">
 			<CardBody className="gap-1 py-4">
-				<p className="text-xs text-default-500 font-medium tracking-wide uppercase">
+				<p className="text-sm text-default-700 font-bold tracking-wide uppercase">
 					{title}
 				</p>
-				<p className={clsx('text-2xl font-semibold', colorClass)}>{value}</p>
-				{note && <p className="text-[11px] text-default-400">{note}</p>}
+				<p className={clsx('text-3xl font-bold', colorClass)}>{value}</p>
+				{note && <p className="text-sm text-default-600 font-medium">{note}</p>}
 			</CardBody>
 		</Card>
 	);
@@ -173,49 +173,53 @@ const StudentDashboardHome: React.FC = () => {
 };
 
 // Vista de perfil del estudiante
-const StudentProfileView: React.FC<{ user: User }> = ({ user }) => (
+const ProfileView: React.FC<{ user: User }> = ({ user }) => (
 	<Card radius="sm" shadow="sm">
 		<CardHeader>
 			<div>
-				<h2 className="text-lg font-semibold">Mi Perfil</h2>
-				<p className="text-xs text-default-500">
-					Información personal y académica
+				<h2 className="text-xl font-bold text-default-900">Perfil</h2>
+				<p className="text-sm text-default-700">
+					Información básica del estudiante
 				</p>
 			</div>
 		</CardHeader>
 		<Divider />
-		<CardBody className="space-y-2 text-sm">
+		<CardBody className="space-y-2 text-base">
 			<p>
-				<span className="font-medium">Nombre:</span> {user.name}
+				<span className="font-bold text-default-900">Nombre:</span>{' '}
+				<span className="text-default-700">{user.name}</span>
 			</p>
 			<p>
-				<span className="font-medium">Correo:</span> {user.email}
+				<span className="font-bold text-default-900">Correo:</span>{' '}
+				<span className="text-default-700">{user.email}</span>
 			</p>
 			<p>
-				<span className="font-medium">Código:</span> {user.studentId}
+				<span className="font-bold text-default-900">ID Estudiante:</span>{' '}
+				<span className="text-default-700">{user.studentId}</span>
 			</p>
 			<p>
-				<span className="font-medium">Programa:</span> Ingeniería de Sistemas
+				<span className="font-bold text-default-900">Estado:</span>{' '}
+				<Chip color="success" variant="flat" size="md">
+					Activo
+				</Chip>
 			</p>
-			<Button size="sm" color="primary" variant="flat" className="mt-2 w-fit">
+			<Button size="md" color="primary" variant="flat" className="mt-2 w-fit">
 				Editar perfil
 			</Button>
 		</CardBody>
 	</Card>
-);
-
-// Vistas placeholder
+); // Vistas placeholder
 const SimplePlaceholder: React.FC<{ title: string; description?: string }> = ({
 	title,
 	description,
 }) => (
 	<Card radius="sm" shadow="sm">
 		<CardHeader>
-			<h2 className="text-lg font-semibold">{title}</h2>
+			<h2 className="text-xl font-bold text-default-900">{title}</h2>
 		</CardHeader>
 		<Divider />
 		<CardBody>
-			<p className="text-sm text-default-600">
+			<p className="text-base text-default-700">
 				{description ||
 					'Sección en construcción. Próximamente funcionalidades completas.'}
 			</p>
@@ -246,7 +250,7 @@ export default function StudentDashboardRoute() {
 			);
 			break;
 		case 'profile':
-			content = <StudentProfileView user={studentUser} />;
+			content = <ProfileView user={studentUser} />;
 			break;
 		case 'requests':
 			content = (

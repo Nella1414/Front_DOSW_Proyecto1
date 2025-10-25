@@ -72,35 +72,35 @@ export default function Login() {
 							xmlns="http://www.w3.org/2000/svg"
 							fill="none"
 							viewBox="0 0 24 24"
-							stroke-width="1.5"
+							strokeWidth="1.5"
 							stroke="currentColor"
 							className="size-10"
 						>
 							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
+								strokeLinecap="round"
+								strokeLinejoin="round"
 								d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5"
 							/>
 						</svg>
 					</Button>
 				</CardHeader>
 				<CardBody className="flex flex-col items-center text-center">
-					<h1 className="text-3xl font-medium items-center text-2xl-900 mb-2">
+					<h1 className="text-3xl font-bold text-default-900 mb-2">
 						SIRHA - DOSW
 					</h1>
 				</CardBody>
 				<CardFooter className="flex justify-center mb-5">
-					<p className="text-small text-default-600">
+					<p className="text-base text-default-700 font-medium">
 						Academic Schedule Reassignment System
 					</p>
 				</CardFooter>
 			</Card>
 			<Card className="w-full max-w-md shadow-medium container mx-auto bg-content4 mt-10">
 				<CardHeader className="flex flex-col items-center pb-2 mt-5">
-					<h1 className="text-2xl font-medium text-default-900 mb-2">
+					<h1 className="text-2xl font-bold text-default-900 mb-2">
 						Sign In to Your Account!
 					</h1>
-					<p className="text-default-600 text-center">
+					<p className="text-base text-default-700 text-center">
 						Enter your credentials to access your account
 					</p>
 				</CardHeader>
@@ -157,7 +157,9 @@ export default function Login() {
 
 					<div className="flex items-center gap-3">
 						<Divider className="flex-1" />
-						<span className="text-small text-default-100">O continúa con</span>
+						<span className="text-sm text-default-600 font-medium">
+							O continúa con
+						</span>
 						<Divider className="flex-1" />
 					</div>
 
@@ -200,11 +202,11 @@ export default function Login() {
 				</CardBody>
 
 				<CardFooter className="flex justify-center mb-5">
-					<p className="text-small text-default-600">
+					<p className="text-base text-default-700">
 						¿No tienes cuenta?{' '}
 						<Link
 							href="/register"
-							className="text-primary-600 hover:text-primary-800 font-medium"
+							className="text-primary font-semibold hover:text-primary-600"
 						>
 							Regístrate aquí
 						</Link>

@@ -408,7 +408,7 @@ export function AcademicGrid() {
 										subject.status === 'aprobada'
 											? 'border-success bg-success-50'
 											: subject.status === 'en_progreso'
-												? 'border-blue-500 bg-blue-50'
+												? 'border-primary bg-primary-50'
 												: 'border-default-200 bg-default-50'
 									}`}
 									shadow="sm"
@@ -423,11 +423,6 @@ export function AcademicGrid() {
 												}
 												variant="flat"
 												size="sm"
-												className={
-													subject.status === 'en_progreso'
-														? 'bg-blue-500 text-white'
-														: ''
-												}
 											>
 												{getStatusLabel(subject.status)}
 											</Chip>
