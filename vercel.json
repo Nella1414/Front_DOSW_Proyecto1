@@ -1,15 +1,4 @@
 {
 	"buildCommand": "pnpm run build",
-	"installCommand": "pnpm install",
-	"framework": null,
-	"routes": [
-		{
-			"src": "/assets/(.*)",
-			"dest": "/build/client/assets/$1"
-		},
-		{
-			"src": "/(.*)",
-			"dest": "/api/index.js"
-		}
-	]
+	"installCommand": "pnpm install"
 }
