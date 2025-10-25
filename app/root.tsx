@@ -1,6 +1,7 @@
 import {
 	isRouteErrorResponse,
 	Links,
+	Meta,
 	Outlet,
 	Scripts,
 	ScrollRestoration,
@@ -38,12 +39,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
 			<head>
 				<meta charSet="utf-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
-				<title>DOSW - Sistema de Gestión Académica</title>
+				<Meta />
 				<Links />
 			</head>
 			<body>
-				{/* Aquí metemos todos los providers (React Query, HeroUI, etc.) */}
-				<Providers>{children}</Providers>
+				{children}
 				<ScrollRestoration />
 				<Scripts />
 			</body>
@@ -53,7 +53,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 // El componente principal - básicamente solo renderiza las rutas
 export default function App() {
-	return <Outlet />;
+	return (
+		<Providers>
+			<Outlet />
+		</Providers>
+	);
 }
 
 // Maneja todos los errores que puedan pasar en la app
