@@ -12,6 +12,21 @@ module.exports = {
 			fontFamily: {
 				sans: ['"Work Sans"', 'system-ui', 'sans-serif'],
 			},
+			colors: {
+				info: {
+					50: '#E6F1FE',
+					100: '#CDE3FD',
+					200: '#9BCCFB',
+					300: '#69B4F8',
+					400: '#379DF4',
+					500: '#006FEE',
+					600: '#0059BE',
+					700: '#00438F',
+					800: '#002D60',
+					900: '#001630',
+					DEFAULT: '#006FEE',
+				},
+			},
 		},
 	},
 	darkMode: 'class',

@@ -1,458 +1,256 @@
-import { Card, CardBody, Chip, Divider } from '@heroui/react';
+import { Alert, Card, CardBody, Chip, Divider, Spinner } from '@heroui/react';
+import { useQuery } from '@tanstack/react-query';
+import { studentApi } from '../lib/api';
 
 interface Subject {
-	id: string;
+	code: string;
 	name: string;
 	credits: number;
-	status: 'aprobada' | 'pendiente' | 'en_progreso';
+	status: 'aprobada' | 'en_progreso' | 'reprobada' | 'pendiente';
 	grade?: number;
-	semester: number;
+	semester?: number;
 }
 
-// Materias organizadas por semestre
-const subjectsBySemester: Subject[] = [
-	// Semestre 1
-	{
-		id: '1',
-		name: 'Matemáticas Básicas',
-		credits: 4,
-		status: 'aprobada',
-		grade: 4.1,
-		semester: 1,
-	},
-	{
-		id: '2',
-		name: 'Introducción a la Programación',
-		credits: 4,
-		status: 'aprobada',
-		grade: 4.5,
-		semester: 1,
-	},
-	{
-		id: '3',
-		name: 'Física Básica',
-		credits: 4,
-		status: 'aprobada',
-		grade: 3.6,
-		semester: 1,
-	},
-	{
-		id: '4',
-		name: 'Fundamentos de la Comunicación 1',
-		credits: 2,
-		status: 'aprobada',
-		grade: 4.0,
-		semester: 1,
-	},
-	{
-		id: '5',
-		name: 'Proyecto Integrador 1',
-		credits: 2,
-		status: 'aprobada',
-		grade: 4.3,
-		semester: 1,
-	},
+interface BackendCourse {
+	courseCode: string;
+	courseName: string;
+	credits: number;
+	grade?: number;
+	semester?: number;
+}
 
-	// Semestre 2
-	{
-		id: '6',
-		name: 'Cálculo Diferencial',
-		credits: 4,
-		status: 'aprobada',
-		grade: 3.8,
-		semester: 2,
-	},
-	{
-		id: '7',
-		name: 'Desarrollo Orientado por Objetos',
-		credits: 4,
-		status: 'aprobada',
-		grade: 4.2,
-		semester: 2,
-	},
-	{
-		id: '8',
-		name: 'Física 1',
-		credits: 4,
-		status: 'aprobada',
-		grade: 3.8,
-		semester: 2,
-	},
-	{
-		id: '9',
-		name: 'Lógica y Matemáticas Discretas',
-		credits: 3,
-		status: 'aprobada',
-		grade: 4.0,
-		semester: 2,
-	},
-	{
-		id: '10',
-		name: 'Colombia: Realidad, Instituciones Políticas y Paz',
-		credits: 2,
-		status: 'aprobada',
-		grade: 3.8,
-		semester: 2,
-	},
+interface BackendData {
+	studentInfo?: {
+		currentSemester?: number;
+		gpa?: number;
+		totalCredits?: number;
+		passedCredits?: number;
+	};
+	courseStatuses?: {
+		passedCourses?: BackendCourse[];
+		currentCourses?: BackendCourse[];
+		failedCourses?: BackendCourse[];
+	};
+}
 
-	// Semestre 3
-	{
-		id: '11',
-		name: 'Cálculo Integral',
-		credits: 4,
-		status: 'aprobada',
-		grade: 4.0,
-		semester: 3,
-	},
-	{
-		id: '12',
-		name: 'Diseño de Datos y Algoritmos',
-		credits: 4,
-		status: 'aprobada',
-		grade: 4.0,
-		semester: 3,
-	},
-	{
-		id: '13',
-		name: 'Física 2',
-		credits: 4,
-		status: 'aprobada',
-		grade: 3.5,
-		semester: 3,
-	},
-	{
-		id: '14',
-		name: 'Matemáticas para Informática',
-		credits: 3,
-		status: 'aprobada',
-		grade: 4.3,
-		semester: 3,
-	},
-	{
-		id: '15',
-		name: 'Historia y Geografía de Colombia',
-		credits: 2,
-		status: 'aprobada',
-		grade: 3.9,
-		semester: 3,
-	},
+function transformBackendToSubjects(data: BackendData): Subject[] {
+	const subjects: Subject[] = [];
 
-	// Semestre 4
-	{
-		id: '16',
-		name: 'Cálculo Vectorial',
-		credits: 4,
-		status: 'aprobada',
-		grade: 3.9,
-		semester: 4,
-	},
-	{
-		id: '17',
-		name: 'Teoría de la Programación y la Computación',
-		credits: 3,
-		status: 'aprobada',
-		grade: 3.9,
-		semester: 4,
-	},
-	{
-		id: '18',
-		name: 'Organización de los Sistemas de Cómputo',
-		credits: 3,
-		status: 'aprobada',
-		grade: 3.7,
-		semester: 4,
-	},
-	{
-		id: '19',
-		name: 'Álgebra Lineal',
-		credits: 3,
-		status: 'aprobada',
-		grade: 4.2,
-		semester: 4,
-	},
-	{
-		id: '20',
-		name: 'Fundamentos Económicos',
-		credits: 3,
-		status: 'aprobada',
-		grade: 3.6,
-		semester: 4,
-	},
+	// Add passed courses
+	if (data.courseStatuses?.passedCourses) {
+		data.courseStatuses.passedCourses.forEach((course) => {
+			subjects.push({
+				code: course.courseCode,
+				name: course.courseName,
+				credits: course.credits,
+				status: 'aprobada',
+				grade: course.grade,
+				semester: course.semester,
+			});
+		});
+	}
 
-	// Semestre 5
-	{
-		id: '21',
-		name: 'Ecuaciones Diferenciales',
-		credits: 3,
-		status: 'aprobada',
-		grade: 3.7,
-		semester: 5,
-	},
-	{
-		id: '22',
-		name: 'Modelos y Servicios de Datos',
-		credits: 4,
-		status: 'aprobada',
-		grade: 4.1,
-		semester: 5,
-	},
-	{
-		id: '23',
-		name: 'Arquitectura y Servicios de Red',
-		credits: 3,
-		status: 'en_progreso',
-		semester: 5,
-	},
-	{
-		id: '24',
-		name: 'Fundamentos de Proyectos',
-		credits: 3,
-		status: 'aprobada',
-		grade: 4.1,
-		semester: 5,
-	},
-	{
-		id: '25',
-		name: 'CLE 1',
-		credits: 2,
-		status: 'aprobada',
-		grade: 4.0,
-		semester: 5,
-	},
+	// Add current courses
+	if (data.courseStatuses?.currentCourses) {
+		data.courseStatuses.currentCourses.forEach((course) => {
+			subjects.push({
+				code: course.courseCode,
+				name: course.courseName,
+				credits: course.credits,
+				status: 'en_progreso',
+				semester: course.semester,
+			});
+		});
+	}
 
-	// Semestre 6
-	{
-		id: '26',
-		name: 'Probabilidad y Estadística',
-		credits: 3,
-		status: 'en_progreso',
-		semester: 6,
-	},
-	{
-		id: '27',
-		name: 'Desarrollo y Operaciones Software',
-		credits: 4,
-		status: 'en_progreso',
-		semester: 6,
-	},
-	{
-		id: '28',
-		name: 'Fundamentos de Seguridad de la Información',
-		credits: 3,
-		status: 'en_progreso',
-		semester: 6,
-	},
-	{
-		id: '29',
-		name: 'Proyecto Integrador 2',
-		credits: 3,
-		status: 'pendiente',
-		semester: 6,
-	},
-	{
-		id: '30',
-		name: 'CLE 2',
-		credits: 2,
-		status: 'aprobada',
-		grade: 3.8,
-		semester: 6,
-	},
+	// Add failed courses
+	if (data.courseStatuses?.failedCourses) {
+		data.courseStatuses.failedCourses.forEach((course) => {
+			subjects.push({
+				code: course.courseCode,
+				name: course.courseName,
+				credits: course.credits,
+				status: 'reprobada',
+				grade: course.grade,
+				semester: course.semester,
+			});
+		});
+	}
 
-	// Semestre 7
-	{
-		id: '31',
-		name: 'Arquitecturas de Software',
-		credits: 4,
-		status: 'pendiente',
-		semester: 7,
-	},
-	{
-		id: '32',
-		name: 'Principios y Tecnologías de Inteligencia Artificial',
-		credits: 4,
-		status: 'pendiente',
-		semester: 7,
-	},
-	{
-		id: '33',
-		name: 'Electiva Técnica 1',
-		credits: 3,
-		status: 'pendiente',
-		semester: 7,
-	},
-	{ id: '34', name: 'CLE 3', credits: 2, status: 'pendiente', semester: 7 },
+	return subjects;
+}
 
-	// Semestre 8
-	{
-		id: '35',
-		name: 'Transformación Digital y Soluciones Empresariales',
-		credits: 3,
-		status: 'pendiente',
-		semester: 8,
-	},
-	{
-		id: '36',
-		name: 'Electiva Técnica 2',
-		credits: 3,
-		status: 'pendiente',
-		semester: 8,
-	},
-	{
-		id: '37',
-		name: 'Electiva Técnica 3',
-		credits: 3,
-		status: 'pendiente',
-		semester: 8,
-	},
-	{
-		id: '38',
-		name: 'Proyecto Integrador 3',
-		credits: 3,
-		status: 'pendiente',
-		semester: 8,
-	},
+function getStatusColor(
+	status: string,
+): 'success' | 'primary' | 'danger' | 'default' {
+	switch (status) {
+		case 'aprobada':
+			return 'success';
+		case 'en_progreso':
+			return 'primary'; // Azul brillante
+		case 'reprobada':
+			return 'danger';
+		default:
+			return 'default';
+	}
+}
 
-	// Semestre 9
-	{
-		id: '39',
-		name: 'Seminario de Opción de Grado',
-		credits: 2,
-		status: 'pendiente',
-		semester: 9,
-	},
-	{
-		id: '40',
-		name: 'Opción de Grado 1',
-		credits: 3,
-		status: 'pendiente',
-		semester: 9,
-	},
-	{
-		id: '41',
-		name: 'Opción de Grado 2',
-		credits: 3,
-		status: 'pendiente',
-		semester: 9,
-	},
-
-	// Semestre 10
-	{
-		id: '42',
-		name: 'Opción de Grado 3',
-		credits: 3,
-		status: 'pendiente',
-		semester: 10,
-	},
-	{
-		id: '43',
-		name: 'Opción de Grado 4',
-		credits: 3,
-		status: 'pendiente',
-		semester: 10,
-	},
-];
+function getStatusLabel(status: string): string {
+	switch (status) {
+		case 'aprobada':
+			return 'Aprobada';
+		case 'en_progreso':
+			return 'En Progreso';
+		case 'reprobada':
+			return 'Reprobada';
+		default:
+			return 'Pendiente';
+	}
+}
 
 export function AcademicGrid() {
-	const getStatusColor = (status: string) => {
-		switch (status) {
-			case 'aprobada':
-				return 'success';
-			case 'en_progreso':
-				return 'secondary';
-			case 'pendiente':
-				return 'default';
-			default:
-				return 'default';
-		}
-	};
+	const {
+		data: backendData,
+		isLoading,
+		error,
+	} = useQuery({
+		queryKey: ['academic-progress-grid'],
+		queryFn: studentApi.getAcademicProgress,
+	});
 
-	const getStatusLabel = (status: string) => {
-		switch (status) {
-			case 'aprobada':
-				return 'Aprobada';
-			case 'en_progreso':
-				return 'En Progreso';
-			case 'pendiente':
-				return 'Pendiente';
-			default:
-				return status;
-		}
-	};
+	if (isLoading) {
+		return (
+			<div className="flex items-center justify-center min-h-[400px]">
+				<Spinner size="lg" color="primary" />
+				<p className="ml-4 text-default-600">Cargando plan académico...</p>
+			</div>
+		);
+	}
 
-	// Agrupar materias por semestre
-	const subjectsBySemesterGroup = subjectsBySemester.reduce(
-		(acc, subject) => {
-			if (!acc[subject.semester]) {
-				acc[subject.semester] = [];
-			}
-			acc[subject.semester].push(subject);
-			return acc;
-		},
-		{} as Record<number, Subject[]>,
+	if (error) {
+		return (
+			<Alert color="danger" title="Error">
+				No se pudo cargar el plan académico. Por favor, intenta de nuevo.
+			</Alert>
+		);
+	}
+
+	const subjects = transformBackendToSubjects(backendData as BackendData);
+	const currentSemester =
+		(backendData as BackendData)?.studentInfo?.currentSemester || 1;
+
+	// Group by semester
+	const subjectsBySemester = new Map<number, Subject[]>();
+	subjects.forEach((subject) => {
+		const sem = subject.semester || currentSemester;
+		if (!subjectsBySemester.has(sem)) {
+			subjectsBySemester.set(sem, []);
+		}
+		subjectsBySemester.get(sem)?.push(subject);
+	});
+
+	// Determine max semester to show
+	const _maxSemester = Math.max(
+		currentSemester,
+		...Array.from(subjectsBySemester.keys()),
 	);
+	const totalSemesters = 10; // Systems Engineering program
 
 	return (
-		<div className="space-y-8">
-			{Object.entries(subjectsBySemesterGroup)
-				.sort(([a], [b]) => Number(a) - Number(b))
-				.map(([semester, subjects]) => (
-					<div key={semester}>
-						<h3 className="text-lg font-semibold text-primary mb-4">
-							Semestre {semester}
-						</h3>
-						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-							{subjects.map((subject) => (
-								<Card
-									key={subject.id}
-									className={`border-2 ${
-										subject.status === 'aprobada'
-											? 'border-success bg-success-50'
-											: subject.status === 'en_progreso'
-												? 'border-blue-500 bg-blue-50'
-												: 'border-default-200 bg-default-50'
-									}`}
-									shadow="sm"
-								>
-									<CardBody className="p-4">
-										<div className="flex justify-between items-start mb-3">
-											<Chip
-												color={
-													subject.status === 'en_progreso'
-														? 'primary'
-														: getStatusColor(subject.status)
-												}
-												variant="flat"
-												size="sm"
-												className={
-													subject.status === 'en_progreso'
-														? 'bg-blue-500 text-white'
-														: ''
-												}
-											>
-												{getStatusLabel(subject.status)}
-											</Chip>
-											<span className="text-xs text-default-500 font-medium">
-												{subject.credits} créditos
-											</span>
-										</div>
-										<h4 className="text-sm font-semibold text-default-900 mb-2 leading-tight">
-											{subject.name}
-										</h4>
-										{subject.grade && (
+		<div className="space-y-6">
+			<Card>
+				<CardBody>
+					<h2 className="text-xl font-bold mb-4">Plan Académico</h2>
+					<div className="grid grid-cols-1 gap-1">
+						{Array.from({ length: totalSemesters }, (_, i) => i + 1).map(
+							(semester) => {
+								const semesterSubjects = subjectsBySemester.get(semester) || [];
+								const totalCredits = semesterSubjects.reduce(
+									(sum, s) => sum + s.credits,
+									0,
+								);
+
+								return (
+									<div key={semester}>
+										<div className="bg-primary-50 p-3 rounded-lg">
 											<div className="flex justify-between items-center">
-												<span className="text-xs text-default-600">Nota:</span>
-												<span className="text-sm font-medium text-success">
-													{subject.grade.toFixed(1)}
-												</span>
+												<h3 className="font-semibold text-primary-700">
+													Semestre {semester}
+												</h3>
+												<div className="flex items-center gap-2">
+													{semester === currentSemester && (
+														<Chip color="primary" size="sm" variant="flat">
+															Actual
+														</Chip>
+													)}
+													<span className="text-sm text-primary-600">
+														{totalCredits} créditos
+													</span>
+												</div>
+											</div>
+										</div>
+
+										{semesterSubjects.length > 0 ? (
+											<div className="pl-4 space-y-2 mt-2 mb-4">
+												{semesterSubjects.map((subject, idx) => (
+													<div
+														key={`${subject.code}-${idx}`}
+														className="flex justify-between items-center py-2 px-4 bg-default-50 rounded-md hover:bg-default-100 transition-colors"
+													>
+														<div className="flex-1">
+															<p className="font-medium text-sm">
+																{subject.name}
+															</p>
+															<p className="text-xs text-default-500">
+																{subject.code} • {subject.credits} créditos
+															</p>
+														</div>
+														<div className="flex items-center gap-3">
+															{subject.grade !== undefined && (
+																<Chip size="sm" color="default" variant="flat">
+																	{subject.grade.toFixed(1)}
+																</Chip>
+															)}
+															{subject.status === 'en_progreso' ? (
+																<Chip
+																	size="sm"
+																	variant="flat"
+																	style={{
+																		backgroundColor: '#E6F1FE',
+																		color: '#006FEE',
+																		borderColor: '#9BCCFB',
+																	}}
+																>
+																	{getStatusLabel(subject.status)}
+																</Chip>
+															) : (
+																<Chip
+																	color={getStatusColor(subject.status)}
+																	size="sm"
+																	variant="flat"
+																>
+																	{getStatusLabel(subject.status)}
+																</Chip>
+															)}
+														</div>
+													</div>
+												))}
+											</div>
+										) : (
+											<div className="pl-4 py-3 text-sm text-default-400">
+												{semester > currentSemester
+													? 'Materias pendientes'
+													: 'Sin materias registradas'}
 											</div>
 										)}
-									</CardBody>
-								</Card>
-							))}
-						</div>
-						<Divider className="mt-6" />
+										{semester < totalSemesters && <Divider className="my-2" />}
+									</div>
+								);
+							},
+						)}
 					</div>
-				))}
+				</CardBody>
+			</Card>
 		</div>
 	);
 }

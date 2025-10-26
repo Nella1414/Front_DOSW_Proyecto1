@@ -6,31 +6,21 @@ import {
 	Chip,
 	Divider,
 	Spacer,
+	Spinner,
 } from '@heroui/react';
+import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { AcademicGrid } from '../../components/academic-grid';
 import { AcademicSchedule } from '../../components/academic-schedule';
 import { AcademicSemaphore } from '../../components/academic-semaphore';
 import {
-	InformativeMessage,
-	SemesterInfo,
-	SemesterSelector,
 	useCurrentPeriod,
 	usePeriodForSemester,
 	useSelectedSemester,
 } from '../../components/informative-message';
-import { CreateRequestView } from '../../components/schedule-change-request/create-request-view';
+import { RequestsWrapper } from '../../components/schedule-change-request/requests-wrapper';
 import { type CurrentView, Sidebar, type User } from '../../components/sidebar';
-
-// Usuario estudiante simulado
-const studentUser: User = {
-	id: 'student-1',
-	name: 'Juan Pérez García',
-	email: 'juan.perez@escuelaing.edu.co',
-	role: 'student',
-	studentId: '1234567890',
-	academicStatus: 'normal',
-};
+import { authApi, studentApi } from '../../lib/api';
 
 // Hook para manejar la vista activa
 function useStudentViews(initial: CurrentView = 'dashboard') {
@@ -104,40 +94,62 @@ const StudentStatCard: React.FC<{
 	);
 };
 
+interface StudentProfile {
+	_id?: string;
+	id?: string;
+	code: string;
+	firstName: string;
+	lastName: string;
+	currentSemester: number;
+	programId: string;
+	externalId: string;
+}
+
 // Dashboard principal del estudiante
-const StudentDashboardHome: React.FC = () => {
+const StudentDashboardHome: React.FC<{ studentProfile: StudentProfile }> = ({
+	studentProfile,
+}) => {
 	return (
 		<div className="space-y-6">
+			{/* Información del estudiante */}
+			<Card shadow="sm" radius="sm">
+				<CardHeader>
+					<div className="flex flex-col gap-1">
+						<h2 className="text-xl font-bold">
+							{studentProfile.firstName} {studentProfile.lastName}
+						</h2>
+						<p className="text-sm text-default-500">
+							Código: {studentProfile.code} | Semestre:{' '}
+							{studentProfile.currentSemester}
+						</p>
+					</div>
+				</CardHeader>
+			</Card>
+
 			{/* Estadísticas rápidas */}
 			<div className="flex flex-col sm:flex-row gap-4">
 				<StudentStatCard
-					title="Progreso"
-					value="68%"
-					color="success"
-					note="Avance académico"
-				/>
-				<StudentStatCard
-					title="Materias"
-					value="24/43"
+					title="Semestre Actual"
+					value={studentProfile.currentSemester || 'N/A'}
 					color="primary"
-					note="Completadas"
+					note="Semestre en curso"
 				/>
 				<StudentStatCard
-					title="Créditos"
-					value="95/139"
+					title="Código"
+					value={studentProfile.code}
 					color="secondary"
-					note="Obtenidos"
+					note="Identificación"
 				/>
 				<StudentStatCard
-					title="Promedio"
-					value="3.9"
-					color="warning"
-					note="Acumulado"
+					title="Estado"
+					value="Activo"
+					color="success"
+					note="Estado académico"
 				/>
 			</div>
 
 			{/* Semáforo académico */}
-			<AcademicSemaphore userRole="STUDENT" studentId={studentUser.studentId} />
+			<AcademicSemaphore userRole="STUDENT" studentId={studentProfile.code} />
 
 			{/* Información adicional */}
 			<Card shadow="sm" radius="sm">
@@ -155,7 +167,7 @@ const StudentDashboardHome: React.FC = () => {
 					</div>
 					<div className="flex justify-between">
 						<span className="text-sm font-medium">Código:</span>
-						<span className="text-sm">{studentUser.studentId}</span>
+						<span className="text-sm">{studentProfile.code}</span>
 					</div>
 					<div className="flex justify-between">
 						<span className="text-sm font-medium">Estado:</span>
@@ -165,7 +177,7 @@ const StudentDashboardHome: React.FC = () => {
 					</div>
 					<div className="flex justify-between">
 						<span className="text-sm font-medium">Semestre actual:</span>
-						<span className="text-sm">2024-2</span>
+						<span className="text-sm">{studentProfile.currentSemester}</span>
 					</div>
 				</CardBody>
 			</Card>
@@ -174,36 +186,73 @@ const StudentDashboardHome: React.FC = () => {
 };
 
 // Vista de perfil del estudiante
-const StudentProfileView: React.FC<{ user: User }> = ({ user }) => (
-	<Card radius="sm" shadow="sm">
-		<CardHeader>
-			<div>
-				<h2 className="text-lg font-semibold">Mi Perfil</h2>
-				<p className="text-xs text-default-500">
-					Información personal y académica
+const StudentProfileView: React.FC<{ user: User }> = ({ user }) => {
+	// Fetch academic progress to get GPA
+	const { data: academicData, isLoading: academicLoading } = useQuery({
+		queryKey: ['academic-progress-profile'],
+		queryFn: studentApi.getAcademicProgress,
+	});
+
+	return (
+		<Card radius="sm" shadow="sm">
+			<CardHeader>
+				<div>
+					<h2 className="text-lg font-semibold">Mi Perfil</h2>
+					<p className="text-xs text-default-500">
+						Información personal y académica
+					</p>
+				</div>
+			</CardHeader>
+			<Divider />
+			<CardBody className="space-y-2 text-sm">
+				<p>
+					<span className="font-medium">Nombre:</span> {user.name}
 				</p>
-			</div>
-		</CardHeader>
-		<Divider />
-		<CardBody className="space-y-2 text-sm">
-			<p>
-				<span className="font-medium">Nombre:</span> {user.name}
-			</p>
-			<p>
-				<span className="font-medium">Correo:</span> {user.email}
-			</p>
-			<p>
-				<span className="font-medium">Código:</span> {user.studentId}
-			</p>
-			<p>
-				<span className="font-medium">Programa:</span> Ingeniería de Sistemas
-			</p>
-			<Button size="sm" color="primary" variant="flat" className="mt-2 w-fit">
-				Editar perfil
-			</Button>
-		</CardBody>
-	</Card>
-);
+				<p>
+					<span className="font-medium">Correo:</span> {user.email}
+				</p>
+				<p>
+					<span className="font-medium">Código:</span> {user.studentId}
+				</p>
+				<p>
+					<span className="font-medium">Programa:</span> Ingeniería de Sistemas
+				</p>
+				<Divider className="my-3" />
+				<div className="space-y-2">
+					<h3 className="text-sm font-semibold text-primary">
+						Rendimiento Académico
+					</h3>
+					{academicLoading ? (
+						<div className="flex items-center gap-2">
+							<Spinner size="sm" />
+							<span className="text-xs text-default-500">Cargando...</span>
+						</div>
+					) : academicData?.studentInfo?.gpa !== undefined ? (
+						<div className="flex items-center gap-2">
+							<span className="font-medium">Promedio Acumulado (GPA):</span>
+							<Chip color="primary" variant="flat" size="lg">
+								{academicData.studentInfo.gpa.toFixed(2)}
+							</Chip>
+						</div>
+					) : (
+						<p className="text-xs text-default-500">
+							No hay información de promedio disponible
+						</p>
+					)}
+					{academicData?.studentInfo && (
+						<p className="text-xs text-default-500">
+							Créditos aprobados: {academicData.studentInfo.passedCredits} /{' '}
+							{academicData.studentInfo.totalCredits}
+						</p>
+					)}
+				</div>
+				<Button size="sm" color="primary" variant="flat" className="mt-2 w-fit">
+					Editar perfil
+				</Button>
+			</CardBody>
+		</Card>
+	);
+};
 
 // Vistas placeholder
 const SimplePlaceholder: React.FC<{ title: string; description?: string }> = ({
@@ -226,24 +275,120 @@ const SimplePlaceholder: React.FC<{ title: string; description?: string }> = ({
 
 export default function StudentDashboardRoute() {
 	const { view, navigate } = useStudentViews('dashboard');
+	useStudentSemester(); // Initialize semester context
+
+	// Prevent navigation back to login/landing page
+	React.useEffect(() => {
+		const handlePopState = (e: PopStateEvent) => {
+			// Prevent going back
+			e.preventDefault();
+			window.history.pushState(null, '', window.location.href);
+		};
+
+		// Push initial state
+		window.history.pushState(null, '', window.location.href);
+
+		// Add listener
+		window.addEventListener('popstate', handlePopState);
+
+		return () => {
+			window.removeEventListener('popstate', handlePopState);
+		};
+	}, []);
+
+	// Obtener datos del usuario autenticado
+	const { data: currentUser, isLoading: userLoading } = useQuery({
+		queryKey: ['current-user'],
+		queryFn: authApi.getCurrentUser,
+	});
+
+	// Obtener perfil del estudiante
 	const {
-		selectedSemester,
-		setSelectedSemester,
-		semesterPeriod,
-		isCurrentSemester,
-	} = useStudentSemester();
+		data: studentProfile,
+		isLoading: profileLoading,
+		error: profileError,
+	} = useQuery({
+		queryKey: ['student-profile'],
+		queryFn: studentApi.getProfile,
+		enabled: !!currentUser,
+	});
+
+	// Mostrar loading mientras se cargan los datos
+	if (userLoading || profileLoading) {
+		return (
+			<div className="min-h-screen flex items-center justify-center">
+				<Spinner size="lg" color="primary" />
+			</div>
+		);
+	}
+
+	// Mostrar error si no se encuentra el perfil del estudiante
+	if (profileError || !studentProfile) {
+		console.error('[Dashboard] Profile error:', profileError);
+		console.error('[Dashboard] Student profile:', studentProfile);
+		console.error('[Dashboard] Current user:', currentUser);
+
+		const errorMessage =
+			profileError instanceof Error
+				? profileError.message
+				: 'Error desconocido al cargar el perfil';
+
+		return (
+			<div className="min-h-screen flex items-center justify-center p-4">
+				<Card className="max-w-md">
+					<CardBody className="text-center space-y-4">
+						<h2 className="text-xl font-bold text-danger mb-2">Error</h2>
+						<p className="text-default-600">
+							No se pudo cargar el perfil del estudiante.
+						</p>
+						<details className="text-left text-xs bg-danger-50 p-3 rounded">
+							<summary className="cursor-pointer font-semibold mb-2">
+								Detalles del error (para el administrador)
+							</summary>
+							<p className="text-danger-800 mb-2">
+								<strong>Mensaje:</strong> {errorMessage}
+							</p>
+							{currentUser && (
+								<p className="text-danger-800">
+									<strong>Usuario:</strong> {currentUser.user?.email}
+									<br />
+									<strong>ExternalId:</strong> {currentUser.user?.externalId}
+								</p>
+							)}
+						</details>
+						<Button
+							color="primary"
+							onPress={() => {
+								localStorage.removeItem('accessToken');
+								window.location.href = '/login';
+							}}
+						>
+							Volver al login
+						</Button>
+					</CardBody>
+				</Card>
+			</div>
+		);
+	}
+
+	// Crear objeto User para el Sidebar
+	const studentUser: User = {
+		id: studentProfile._id || studentProfile.id,
+		name: `${studentProfile.firstName} ${studentProfile.lastName}`,
+		email: currentUser?.user?.email || '',
+		role: 'student',
+		studentId: studentProfile.code,
+		academicStatus: 'normal',
+	};
 
 	let content: React.ReactNode;
 	switch (view) {
 		case 'dashboard':
-			content = <StudentDashboardHome />;
+			content = <StudentDashboardHome studentProfile={studentProfile} />;
 			break;
 		case 'academic-progress':
 			content = (
-				<AcademicSemaphore
-					userRole="STUDENT"
-					studentId={studentUser.studentId}
-				/>
+				<AcademicSemaphore userRole="STUDENT" studentId={studentProfile.code} />
 			);
 			break;
 		case 'profile':
@@ -258,36 +403,15 @@ export default function StudentDashboardRoute() {
 			);
 			break;
 		case 'create-request':
-			content = <CreateRequestView />;
+			content = <RequestsWrapper />;
 			break;
 		case 'academic-plan':
 			content = <AcademicGrid />;
 			break;
 		case 'schedule':
-			content = (
-				<div className="space-y-6">
-					<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-						{isCurrentSemester && (
-							<InformativeMessage
-								period={semesterPeriod}
-								onCtaClick={() => {
-									console.log('CTA clicked for period:', semesterPeriod);
-								}}
-							/>
-						)}
-						<div className="sm:ml-4 min-w-[200px]">
-							<SemesterSelector
-								selectedSemester={selectedSemester}
-								onSemesterChange={setSelectedSemester}
-							/>
-						</div>
-					</div>
-
-					<SemesterInfo semester={selectedSemester} />
-
-					<AcademicSchedule />
-				</div>
-			);
+			// Schedule view has its own period selector (Actual vs Histórico)
+			// No need for global semester selector here
+			content = <AcademicSchedule />;
 			break;
 		default:
 			content = <SimplePlaceholder title="Vista" />;

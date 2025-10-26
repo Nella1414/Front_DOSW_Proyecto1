@@ -13,7 +13,9 @@ import {
 } from '@heroui/react';
 import type React from 'react';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
 import { DemoCredentials } from '../../components/demo-credentials';
+import { authApi } from '../../lib/api';
 
 export function meta() {
 	return [
@@ -25,50 +27,47 @@ export function meta() {
 export default function Login() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
-	const [isLoading, setIsLoading] = useState(false);
+	const [isEmailLoading, setIsEmailLoading] = useState(false);
+	const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+	const [error, setError] = useState('');
+	const navigate = useNavigate();
 
 	const handleEmailLogin = async (e: React.FormEvent) => {
 		e.preventDefault();
-		setIsLoading(true);
+		setIsEmailLoading(true);
+		setError('');
 
-		// Simulate login process
-		setTimeout(() => {
-			console.log('Login attempt:', { email, password });
+		try {
+			const response = await authApi.login({ email, password });
 
-			// Check credentials and redirect based on role
-			if (email === 'du.important@gmail.com' && password === '123456789') {
-				// Admin credentials - redirect to admin dashboard
-				window.location.href = '/admin-dashboard';
-			} else if (
-				email === 'decano@escuelaing.edu.co' &&
-				password === '123456789'
-			) {
-				// Faculty/Decano credentials - redirect to admin dashboard
-				window.location.href = '/admin-dashboard';
-			} else if (
-				email === 'juan.perez@escuelaing.edu.co' &&
-				password === '123456789'
-			) {
-				// Student credentials - redirect to student dashboard
-				window.location.href = '/student-dashboard';
+			// Guardar token en localStorage
+			localStorage.setItem('accessToken', response.accessToken);
+
+			// Redirigir según el rol del usuario
+			const userRole = response.user.roles[0];
+
+			if (userRole === 'ADMIN' || userRole === 'DEAN') {
+				navigate('/admin-dashboard');
 			} else {
-				// Show error for invalid credentials
-				alert('Credenciales inválidas. Verifica tu email y contraseña.');
+				navigate('/student-dashboard');
 			}
-
-			setIsLoading(false);
-		}, 2000);
+		} catch (err: unknown) {
+			console.error('Login error:', err);
+			const error = err as { response?: { data?: { message?: string } } };
+			const errorMessage =
+				error.response?.data?.message ||
+				'Error al iniciar sesión. Verifica tus credenciales.';
+			setError(errorMessage);
+		} finally {
+			setIsEmailLoading(false);
+		}
 	};
 
 	const handleGoogleLogin = () => {
-		setIsLoading(true);
-		// Simulate Google OAuth process
-		setTimeout(() => {
-			console.log('Google login attempt');
-			setIsLoading(false);
-			// Here you would typically redirect to Google OAuth
-		}, 1500);
+		setIsGoogleLoading(true);
+		authApi.googleLogin();
 	};
+
 	useEffect(() => {}, []);
 	return (
 		<div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br dark:bg-gradient-to-tl from-content3 to-content1 p-4">
@@ -79,13 +78,13 @@ export default function Login() {
 							xmlns="http://www.w3.org/2000/svg"
 							fill="none"
 							viewBox="0 0 24 24"
-							stroke-width="1.5"
+							strokeWidth="1.5"
 							stroke="currentColor"
 							className="size-10"
 						>
 							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
+								strokeLinecap="round"
+								strokeLinejoin="round"
 								d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5"
 							/>
 						</svg>
@@ -113,6 +112,12 @@ export default function Login() {
 				</CardHeader>
 
 				<CardBody className="space-y-5 px-5">
+					{error && (
+						<div className="bg-danger-50 border border-danger-200 text-danger-800 px-4 py-3 rounded">
+							{error}
+						</div>
+					)}
+
 					<Form onSubmit={handleEmailLogin} className="space-y-4">
 						<Input
 							type="email"
@@ -155,10 +160,10 @@ export default function Login() {
 							color="primary"
 							size="lg"
 							className="loginButton w-full"
-							isLoading={isLoading}
-							isDisabled={isLoading}
+							isLoading={isEmailLoading}
+							isDisabled={isEmailLoading || isGoogleLoading}
 						>
-							{isLoading ? 'Iniciando sesión...' : 'Iniciar sesión'}
+							{isEmailLoading ? 'Iniciando sesión...' : 'Iniciar sesión'}
 						</Button>
 					</Form>
 
@@ -173,8 +178,8 @@ export default function Login() {
 						variant="bordered"
 						size="lg"
 						className="loginGoogle w-full"
-						isLoading={isLoading}
-						isDisabled={isLoading}
+						isLoading={isGoogleLoading}
+						isDisabled={isEmailLoading || isGoogleLoading}
 						startContent={
 							<svg
 								className="w-5 h-5"
@@ -202,7 +207,7 @@ export default function Login() {
 							</svg>
 						}
 					>
-						{isLoading ? 'Conectando...' : 'Continuar con Google'}
+						{isGoogleLoading ? 'Conectando...' : 'Continuar con Google'}
 					</Button>
 				</CardBody>
 

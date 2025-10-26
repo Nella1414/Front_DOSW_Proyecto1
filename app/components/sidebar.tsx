@@ -8,6 +8,7 @@ import {
 	Tooltip,
 } from '@heroui/react';
 import React from 'react';
+import { authApi } from '../lib/api';
 
 // Función utilitaria para concatenar clases
 function clsx(...classes: Array<string | false | null | undefined>) {
@@ -541,7 +542,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
 					color="danger"
 					size="sm"
 					className={clsx(collapsed && 'px-0')}
-					onPress={() => onNavigate('dashboard')}
+					onPress={() => {
+						authApi.logout();
+					}}
 				>
 					{collapsed ? '⏻' : 'Cerrar sesión'}
 				</Button>

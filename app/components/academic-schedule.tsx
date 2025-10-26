@@ -1,26 +1,24 @@
 import {
-	Button,
+	Alert,
 	Card,
 	CardBody,
 	CardHeader,
-	Input,
-	Modal,
-	ModalBody,
-	ModalContent,
-	ModalFooter,
-	ModalHeader,
-	Textarea,
-	useDisclosure,
+	Select,
+	SelectItem,
+	Spinner,
 } from '@heroui/react';
+import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
+import { studentApi } from '../lib/api';
 
 interface ClassBlock {
 	id: string;
-	subject: string;
+	courseName: string;
 	classroom: string;
 	teacher: string;
-	color?: string;
-	notes?: string;
+	startTime: string;
+	endTime: string;
+	day: string;
 }
 
 interface ScheduleData {
@@ -29,139 +27,465 @@ interface ScheduleData {
 	};
 }
 
-const DAYS = ['LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO'];
-const TIME_SLOTS = [
-	'07:00–08:30',
-	'08:30–10:00',
-	'10:00–11:30',
-	'11:30–13:00',
-	'13:00–14:30',
-	'14:30–16:00',
-	'16:00–17:30',
-	'17:30–19:00',
-];
+interface ScheduleFromBackend {
+	_id?: string;
+	id?: string;
+	courseName?: string;
+	courseCode?: string;
+	courseId?: string;
+	course?: { name: string };
+	classroom?: string;
+	room?: string;
+	teacher?: string;
+	instructor?: string;
+	professorName?: string;
+	startTime: string;
+	endTime: string;
+	day: string;
+}
 
-// Datos de ejemplo
-const mockScheduleData: ScheduleData = {
-	LUNES: {
-		'07:00–08:30': {
-			id: '1',
-			subject: 'Probabilidad y Estadística',
-			classroom: 'A-101',
-			teacher: 'Dr. García',
-		},
-		'14:30–16:00': {
-			id: '2',
-			subject: 'Desarrollo y Operaciones Software',
-			classroom: 'L-201',
-			teacher: 'Ing. Martínez',
-		},
-	},
-	MARTES: {
-		'10:00–11:30': {
-			id: '3',
-			subject: 'Arquitectura y Servicios de Red',
-			classroom: 'A-301',
-			teacher: 'Dra. López',
-		},
-		'16:00–17:30': {
-			id: '4',
-			subject: 'Fundamentos de Seguridad',
-			classroom: 'A-201',
-			teacher: 'Dr. Rodríguez',
-		},
-	},
-	MIÉRCOLES: {
-		'07:00–08:30': {
-			id: '5',
-			subject: 'Probabilidad y Estadística',
-			classroom: 'A-101',
-			teacher: 'Dr. García',
-		},
-		'13:00–14:30': {
-			id: '6',
-			subject: 'Desarrollo y Operaciones Software',
-			classroom: 'L-201',
-			teacher: 'Ing. Martínez',
-		},
-	},
-	JUEVES: {
-		'10:00–11:30': {
-			id: '7',
-			subject: 'Arquitectura y Servicios de Red',
-			classroom: 'A-301',
-			teacher: 'Dra. López',
-		},
-		'16:00–17:30': {
-			id: '8',
-			subject: 'Fundamentos de Seguridad',
-			classroom: 'A-201',
-			teacher: 'Dr. Rodríguez',
-		},
-	},
-	VIERNES: {
-		'08:30–10:00': {
-			id: '9',
-			subject: 'Probabilidad y Estadística',
-			classroom: 'A-101',
-			teacher: 'Dr. García',
-		},
-	},
-	SÁBADO: {},
+interface HistoricalPeriod {
+	periodId: string;
+	periodCode: string;
+	enrollmentCount: number;
+}
+
+interface HistoricalClass {
+	_id?: string;
+	courseCode?: string;
+	courseId?: string;
+	courseName: string;
+	groupNumber: string;
+	instructor?: string;
+	professorName?: string;
+	startTime: string;
+	endTime: string;
+	room?: string;
+}
+
+interface DaySchedule {
+	dayName: string;
+	dayOfWeek: number;
+	classes: ScheduleFromBackend[] | HistoricalClass[];
+}
+
+const DAYS = ['LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO'];
+
+// Función para convertir horario de 24h a formato legible
+function formatTime(time: string): string {
+	const [hours, minutes] = time.split(':');
+	return `${hours}:${minutes}`;
+}
+
+// Función para generar slots de tiempo dinámicos
+function generateTimeSlots(schedules: ScheduleFromBackend[]): string[] {
+	const times = new Set<string>();
+
+	schedules.forEach((schedule) => {
+		times.add(schedule.startTime);
+		times.add(schedule.endTime);
+	});
+
+	const sortedTimes = Array.from(times).sort();
+	const slots: string[] = [];
+
+	for (let i = 0; i < sortedTimes.length - 1; i++) {
+		slots.push(
+			`${formatTime(sortedTimes[i])}–${formatTime(sortedTimes[i + 1])}`,
+		);
+	}
+
+	return slots.length > 0
+		? slots
+		: ['07:00–08:30', '08:30–10:00', '10:00–11:30'];
+}
+
+// Mapeo de nombres de días en inglés a español
+const DAY_NAME_MAP: Record<string, string> = {
+	Monday: 'LUNES',
+	Tuesday: 'MARTES',
+	Wednesday: 'MIÉRCOLES',
+	Thursday: 'JUEVES',
+	Friday: 'VIERNES',
+	Saturday: 'SÁBADO',
+	Sunday: 'DOMINGO',
 };
 
-export function AcademicSchedule() {
-	const [scheduleData, setScheduleData] =
-		useState<ScheduleData>(mockScheduleData);
-	const [selectedSlot, setSelectedSlot] = useState<{
-		day: string;
-		time: string;
-	} | null>(null);
-	const [newClass, setNewClass] = useState({
-		subject: '',
-		teacher: '',
-		classroom: '',
-		notes: '',
+// Función para convertir datos del backend a formato de horario
+function transformScheduleData(schedules: ScheduleFromBackend[]): {
+	data: ScheduleData;
+	timeSlots: string[];
+} {
+	const scheduleData: ScheduleData = {};
+
+	// Inicializar días
+	DAYS.forEach((day) => {
+		scheduleData[day] = {};
 	});
-	const { isOpen, onOpen, onClose } = useDisclosure();
 
-	const handleCellClick = (day: string, timeSlot: string) => {
-		const existingClass = scheduleData[day]?.[timeSlot];
-		if (!existingClass) {
-			setSelectedSlot({ day, time: timeSlot });
-			setNewClass({ subject: '', teacher: '', classroom: '', notes: '' });
-			onOpen();
+	// Generar slots de tiempo dinámicamente
+	const timeSlots = generateTimeSlots(schedules);
+
+	// Llenar con datos del backend
+	schedules.forEach((schedule) => {
+		// Convertir día del inglés al español si es necesario
+		let dayKey = schedule.day.toUpperCase();
+		if (DAY_NAME_MAP[schedule.day]) {
+			dayKey = DAY_NAME_MAP[schedule.day];
 		}
-	};
 
-	const handleSaveClass = () => {
-		if (!selectedSlot || !newClass.subject.trim()) return;
+		const timeSlot = `${formatTime(schedule.startTime)}–${formatTime(schedule.endTime)}`;
+		console.log(
+			`[transformScheduleData] Mapping ${schedule.day} → ${dayKey}, timeSlot: ${timeSlot}`,
+		);
 
-		const newClassBlock: ClassBlock = {
-			id: Date.now().toString(),
-			subject: newClass.subject,
-			classroom: newClass.classroom,
-			teacher: newClass.teacher,
-			notes: newClass.notes,
-		};
+		if (scheduleData[dayKey]) {
+			scheduleData[dayKey][timeSlot] = {
+				id: schedule._id || schedule.id || 'unknown',
+				courseName:
+					schedule.courseName || schedule.course?.name || 'Sin nombre',
+				classroom: schedule.classroom || 'Por definir',
+				teacher: schedule.teacher || schedule.instructor || 'Por asignar',
+				startTime: schedule.startTime,
+				endTime: schedule.endTime,
+				day: schedule.day,
+			};
+			console.log(
+				`[transformScheduleData] Added class to ${dayKey}[${timeSlot}]:`,
+				scheduleData[dayKey][timeSlot],
+			);
+		} else {
+			console.warn(
+				`[transformScheduleData] Day ${dayKey} not found in scheduleData`,
+			);
+		}
+	});
 
-		setScheduleData((prev) => ({
-			...prev,
-			[selectedSlot.day]: {
-				...prev[selectedSlot.day],
-				[selectedSlot.time]: newClassBlock,
-			},
-		}));
+	return { data: scheduleData, timeSlots };
+}
 
-		onClose();
-		setSelectedSlot(null);
-	};
+export function AcademicSchedule() {
+	const [viewMode, setViewMode] = useState<'current' | 'historical'>('current');
+	const [selectedPeriod, setSelectedPeriod] = useState<string>('');
+
+	// Obtener horario actual del backend
+	const {
+		data: currentScheduleResponse,
+		isLoading: currentLoading,
+		error: currentError,
+	} = useQuery({
+		queryKey: ['student-schedule'],
+		queryFn: studentApi.getSchedule,
+		retry: 1,
+		enabled: viewMode === 'current',
+	});
+
+	// Obtener horarios históricos
+	const {
+		data: historicalData,
+		isLoading: historicalLoading,
+		error: historicalError,
+	} = useQuery({
+		queryKey: ['historical-schedules'],
+		queryFn: studentApi.getHistoricalSchedules,
+		retry: 1,
+		enabled: viewMode === 'historical',
+	});
+
+	// Obtener horario específico de un período
+	const {
+		data: periodScheduleResponse,
+		isLoading: periodLoading,
+		error: periodError,
+	} = useQuery({
+		queryKey: ['historical-schedule-period', selectedPeriod],
+		queryFn: () => studentApi.getHistoricalScheduleByPeriod(selectedPeriod),
+		retry: 1,
+		enabled: viewMode === 'historical' && !!selectedPeriod,
+	});
+
+	const isLoading =
+		viewMode === 'current'
+			? currentLoading
+			: selectedPeriod
+				? periodLoading
+				: historicalLoading;
+	const error =
+		viewMode === 'current'
+			? currentError
+			: selectedPeriod
+				? periodError
+				: historicalError;
+
+	// Determinar qué horario mostrar y transformar si es necesario
+	let schedulesResponse = currentScheduleResponse;
+
+	// Verificar si la respuesta tiene estructura {schedule: Array} (nuevo formato backend)
+	if (
+		currentScheduleResponse &&
+		typeof currentScheduleResponse === 'object' &&
+		'schedule' in currentScheduleResponse
+	) {
+		const scheduleData = (
+			currentScheduleResponse as { schedule: DaySchedule[] | undefined }
+		).schedule;
+		console.log('[AcademicSchedule] Processing schedule data:', scheduleData);
+		if (scheduleData && Array.isArray(scheduleData)) {
+			schedulesResponse = scheduleData.flatMap((day) => {
+				console.log('[AcademicSchedule] Processing day:', day);
+				return (day.classes || []).map((cls) => {
+					console.log('[AcademicSchedule] Processing class:', cls);
+					return {
+						courseName: cls.courseName || '',
+						course: { name: cls.courseName || '' },
+						classroom: cls.room || 'Por asignar',
+						teacher: cls.instructor || cls.professorName || 'Por asignar',
+						startTime: cls.startTime || '',
+						endTime: cls.endTime || '',
+						day: day.dayName || String(day.dayOfWeek),
+						_id:
+							cls._id || cls.courseId || `${cls.courseCode}-${day.dayOfWeek}`,
+					};
+				});
+			});
+			console.log(
+				'[AcademicSchedule] Final schedulesResponse:',
+				schedulesResponse,
+			);
+		}
+	}
+
+	if (viewMode === 'historical' && selectedPeriod && periodScheduleResponse) {
+		// El backend devuelve datos estructurados, extraer el schedule
+		const schedule = periodScheduleResponse.schedule as
+			| DaySchedule[]
+			| undefined;
+		schedulesResponse =
+			schedule?.flatMap(
+				(day) =>
+					day.classes?.map((cls) => ({
+						courseName: cls.courseName,
+						course: { name: cls.courseName },
+						classroom: cls.room || 'Por asignar',
+						teacher: 'Histórico',
+						startTime: cls.startTime,
+						endTime: cls.endTime,
+						day: day.dayName || String(day.dayOfWeek),
+						_id: `${cls.courseCode}-${day.dayOfWeek}`,
+					})) || [],
+			) || [];
+	}
+
+	if (isLoading) {
+		return (
+			<Card radius="sm" shadow="sm">
+				<CardHeader>
+					<h3 className="text-lg font-semibold">Horario Académico</h3>
+				</CardHeader>
+				<CardBody className="flex items-center justify-center min-h-[400px]">
+					<Spinner size="lg" color="primary" />
+					<p className="mt-4 text-default-600">Cargando horario...</p>
+				</CardBody>
+			</Card>
+		);
+	}
+
+	if (error) {
+		console.error('[AcademicSchedule] Error loading schedule:', error);
+		return (
+			<Card radius="sm" shadow="sm">
+				<CardHeader>
+					<h3 className="text-lg font-semibold">Horario Académico</h3>
+				</CardHeader>
+				<CardBody className="flex items-center justify-center min-h-[400px]">
+					<p className="text-danger">
+						Error al cargar el horario. Por favor, intenta de nuevo.
+					</p>
+				</CardBody>
+			</Card>
+		);
+	}
+
+	// Asegurarse de que schedulesResponse sea un array
+	console.log('[AcademicSchedule] Schedules response:', schedulesResponse);
+	const schedules = Array.isArray(schedulesResponse) ? schedulesResponse : [];
+	console.log('[AcademicSchedule] Schedules array:', schedules);
+
+	// Si está en modo histórico pero no ha seleccionado período, no procesar
+	if (viewMode === 'historical' && !selectedPeriod) {
+		// El mensaje ya se muestra en el header
+		return (
+			<Card radius="sm" shadow="sm">
+				<CardHeader className="flex flex-col gap-3">
+					<div className="flex justify-between items-center w-full">
+						<h3 className="text-lg font-semibold">Horario Académico</h3>
+						<div className="flex gap-2">
+							<button
+								type="button"
+								onClick={() => {
+									setViewMode('current');
+									setSelectedPeriod('');
+								}}
+								className="px-4 py-2 text-sm rounded-lg bg-default-100 text-default-600 hover:bg-default-200"
+							>
+								Actual
+							</button>
+							<button
+								type="button"
+								onClick={() => setViewMode('historical')}
+								className="px-4 py-2 text-sm rounded-lg bg-primary text-white"
+							>
+								Histórico
+							</button>
+						</div>
+					</div>
+
+					{historicalData?.periods && (
+						<div className="w-full">
+							<Select
+								label="Seleccionar Período"
+								placeholder="Escoge un período académico"
+								selectedKeys={[]}
+								onSelectionChange={(keys) => {
+									const value = Array.from(keys)[0] as string;
+									setSelectedPeriod(value);
+								}}
+								className="max-w-xs"
+							>
+								{(historicalData.periods as HistoricalPeriod[]).map(
+									(period) => (
+										<SelectItem key={period.periodId}>
+											{period.periodCode} - {period.enrollmentCount} materias
+										</SelectItem>
+									),
+								)}
+							</Select>
+						</div>
+					)}
+
+					<Alert color="warning" title="Selecciona un período">
+						Por favor selecciona un período académico para ver su horario.
+					</Alert>
+				</CardHeader>
+			</Card>
+		);
+	}
+
+	const { data: scheduleData, timeSlots } = transformScheduleData(schedules);
+
+	// Si no hay horarios
+	if (schedules.length === 0) {
+		const message =
+			viewMode === 'historical'
+				? 'No hay horarios registrados para este período.'
+				: 'No tienes materias registradas en este momento.';
+
+		return (
+			<Card radius="sm" shadow="sm">
+				<CardHeader className="flex flex-col gap-3">
+					<div className="flex justify-between items-center w-full">
+						<h3 className="text-lg font-semibold">Horario Académico</h3>
+						<div className="flex gap-2">
+							<button
+								type="button"
+								onClick={() => {
+									setViewMode('current');
+									setSelectedPeriod('');
+								}}
+								className={`px-4 py-2 text-sm rounded-lg ${
+									viewMode === 'current'
+										? 'bg-primary text-white'
+										: 'bg-default-100 text-default-600 hover:bg-default-200'
+								}`}
+							>
+								Actual
+							</button>
+							<button
+								type="button"
+								onClick={() => setViewMode('historical')}
+								className={`px-4 py-2 text-sm rounded-lg ${
+									viewMode === 'historical'
+										? 'bg-primary text-white'
+										: 'bg-default-100 text-default-600 hover:bg-default-200'
+								}`}
+							>
+								Histórico
+							</button>
+						</div>
+					</div>
+				</CardHeader>
+				<CardBody className="flex items-center justify-center min-h-[400px]">
+					<p className="text-default-600">{message}</p>
+				</CardBody>
+			</Card>
+		);
+	}
 
 	return (
 		<div className="space-y-6">
 			<Card radius="sm" shadow="sm">
-				<CardHeader>
-					<h3 className="text-lg font-semibold">Horario Académico</h3>
+				<CardHeader className="flex flex-col gap-3">
+					<div className="flex justify-between items-center w-full">
+						<h3 className="text-lg font-semibold">Horario Académico</h3>
+						<div className="flex gap-2">
+							<button
+								type="button"
+								onClick={() => {
+									setViewMode('current');
+									setSelectedPeriod('');
+								}}
+								className={`px-4 py-2 text-sm rounded-lg ${
+									viewMode === 'current'
+										? 'bg-primary text-white'
+										: 'bg-default-100 text-default-600 hover:bg-default-200'
+								}`}
+							>
+								Actual
+							</button>
+							<button
+								type="button"
+								onClick={() => setViewMode('historical')}
+								className={`px-4 py-2 text-sm rounded-lg ${
+									viewMode === 'historical'
+										? 'bg-primary text-white'
+										: 'bg-default-100 text-default-600 hover:bg-default-200'
+								}`}
+							>
+								Histórico
+							</button>
+						</div>
+					</div>
+
+					{viewMode === 'historical' && historicalData?.periods && (
+						<div className="w-full">
+							<Select
+								label="Seleccionar Período"
+								placeholder="Escoge un período académico"
+								selectedKeys={selectedPeriod ? [selectedPeriod] : []}
+								onSelectionChange={(keys) => {
+									const value = Array.from(keys)[0] as string;
+									setSelectedPeriod(value);
+								}}
+								className="max-w-xs"
+							>
+								{(historicalData.periods as HistoricalPeriod[]).map(
+									(period) => (
+										<SelectItem key={period.periodId}>
+											{period.periodCode} - {period.enrollmentCount} materias
+										</SelectItem>
+									),
+								)}
+							</Select>
+						</div>
+					)}
+
+					{viewMode === 'historical' &&
+						!selectedPeriod &&
+						historicalData?.periods && (
+							<Alert color="warning" title="Selecciona un período">
+								Por favor selecciona un período académico para ver su horario.
+							</Alert>
+						)}
 				</CardHeader>
 				<CardBody>
 					<div className="overflow-x-auto">
@@ -186,7 +510,7 @@ export function AcademicSchedule() {
 								))}
 
 								{/* Time Slots Rows */}
-								{TIME_SLOTS.map((timeSlot) => (
+								{timeSlots.map((timeSlot) => (
 									<>
 										{/* Time Label */}
 										<div
@@ -209,7 +533,7 @@ export function AcademicSchedule() {
 													{classBlock ? (
 														<div className="h-full bg-red-500 text-white rounded-md p-2 shadow-sm flex flex-col justify-center">
 															<div className="text-xs font-bold leading-tight mb-1">
-																{classBlock.subject}
+																{classBlock.courseName}
 															</div>
 															<div className="text-xs leading-tight mb-1">
 																{classBlock.classroom}
@@ -219,11 +543,7 @@ export function AcademicSchedule() {
 															</div>
 														</div>
 													) : (
-														<button
-															type="button"
-															className="w-full h-full min-h-[76px] hover:bg-default-100 rounded-md transition-colors"
-															onClick={() => handleCellClick(day, timeSlot)}
-														/>
+														<div className="w-full h-full min-h-[76px] bg-default-50" />
 													)}
 												</div>
 											);
@@ -235,68 +555,6 @@ export function AcademicSchedule() {
 					</div>
 				</CardBody>
 			</Card>
-
-			{/* Modal para añadir clase */}
-			<Modal isOpen={isOpen} onClose={onClose} size="lg">
-				<ModalContent>
-					<ModalHeader>
-						Añadir Clase
-						{selectedSlot && (
-							<span className="text-sm font-normal text-default-500 ml-2">
-								{selectedSlot.day} - {selectedSlot.time}
-							</span>
-						)}
-					</ModalHeader>
-					<ModalBody className="space-y-4">
-						<Input
-							label="Nombre de la Materia"
-							placeholder="Ej: Cálculo Diferencial"
-							value={newClass.subject}
-							onChange={(e) =>
-								setNewClass((prev) => ({ ...prev, subject: e.target.value }))
-							}
-							isRequired
-						/>
-						<Input
-							label="Profesor"
-							placeholder="Ej: Dr. García"
-							value={newClass.teacher}
-							onChange={(e) =>
-								setNewClass((prev) => ({ ...prev, teacher: e.target.value }))
-							}
-						/>
-						<Input
-							label="Aula/Salón"
-							placeholder="Ej: A-101"
-							value={newClass.classroom}
-							onChange={(e) =>
-								setNewClass((prev) => ({ ...prev, classroom: e.target.value }))
-							}
-						/>
-						<Textarea
-							label="Notas (Opcional)"
-							placeholder="Información adicional..."
-							value={newClass.notes}
-							onChange={(e) =>
-								setNewClass((prev) => ({ ...prev, notes: e.target.value }))
-							}
-							rows={3}
-						/>
-					</ModalBody>
-					<ModalFooter>
-						<Button variant="light" onPress={onClose}>
-							Cancelar
-						</Button>
-						<Button
-							color="primary"
-							onPress={handleSaveClass}
-							isDisabled={!newClass.subject.trim()}
-						>
-							Guardar
-						</Button>
-					</ModalFooter>
-				</ModalContent>
-			</Modal>
 		</div>
 	);
 }
