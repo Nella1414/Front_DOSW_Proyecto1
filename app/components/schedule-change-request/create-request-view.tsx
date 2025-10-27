@@ -1,23 +1,84 @@
-import { Button, Card, CardBody, CardHeader, Divider } from '@heroui/react';
-import { AnimatePresence, motion } from 'framer-motion';
-import React, { useId } from 'react';
+import {
+	Alert,
+	Button,
+	Card,
+	CardBody,
+	CardHeader,
+	Divider,
+	Select,
+	SelectItem,
+	Textarea,
+} from '@heroui/react';
+import React from 'react';
 import { GroupDetailsCard } from './group-details-card';
 import { ProcessingGuidelinesCard } from './processing-guidelines-card';
 import { RequestConfirmationModal } from './request-confirmation-modal';
 import type { FormData } from './types';
-import {
-	calculateCapacityStatus,
-	clsx,
-	mockGroups,
-	mockSubjects,
-} from './utils';
+import { calculateCapacityStatus, mockGroups, mockSubjects } from './utils';
+
+// Componente wrapper para animaciones que se monta solo en el cliente
+const ClientOnlyAnimation: React.FC<{
+	children: React.ReactNode;
+	show: boolean;
+	mode?: 'wait' | 'sync' | 'popLayout';
+}> = ({ children, show }) => {
+	const [isMounted, setIsMounted] = React.useState(false);
+	const [AnimatePresence, setAnimatePresence] = React.useState<any>(null);
+
+	React.useEffect(() => {
+		setIsMounted(true);
+		import('framer-motion').then((mod) => {
+			setAnimatePresence(() => mod.AnimatePresence);
+		});
+	}, []);
+
+	// Si no está montado o framer-motion no está cargado, mostrar sin animación
+	if (!isMounted || !AnimatePresence) {
+		return show ? <>{children}</> : null;
+	}
+
+	return <AnimatePresence>{show && children}</AnimatePresence>;
+};
+
+// Componente wrapper para motion que se monta solo en el cliente
+const ClientOnlyMotion: React.FC<{
+	children: React.ReactNode;
+	initial?: any;
+	animate?: any;
+	exit?: any;
+	transition?: any;
+	className?: string;
+}> = ({ children, initial, animate, exit, transition, className }) => {
+	const [isMounted, setIsMounted] = React.useState(false);
+	const [motion, setMotion] = React.useState<any>(null);
+
+	React.useEffect(() => {
+		setIsMounted(true);
+		import('framer-motion').then((mod) => {
+			setMotion(() => mod.motion);
+		});
+	}, []);
+
+	// Si no está montado o framer-motion no está cargado, mostrar sin animación
+	if (!isMounted || !motion) {
+		return <div className={className}>{children}</div>;
+	}
+
+	const MotionDiv = motion.div;
+	return (
+		<MotionDiv
+			initial={initial}
+			animate={animate}
+			exit={exit}
+			transition={transition}
+			className={className}
+		>
+			{children}
+		</MotionDiv>
+	);
+};
 
 export const CreateRequestView: React.FC = () => {
-	// Generate unique IDs for form elements
-	const subjectSelectId = useId();
-	const groupToSelectId = useId();
-	const reasonTextareaId = useId();
-
 	const [formData, setFormData] = React.useState<FormData>({
 		subject: '',
 		groupTo: '',
@@ -171,6 +232,7 @@ export const CreateRequestView: React.FC = () => {
 			groupTo: '',
 			reason: '',
 		});
+		setErrors({});
 	}, []);
 
 	return (
@@ -219,43 +281,12 @@ export const CreateRequestView: React.FC = () => {
 
 						{/* Mensaje informativo importante */}
 						<CardBody className="space-y-6">
-							<Card
-								className="bg-primary-50 border border-primary-200"
-								shadow="none"
-							>
-								<CardBody>
-									<div className="flex gap-3">
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											fill="none"
-											viewBox="0 0 24 24"
-											strokeWidth={1.5}
-											stroke="currentColor"
-											className="w-5 h-5 text-primary flex-shrink-0 mt-0.5"
-											role="img"
-											aria-label="Información importante"
-										>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"
-											/>
-										</svg>
-										<div className="text-sm">
-											<p className="font-semibold text-primary-700 mb-1">
-												Importante:
-											</p>
-											<p className="text-primary-600">
-												Los cambios de horario solo se permiten durante las
-												primeras dos semanas del semestre. Las solicitudes deben
-												enviarse con al menos 48 horas de anticipación. No se
-												pueden solicitar cambios para materias canceladas o
-												grupos que hayan alcanzado su capacidad máxima.
-											</p>
-										</div>
-									</div>
-								</CardBody>
-							</Card>
+							<Alert
+								color="primary"
+								variant="faded"
+								title="Importante"
+								description="Los cambios de horario solo se permiten durante las primeras dos semanas del semestre. Las solicitudes deben enviarse con al menos 48 horas de anticipación. No se pueden solicitar cambios para materias canceladas o grupos que hayan alcanzado su capacidad máxima."
+							/>
 
 							{/* Formulario */}
 							<form onSubmit={handleSubmit} className="space-y-6">
@@ -269,171 +300,136 @@ export const CreateRequestView: React.FC = () => {
 
 									<div className="space-y-4">
 										{/* Materia - Siempre visible */}
-										<div>
-											<label
-												htmlFor={subjectSelectId}
-												className="text-sm font-medium mb-2 block"
-											>
-												Materia <span className="text-danger">*</span>
-											</label>
-											<select
-												id={subjectSelectId}
-												value={formData.subject}
-												onChange={(e) =>
-													handleChange('subject', e.target.value)
-												}
-												className={clsx(
-													'w-full px-3 py-2 rounded-lg border bg-default-100 text-sm',
-													errors.subject
-														? 'border-danger'
-														: 'border-default-200',
-												)}
-											>
-												<option value="">Selecciona la materia</option>
-												{mockSubjects.map((subject) => (
-													<option key={subject.id} value={subject.id}>
-														{subject.code} - {subject.name} (Grupo Actual:{' '}
-														{subject.currentGroup})
-													</option>
-												))}
-											</select>
-											{errors.subject && (
-												<p className="text-xs text-danger mt-1">
-													{errors.subject}
-												</p>
-											)}
-											<p className="text-xs text-default-400 mt-1">
-												Solo puedes cambiar de grupo dentro de la misma materia
-											</p>
-										</div>
+										<Select
+											isRequired
+											label="Materia"
+											placeholder="Selecciona la materia"
+											selectedKeys={formData.subject ? [formData.subject] : []}
+											onSelectionChange={(keys) => {
+												const value = Array.from(keys)[0] as string;
+												handleChange('subject', value || '');
+											}}
+											isInvalid={!!errors.subject}
+											errorMessage={errors.subject}
+											description="Solo puedes cambiar de grupo dentro de la misma materia"
+											variant="bordered"
+											labelPlacement="outside"
+											disallowEmptySelection
+										>
+											{mockSubjects.map((subject) => (
+												<SelectItem
+													key={subject.id}
+													textValue={`${subject.code} - ${subject.name}`}
+												>
+													{subject.code} - {subject.name} (Grupo Actual:{' '}
+													{subject.currentGroup})
+												</SelectItem>
+											))}
+										</Select>
 
 										{/* Campos que aparecen después de seleccionar materia */}
-										<AnimatePresence>
-											{formData.subject && (
-												<motion.div
-													initial={{ opacity: 0, height: 0 }}
-													animate={{ opacity: 1, height: 'auto' }}
-													exit={{ opacity: 0, height: 0 }}
-													transition={{ duration: 0.3, ease: 'easeOut' }}
+										<ClientOnlyAnimation show={!!formData.subject}>
+											<ClientOnlyMotion
+												initial={{ opacity: 0, height: 0 }}
+												animate={{ opacity: 1, height: 'auto' }}
+												exit={{ opacity: 0, height: 0 }}
+												transition={{ duration: 0.3, ease: 'easeOut' }}
+												className="space-y-4"
+											>
+												<Divider className="my-4" />
+
+												{/* Grupo Destino */}
+												<ClientOnlyMotion
+													initial={{ opacity: 0, x: -20 }}
+													animate={{ opacity: 1, x: 0 }}
+													transition={{ duration: 0.3, delay: 0.1 }}
 												>
-													<Divider className="my-4" />
-
-													{/* Grupo Destino */}
-													<motion.div
-														initial={{ opacity: 0, x: -20 }}
-														animate={{ opacity: 1, x: 0 }}
-														transition={{ duration: 0.3, delay: 0.1 }}
+													<Select
+														isRequired
+														label="Grupo Destino"
+														placeholder="Selecciona el grupo destino"
+														selectedKeys={
+															formData.groupTo ? [formData.groupTo] : []
+														}
+														onSelectionChange={(keys) => {
+															const value = Array.from(keys)[0] as string;
+															handleChange('groupTo', value || '');
+														}}
+														isInvalid={!!errors.groupTo}
+														errorMessage={errors.groupTo}
+														variant="bordered"
+														labelPlacement="outside"
+														disallowEmptySelection
 													>
-														<label
-															htmlFor={groupToSelectId}
-															className="text-sm font-medium mb-2 block"
-														>
-															Grupo Destino{' '}
-															<span className="text-danger">*</span>
-														</label>
-														<select
-															id={groupToSelectId}
-															value={formData.groupTo}
-															onChange={(e) =>
-																handleChange('groupTo', e.target.value)
-															}
-															className={clsx(
-																'w-full px-3 py-2 rounded-lg border bg-default-100 text-sm',
-																errors.groupTo
-																	? 'border-danger'
-																	: 'border-default-200',
-															)}
-														>
-															<option value="">
-																Selecciona el grupo destino
-															</option>
-															{mockGroups.map((group) => (
-																<option key={group.id} value={group.id}>
-																	{group.name} - {group.schedule} (
-																	{group.currentEnrollments}/{group.maxStudents}{' '}
-																	estudiantes)
-																</option>
-															))}
-														</select>
-														{errors.groupTo && (
-															<p className="text-xs text-danger mt-1">
-																{errors.groupTo}
-															</p>
-														)}
-													</motion.div>
+														{mockGroups.map((group) => (
+															<SelectItem
+																key={group.id}
+																textValue={`${group.name} - ${group.schedule}`}
+															>
+																{group.name} - {group.schedule} (
+																{group.currentEnrollments}/{group.maxStudents}{' '}
+																estudiantes)
+															</SelectItem>
+														))}
+													</Select>
+												</ClientOnlyMotion>
 
-													<Divider className="my-4" />
+												<Divider className="my-4" />
 
-													{/* Razón del Cambio */}
-													<motion.div
-														initial={{ opacity: 0, x: -20 }}
-														animate={{ opacity: 1, x: 0 }}
-														transition={{ duration: 0.3, delay: 0.2 }}
+												{/* Razón del Cambio */}
+												<ClientOnlyMotion
+													initial={{ opacity: 0, x: -20 }}
+													animate={{ opacity: 1, x: 0 }}
+													transition={{ duration: 0.3, delay: 0.2 }}
+												>
+													<Textarea
+														isRequired
+														label="Motivo del Cambio"
+														placeholder="Por favor explica por qué necesitas este cambio de horario..."
+														value={formData.reason}
+														onValueChange={(value) =>
+															handleChange('reason', value)
+														}
+														isInvalid={!!errors.reason}
+														errorMessage={errors.reason}
+														description="Proporciona un motivo claro para tu solicitud. Razones comunes incluyen conflictos de horario, problemas de transporte o compromisos laborales."
+														variant="bordered"
+														labelPlacement="outside"
+														maxLength={500}
+														minRows={4}
+														classNames={{
+															description: 'text-xs',
+															errorMessage: 'text-xs',
+														}}
+													/>
+													<div className="flex justify-end mt-1">
+														<span className="text-xs text-default-400">
+															{formData.reason.length}/500
+														</span>
+													</div>
+												</ClientOnlyMotion>
+
+												{/* Botón de envío */}
+												<ClientOnlyMotion
+													initial={{ opacity: 0, y: 20 }}
+													animate={{ opacity: 1, y: 0 }}
+													transition={{ duration: 0.3, delay: 0.3 }}
+												>
+													<Button
+														type="submit"
+														color="primary"
+														size="lg"
+														className="w-full mt-4"
+														isLoading={isSubmitting}
+														isDisabled={
+															!isFormValid || isSubmitting || hasSubmitted
+														}
 													>
-														<label
-															htmlFor={reasonTextareaId}
-															className="text-sm font-medium mb-2 block"
-														>
-															Motivo del Cambio{' '}
-															<span className="text-danger">*</span>
-														</label>
-														<textarea
-															id={reasonTextareaId}
-															value={formData.reason}
-															onChange={(e) =>
-																handleChange('reason', e.target.value)
-															}
-															placeholder="Por favor explica por qué necesitas este cambio de horario..."
-															className={clsx(
-																'w-full px-3 py-2 rounded-lg border bg-default-100 text-sm min-h-[100px] resize-none',
-																errors.reason
-																	? 'border-danger'
-																	: 'border-default-200',
-															)}
-														/>
-														<div className="flex justify-between items-center mt-1">
-															{errors.reason ? (
-																<p className="text-xs text-danger">
-																	{errors.reason}
-																</p>
-															) : (
-																<p className="text-xs text-default-400">
-																	Proporciona un motivo claro para tu solicitud.
-																	Razones comunes incluyen conflictos de
-																	horario, problemas de transporte o compromisos
-																	laborales.
-																</p>
-															)}
-															<span className="text-xs text-default-400 ml-2">
-																{formData.reason.length}/500
-															</span>
-														</div>
-													</motion.div>
-
-													{/* Botón de envío */}
-													<motion.div
-														initial={{ opacity: 0, y: 20 }}
-														animate={{ opacity: 1, y: 0 }}
-														transition={{ duration: 0.3, delay: 0.3 }}
-													>
-														<Button
-															type="submit"
-															color="primary"
-															size="lg"
-															className="w-full mt-4"
-															isLoading={isSubmitting}
-															isDisabled={
-																!isFormValid || isSubmitting || hasSubmitted
-															}
-														>
-															{isSubmitting
-																? 'Enviando...'
-																: 'Enviar Solicitud'}
-														</Button>
-													</motion.div>
-												</motion.div>
-											)}
-										</AnimatePresence>
+														{isSubmitting ? 'Enviando...' : 'Enviar Solicitud'}
+													</Button>
+												</ClientOnlyMotion>
+											</ClientOnlyMotion>
+										</ClientOnlyAnimation>
 									</div>
 								</div>
 							</form>
@@ -445,26 +441,28 @@ export const CreateRequestView: React.FC = () => {
 				<div className="lg:col-span-1">
 					<div className="sticky top-6 space-y-4">
 						{/* Detalles del Grupo Seleccionado */}
-						<AnimatePresence mode="wait">
-							{selectedGroup && groupCapacityStatus && (
-								<motion.div
-									key="group-details"
-									initial={{ opacity: 0, x: 20, scale: 0.95 }}
-									animate={{ opacity: 1, x: 0, scale: 1 }}
-									exit={{ opacity: 0, x: 20, scale: 0.95 }}
-									transition={{
-										duration: 0.4,
-										ease: [0.4, 0, 0.2, 1],
-									}}
-								>
+						<ClientOnlyAnimation
+							show={!!(selectedGroup && groupCapacityStatus)}
+							mode="wait"
+						>
+							<ClientOnlyMotion
+								key="group-details"
+								initial={{ opacity: 0, x: 20, scale: 0.95 }}
+								animate={{ opacity: 1, x: 0, scale: 1 }}
+								exit={{ opacity: 0, x: 20, scale: 0.95 }}
+								transition={{
+									duration: 0.4,
+									ease: [0.4, 0, 0.2, 1],
+								}}
+							>
+								{selectedGroup && groupCapacityStatus && (
 									<GroupDetailsCard
 										group={selectedGroup}
 										capacityStatus={groupCapacityStatus}
 									/>
-								</motion.div>
-							)}
-						</AnimatePresence>
-
+								)}
+							</ClientOnlyMotion>
+						</ClientOnlyAnimation>{' '}
 						{/* Guías de Procesamiento */}
 						<ProcessingGuidelinesCard />
 					</div>
