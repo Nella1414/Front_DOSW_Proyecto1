@@ -19,6 +19,7 @@ import {
 	usePeriodForSemester,
 	useSelectedSemester,
 } from '../../components/informative-message';
+import { CreateRequestView } from '../../components/schedule-change-request/create-request-view';
 import { type CurrentView, Sidebar, type User } from '../../components/sidebar';
 
 // Usuario estudiante simulado
@@ -261,12 +262,7 @@ export default function StudentDashboardRoute() {
 			);
 			break;
 		case 'create-request':
-			content = (
-				<SimplePlaceholder
-					title="Nueva Solicitud"
-					description="Formulario para crear una nueva solicitud."
-				/>
-			);
+			content = <CreateRequestView />;
 			break;
 		case 'academic-plan':
 			content = <AcademicGrid />;
@@ -315,14 +311,18 @@ export default function StudentDashboardRoute() {
 										? 'Progreso Académico'
 										: view === 'schedule'
 											? 'Mi Horario Académico'
-											: view.replace('-', ' ')}
+											: view === 'create-request'
+												? 'Nueva Solicitud'
+												: view.replace('-', ' ')}
 							</h1>
 							<p className="text-xs text-default-500">
 								{view === 'dashboard'
 									? 'Resumen de tu información académica.'
 									: view === 'schedule'
 										? 'Consulta tu horario de clases y materias.'
-										: 'Gestión de la sección seleccionada.'}
+										: view === 'create-request'
+											? 'Gestión de solicitudes de cambio de horario.'
+											: 'Gestión de la sección seleccionada.'}
 							</p>
 						</div>
 						<div className="flex gap-2">
@@ -331,6 +331,23 @@ export default function StudentDashboardRoute() {
 								variant="flat"
 								color="secondary"
 								onPress={() => navigate('dashboard')}
+								startContent={
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										strokeWidth={2}
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										className="w-4 h-4"
+										role="img"
+										aria-label="Home icon"
+									>
+										<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+										<polyline points="9 22 9 12 15 12 15 22" />
+									</svg>
+								}
 							>
 								Inicio
 							</Button>
@@ -339,6 +356,23 @@ export default function StudentDashboardRoute() {
 								variant="flat"
 								color="primary"
 								onPress={() => navigate('academic-progress')}
+								startContent={
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										strokeWidth={2}
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										className="w-4 h-4"
+										role="img"
+										aria-label="Academic progress icon"
+									>
+										<path d="M3 3v18h18" />
+										<path d="m19 9-5 5-4-4-3 3" />
+									</svg>
+								}
 							>
 								Mi Progreso
 							</Button>
@@ -347,6 +381,23 @@ export default function StudentDashboardRoute() {
 								variant="flat"
 								color="success"
 								onPress={() => navigate('schedule')}
+								startContent={
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										strokeWidth={2}
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										className="w-4 h-4"
+										role="img"
+										aria-label="Schedule icon"
+									>
+										<circle cx="12" cy="12" r="10" />
+										<polyline points="12 6 12 12 16 14" />
+									</svg>
+								}
 							>
 								Mi Horario
 							</Button>
