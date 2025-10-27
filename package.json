@@ -8,16 +8,6 @@
 		"build:local": "react-router build",
 		"build:azure": "echo 'Build already completed in GitHub Actions'",
 		"dev": "react-router dev",
-<<<<<<< HEAD
-		"start": "react-router-serve ./build/server/index.js",
-		"type-check": "react-router typegen && tsc",
-		"lint": "biome check .",
-		"format": "biome check --write .",
-		"prepare": "husky"
-	},
-	"dependencies": {
-		"@heroui/react": "^2.8.4",
-=======
 		"start": "node index.js",
 		"type-check": "react-router typegen && tsc",
 		"lint": "biome check .",
@@ -29,19 +19,14 @@
 		"@heroui/react": "^2.8.4",
 		"@react-router/dev": "^7.7.1",
 		"@react-router/express": "^7.9.4",
->>>>>>> origin/main
 		"@react-router/node": "^7.7.1",
 		"@react-router/serve": "^7.7.1",
 		"@tanstack/react-form": "^1.21.1",
 		"@tanstack/react-query": "^5.89.0",
-<<<<<<< HEAD
-		"axios": "^1.12.2",
-=======
 		"@vercel/react-router": "^1.2.3",
 		"axios": "^1.12.2",
 		"compression": "^1.8.1",
 		"express": "^5.1.0",
->>>>>>> origin/main
 		"framer-motion": "^12.23.13",
 		"isbot": "^5.1.27",
 		"morgan": "^1.10.1",
@@ -56,19 +41,11 @@
 		"@biomejs/biome": "^2.2.4",
 		"@commitlint/cli": "^19.8.1",
 		"@commitlint/config-conventional": "^19.8.1",
-<<<<<<< HEAD
-		"@react-router/dev": "^7.7.1",
-=======
->>>>>>> origin/main
 		"@tailwindcss/vite": "^4.1.4",
 		"@types/node": "^20",
 		"@types/react": "^19.1.2",
 		"@types/react-dom": "^19.1.2",
 		"husky": "^9.1.7",
-<<<<<<< HEAD
-		"tailwindcss": "^4.1.4",
-=======
->>>>>>> origin/main
 		"typescript": "^5.8.3",
 		"vite-tsconfig-paths": "^5.1.4"
 	},

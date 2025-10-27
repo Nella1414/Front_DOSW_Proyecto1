@@ -169,19 +169,11 @@ const ROLE_ITEMS: Record<UserRole, NavItemConfig[]> = {
 	],
 	faculty: [
 		{
-<<<<<<< HEAD
-			key: 'management',
-			label: 'Gestión',
-			icon: <Icon.Management />,
-			color: 'warning',
-			moduleToken: 'classes',
-=======
 			key: 'requests',
 			label: 'Solicitudes',
 			icon: <Icon.Requests />,
 			color: 'warning',
 			moduleToken: 'requests',
->>>>>>> origin/main
 		},
 		{
 			key: 'reports',
@@ -295,14 +287,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
 					<div className="flex items-center gap-3">
 						<Avatar
 							name={user.name}
-<<<<<<< HEAD
-							className="h-10 w-10 text-xs font-medium bg-primary/20 text-primary-600"
-						/>
-						{!collapsed && (
-							<div className="min-w-0">
-								<p className="text-sm font-medium truncate">{user.name}</p>
-								<p className="text-xs text-default-500 truncate">
-=======
 							className="h-10 w-10 text-sm font-semibold bg-primary/20 text-primary-600"
 						/>
 						{!collapsed && (
@@ -311,7 +295,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
 									{user.name}
 								</p>
 								<p className="text-sm text-default-600 truncate">
->>>>>>> origin/main
 									{user.email}
 								</p>
 								{role && (
@@ -326,12 +309,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
 													? 'warning'
 													: 'primary'
 										}
-<<<<<<< HEAD
-=======
 										classNames={{
 											content: 'font-medium text-xs',
 										}}
->>>>>>> origin/main
 									>
 										{role}
 									</Chip>
@@ -354,17 +334,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
 									onClick={() => onNavigate(item.key)}
 									aria-current={active ? 'page' : undefined}
 									className={clsx(
-<<<<<<< HEAD
 										'group w-full flex items-center gap-3 rounded-md px-3 py-2 text-left text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-focus',
 										active
 											? 'bg-primary text-primary-foreground shadow-sm'
 											: 'text-default-600 hover:bg-content2 hover:text-default-900',
-=======
 										'group w-full flex items-center gap-3 rounded-md px-3 py-2.5 text-left text-base font-semibold transition-colors outline-none focus-visible:ring-2 focus-visible:ring-focus',
 										active
 											? 'bg-primary text-primary-foreground shadow-sm'
 											: 'text-default-700 hover:bg-content2 hover:text-default-900',
->>>>>>> origin/main
 									)}
 								>
 									{item.icon}

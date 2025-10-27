@@ -331,14 +331,6 @@ function SemaphoreIndicator({
 			</div>
 		);
 	}
-<<<<<<< HEAD
-
-	return (
-		<Tooltip content={`${percentage}% completado. ${getDescription()}`}>
-			<div className="flex items-center gap-3">
-				<div className={`w-6 h-6 rounded-full bg-${getColor()}`} />
-				<span className="font-medium">{percentage}%</span>
-=======
 	return (
 		<Tooltip content={`${percentage}% completado. ${getDescription()}`}>
 			<div className="flex items-center gap-3">
@@ -353,7 +345,6 @@ function SemaphoreIndicator({
 				>
 					{percentage}%
 				</Chip>
->>>>>>> origin/main
 			</div>
 		</Tooltip>
 	);
@@ -381,11 +372,7 @@ function SubjectDetails({
 			case 'aprobada':
 				return 'success';
 			case 'en_progreso':
-<<<<<<< HEAD
-				return 'secondary'; // Cambiado de warning a secondary (azul)
-=======
 				return 'primary'; // Primary (azul) es semánticamente correcto para "en progreso"
->>>>>>> origin/main
 			case 'pendiente':
 				return 'default';
 			default:
@@ -458,23 +445,7 @@ function SubjectDetails({
 									<TableCell>{subject.name}</TableCell>
 									<TableCell>{subject.credits}</TableCell>
 									<TableCell>
-<<<<<<< HEAD
-										<Chip
-											color={
-												subject.status === 'en_progreso'
-													? 'primary'
-													: getStatusColor(subject.status)
-											}
-											variant="flat"
-											className={
-												subject.status === 'en_progreso'
-													? 'bg-blue-500 text-white'
-													: ''
-											}
-										>
-=======
 										<Chip color={getStatusColor(subject.status)} variant="flat">
->>>>>>> origin/main
 											{getStatusLabel(subject.status)}
 										</Chip>
 									</TableCell>

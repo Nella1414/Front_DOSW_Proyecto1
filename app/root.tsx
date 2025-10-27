@@ -9,10 +9,7 @@ import {
 import type { Route } from './+types/root';
 import './app.css';
 import { Snippet } from '@heroui/react';
-<<<<<<< HEAD
-=======
 import type React from 'react';
->>>>>>> origin/main
 import { Providers } from './providers';
 
 // Aquí configuramos las fuentes que va a usar toda la app
@@ -46,10 +43,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
 				<Links />
 			</head>
 			<body>
-<<<<<<< HEAD
-				{/* Aquí metemos todos los providers (React Query, HeroUI, etc.) */}
-=======
->>>>>>> origin/main
 				<Providers>{children}</Providers>
 				<ScrollRestoration />
 				<Scripts />
