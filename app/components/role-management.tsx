@@ -112,21 +112,50 @@ export function RoleManagement() {
 		<div className="space-y-6">
 			{success && (
 				<Alert color="success" title="Rol actualizado exitosamente">
+<<<<<<< HEAD
 					Usuario: {success.user} | Nuevo rol: {success.role}
+=======
+					<span className="text-base">
+						Usuario: <strong>{success.user}</strong> | Nuevo rol:{' '}
+						<strong>{success.role}</strong>
+					</span>
+>>>>>>> origin/main
 				</Alert>
 			)}
 
 			<div className="flex gap-4 items-end">
 				<Input
 					label="Buscar usuario"
+<<<<<<< HEAD
+=======
+					labelPlacement="outside"
+>>>>>>> origin/main
 					placeholder="Nombre o correo..."
 					value={searchTerm}
 					onChange={(e) => setSearchTerm(e.target.value)}
 					className="flex-1"
+<<<<<<< HEAD
 				/>
 			</div>
 
 			<Table aria-label="Tabla de usuarios">
+=======
+					size="lg"
+					classNames={{
+						label: 'text-base font-semibold text-default-900',
+						input: 'text-base',
+					}}
+				/>
+			</div>
+
+			<Table
+				aria-label="Tabla de usuarios"
+				classNames={{
+					th: 'text-sm font-bold',
+					td: 'text-base',
+				}}
+			>
+>>>>>>> origin/main
 				<TableHeader>
 					<TableColumn>NOMBRE</TableColumn>
 					<TableColumn>CORREO</TableColumn>
@@ -159,11 +188,22 @@ export function RoleManagement() {
 
 			{/* Panel que aparece cuando se selecciona un usuario para cambiar su rol */}
 			{selectedUser && (
+<<<<<<< HEAD
 				<div className="bg-default-50 p-4 rounded-lg space-y-4">
 					<h3 className="font-semibold">Asignar nuevo rol</h3>
 					<div className="flex gap-4 items-end">
 						<Select
 							label="Nuevo rol"
+=======
+				<div className="bg-default-100 p-5 rounded-lg space-y-4">
+					<h3 className="font-bold text-lg text-default-900">
+						Asignar nuevo rol
+					</h3>
+					<div className="flex gap-4 items-end">
+						<Select
+							label="Nuevo rol"
+							labelPlacement="outside"
+>>>>>>> origin/main
 							placeholder="Selecciona un rol"
 							selectedKeys={newRole ? [newRole] : []}
 							onSelectionChange={(keys) => {
@@ -171,6 +211,14 @@ export function RoleManagement() {
 								setNewRole(selected);
 							}}
 							className="flex-1"
+<<<<<<< HEAD
+=======
+							size="lg"
+							classNames={{
+								label: 'text-base font-semibold text-default-900',
+								value: 'text-base',
+							}}
+>>>>>>> origin/main
 						>
 							{ROLES.map((role) => (
 								<SelectItem key={role.value}>{role.label}</SelectItem>
@@ -178,6 +226,10 @@ export function RoleManagement() {
 						</Select>
 						<Button
 							color="primary"
+<<<<<<< HEAD
+=======
+							size="lg"
+>>>>>>> origin/main
 							onPress={handleRoleUpdate}
 							isLoading={updateRole.isPending}
 							isDisabled={!newRole}
@@ -186,6 +238,10 @@ export function RoleManagement() {
 						</Button>
 						<Button
 							variant="light"
+<<<<<<< HEAD
+=======
+							size="lg"
+>>>>>>> origin/main
 							onPress={() => {
 								setSelectedUser('');
 								setNewRole('');
@@ -199,7 +255,11 @@ export function RoleManagement() {
 
 			{updateRole.error && (
 				<Alert color="danger" title="Error al actualizar rol">
+<<<<<<< HEAD
 					{updateRole.error.message}
+=======
+					<span className="text-base">{updateRole.error.message}</span>
+>>>>>>> origin/main
 				</Alert>
 			)}
 		</div>

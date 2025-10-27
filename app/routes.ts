@@ -10,4 +10,8 @@ export default [
 	route('/academic-progress', 'routes/academic-progress/academic-progress.tsx'), // Progreso académico
 	route('/student-dashboard', 'routes/student-dashboard/student-dashboard.tsx'), // Dashboard del estudiante
 	route('/admin-dashboard', 'routes/admin-dashboard/admin-dashboard.tsx'), // El dashboard del admin
+<<<<<<< HEAD
+=======
+	route('/faculty-dashboard', 'routes/faculty-dashboard/faculty-dashboard.tsx'), // Dashboard de profesores
+>>>>>>> origin/main
 ] satisfies RouteConfig;

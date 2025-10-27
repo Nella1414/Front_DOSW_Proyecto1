@@ -9,6 +9,10 @@ import {
 } from '@heroui/react';
 import React from 'react';
 import { AcademicGrid } from '../../components/academic-grid';
+<<<<<<< HEAD
+=======
+import { AcademicSchedule } from '../../components/academic-schedule';
+>>>>>>> origin/main
 import { AcademicSemaphore } from '../../components/academic-semaphore';
 import {
 	InformativeMessage,
@@ -19,7 +23,10 @@ import {
 	useSelectedSemester,
 } from '../../components/informative-message';
 import { type CurrentView, Sidebar, type User } from '../../components/sidebar';
+<<<<<<< HEAD
 import { AcademicSchedule } from '../../components/academic-schedule';
+=======
+>>>>>>> origin/main
 
 // Usuario estudiante simulado
 const studentUser: User = {
@@ -89,6 +96,7 @@ const StudentStatCard: React.FC<{
 						? 'text-warning'
 						: color === 'danger'
 							? 'text-danger'
+<<<<<<< HEAD
 							: 'text-default-700';
 	return (
 		<Card className="min-w-[160px] flex-1" radius="sm" shadow="sm">
@@ -98,6 +106,17 @@ const StudentStatCard: React.FC<{
 				</p>
 				<p className={clsx('text-2xl font-semibold', colorClass)}>{value}</p>
 				{note && <p className="text-[11px] text-default-400">{note}</p>}
+=======
+							: 'text-default-900';
+	return (
+		<Card className="min-w-[160px] flex-1" radius="sm" shadow="sm">
+			<CardBody className="gap-1 py-4">
+				<p className="text-sm text-default-700 font-bold tracking-wide uppercase">
+					{title}
+				</p>
+				<p className={clsx('text-3xl font-bold', colorClass)}>{value}</p>
+				{note && <p className="text-sm text-default-600 font-medium">{note}</p>}
+>>>>>>> origin/main
 			</CardBody>
 		</Card>
 	);
@@ -173,6 +192,7 @@ const StudentDashboardHome: React.FC = () => {
 };
 
 // Vista de perfil del estudiante
+<<<<<<< HEAD
 const StudentProfileView: React.FC<{ user: User }> = ({ user }) => (
 	<Card radius="sm" shadow="sm">
 		<CardHeader>
@@ -180,10 +200,20 @@ const StudentProfileView: React.FC<{ user: User }> = ({ user }) => (
 				<h2 className="text-lg font-semibold">Mi Perfil</h2>
 				<p className="text-xs text-default-500">
 					Información personal y académica
+=======
+const ProfileView: React.FC<{ user: User }> = ({ user }) => (
+	<Card radius="sm" shadow="sm">
+		<CardHeader>
+			<div>
+				<h2 className="text-xl font-bold text-default-900">Perfil</h2>
+				<p className="text-sm text-default-700">
+					Información básica del estudiante
+>>>>>>> origin/main
 				</p>
 			</div>
 		</CardHeader>
 		<Divider />
+<<<<<<< HEAD
 		<CardBody className="space-y-2 text-sm">
 			<p>
 				<span className="font-medium">Nombre:</span> {user.name}
@@ -198,24 +228,58 @@ const StudentProfileView: React.FC<{ user: User }> = ({ user }) => (
 				<span className="font-medium">Programa:</span> Ingeniería de Sistemas
 			</p>
 			<Button size="sm" color="primary" variant="flat" className="mt-2 w-fit">
+=======
+		<CardBody className="space-y-2 text-base">
+			<p>
+				<span className="font-bold text-default-900">Nombre:</span>{' '}
+				<span className="text-default-700">{user.name}</span>
+			</p>
+			<p>
+				<span className="font-bold text-default-900">Correo:</span>{' '}
+				<span className="text-default-700">{user.email}</span>
+			</p>
+			<p>
+				<span className="font-bold text-default-900">ID Estudiante:</span>{' '}
+				<span className="text-default-700">{user.studentId}</span>
+			</p>
+			<p>
+				<span className="font-bold text-default-900">Estado:</span>{' '}
+				<Chip color="success" variant="flat" size="md">
+					Activo
+				</Chip>
+			</p>
+			<Button size="md" color="primary" variant="flat" className="mt-2 w-fit">
+>>>>>>> origin/main
 				Editar perfil
 			</Button>
 		</CardBody>
 	</Card>
+<<<<<<< HEAD
 );
 
 // Vistas placeholder
+=======
+); // Vistas placeholder
+>>>>>>> origin/main
 const SimplePlaceholder: React.FC<{ title: string; description?: string }> = ({
 	title,
 	description,
 }) => (
 	<Card radius="sm" shadow="sm">
 		<CardHeader>
+<<<<<<< HEAD
 			<h2 className="text-lg font-semibold">{title}</h2>
 		</CardHeader>
 		<Divider />
 		<CardBody>
 			<p className="text-sm text-default-600">
+=======
+			<h2 className="text-xl font-bold text-default-900">{title}</h2>
+		</CardHeader>
+		<Divider />
+		<CardBody>
+			<p className="text-base text-default-700">
+>>>>>>> origin/main
 				{description ||
 					'Sección en construcción. Próximamente funcionalidades completas.'}
 			</p>
@@ -246,7 +310,11 @@ export default function StudentDashboardRoute() {
 			);
 			break;
 		case 'profile':
+<<<<<<< HEAD
 			content = <StudentProfileView user={studentUser} />;
+=======
+			content = <ProfileView user={studentUser} />;
+>>>>>>> origin/main
 			break;
 		case 'requests':
 			content = (
