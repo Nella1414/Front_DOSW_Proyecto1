@@ -169,11 +169,11 @@ const ROLE_ITEMS: Record<UserRole, NavItemConfig[]> = {
 	],
 	faculty: [
 		{
-			key: 'management',
-			label: 'Gestión',
-			icon: <Icon.Management />,
+			key: 'requests',
+			label: 'Solicitudes',
+			icon: <Icon.Requests />,
 			color: 'warning',
-			moduleToken: 'classes',
+			moduleToken: 'requests',
 		},
 		{
 			key: 'reports',
