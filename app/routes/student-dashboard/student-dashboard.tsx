@@ -21,6 +21,7 @@ import {
 } from '../../components/informative-message';
 import { CreateRequestView } from '../../components/schedule-change-request/create-request-view';
 import { type CurrentView, Sidebar, type User } from '../../components/sidebar';
+import { StudentRequests } from '../../components/student-requests';
 
 // Usuario estudiante simulado
 const studentUser: User = {
@@ -254,12 +255,7 @@ export default function StudentDashboardRoute() {
 			content = <ProfileView user={studentUser} />;
 			break;
 		case 'requests':
-			content = (
-				<SimplePlaceholder
-					title="Mis Solicitudes"
-					description="Historial de solicitudes realizadas."
-				/>
-			);
+			content = <StudentRequests studentId={studentUser.studentId} />;
 			break;
 		case 'create-request':
 			content = <CreateRequestView />;
