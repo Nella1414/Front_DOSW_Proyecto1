@@ -112,21 +112,36 @@ export function RoleManagement() {
 		<div className="space-y-6">
 			{success && (
 				<Alert color="success" title="Rol actualizado exitosamente">
-					Usuario: {success.user} | Nuevo rol: {success.role}
+					<span className="text-base">
+						Usuario: <strong>{success.user}</strong> | Nuevo rol:{' '}
+						<strong>{success.role}</strong>
+					</span>
 				</Alert>
 			)}
 
 			<div className="flex gap-4 items-end">
 				<Input
 					label="Buscar usuario"
+					labelPlacement="outside"
 					placeholder="Nombre o correo..."
 					value={searchTerm}
 					onChange={(e) => setSearchTerm(e.target.value)}
 					className="flex-1"
+					size="lg"
+					classNames={{
+						label: 'text-base font-semibold text-default-900',
+						input: 'text-base',
+					}}
 				/>
 			</div>
 
-			<Table aria-label="Tabla de usuarios">
+			<Table
+				aria-label="Tabla de usuarios"
+				classNames={{
+					th: 'text-sm font-bold',
+					td: 'text-base',
+				}}
+			>
 				<TableHeader>
 					<TableColumn>NOMBRE</TableColumn>
 					<TableColumn>CORREO</TableColumn>
@@ -159,11 +174,14 @@ export function RoleManagement() {
 
 			{/* Panel que aparece cuando se selecciona un usuario para cambiar su rol */}
 			{selectedUser && (
-				<div className="bg-default-50 p-4 rounded-lg space-y-4">
-					<h3 className="font-semibold">Asignar nuevo rol</h3>
+				<div className="bg-default-100 p-5 rounded-lg space-y-4">
+					<h3 className="font-bold text-lg text-default-900">
+						Asignar nuevo rol
+					</h3>
 					<div className="flex gap-4 items-end">
 						<Select
 							label="Nuevo rol"
+							labelPlacement="outside"
 							placeholder="Selecciona un rol"
 							selectedKeys={newRole ? [newRole] : []}
 							onSelectionChange={(keys) => {
@@ -171,6 +189,11 @@ export function RoleManagement() {
 								setNewRole(selected);
 							}}
 							className="flex-1"
+							size="lg"
+							classNames={{
+								label: 'text-base font-semibold text-default-900',
+								value: 'text-base',
+							}}
 						>
 							{ROLES.map((role) => (
 								<SelectItem key={role.value}>{role.label}</SelectItem>
@@ -178,6 +201,7 @@ export function RoleManagement() {
 						</Select>
 						<Button
 							color="primary"
+							size="lg"
 							onPress={handleRoleUpdate}
 							isLoading={updateRole.isPending}
 							isDisabled={!newRole}
@@ -186,6 +210,7 @@ export function RoleManagement() {
 						</Button>
 						<Button
 							variant="light"
+							size="lg"
 							onPress={() => {
 								setSelectedUser('');
 								setNewRole('');
@@ -199,7 +224,7 @@ export function RoleManagement() {
 
 			{updateRole.error && (
 				<Alert color="danger" title="Error al actualizar rol">
-					{updateRole.error.message}
+					<span className="text-base">{updateRole.error.message}</span>
 				</Alert>
 			)}
 		</div>

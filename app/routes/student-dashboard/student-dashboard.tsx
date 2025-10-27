@@ -19,6 +19,7 @@ import {
 	usePeriodForSemester,
 	useSelectedSemester,
 } from '../../components/informative-message';
+import { CreateRequestView } from '../../components/schedule-change-request/create-request-view';
 import { type CurrentView, Sidebar, type User } from '../../components/sidebar';
 import { StudentRequests } from '../../components/student-requests';
 
@@ -90,15 +91,15 @@ const StudentStatCard: React.FC<{
 						? 'text-warning'
 						: color === 'danger'
 							? 'text-danger'
-							: 'text-default-700';
+							: 'text-default-900';
 	return (
 		<Card className="min-w-[160px] flex-1" radius="sm" shadow="sm">
 			<CardBody className="gap-1 py-4">
-				<p className="text-xs text-default-500 font-medium tracking-wide uppercase">
+				<p className="text-sm text-default-700 font-bold tracking-wide uppercase">
 					{title}
 				</p>
-				<p className={clsx('text-2xl font-semibold', colorClass)}>{value}</p>
-				{note && <p className="text-[11px] text-default-400">{note}</p>}
+				<p className={clsx('text-3xl font-bold', colorClass)}>{value}</p>
+				{note && <p className="text-sm text-default-600 font-medium">{note}</p>}
 			</CardBody>
 		</Card>
 	);
@@ -174,49 +175,53 @@ const StudentDashboardHome: React.FC = () => {
 };
 
 // Vista de perfil del estudiante
-const StudentProfileView: React.FC<{ user: User }> = ({ user }) => (
+const ProfileView: React.FC<{ user: User }> = ({ user }) => (
 	<Card radius="sm" shadow="sm">
 		<CardHeader>
 			<div>
-				<h2 className="text-lg font-semibold">Mi Perfil</h2>
-				<p className="text-xs text-default-500">
-					Información personal y académica
+				<h2 className="text-xl font-bold text-default-900">Perfil</h2>
+				<p className="text-sm text-default-700">
+					Información básica del estudiante
 				</p>
 			</div>
 		</CardHeader>
 		<Divider />
-		<CardBody className="space-y-2 text-sm">
+		<CardBody className="space-y-2 text-base">
 			<p>
-				<span className="font-medium">Nombre:</span> {user.name}
+				<span className="font-bold text-default-900">Nombre:</span>{' '}
+				<span className="text-default-700">{user.name}</span>
 			</p>
 			<p>
-				<span className="font-medium">Correo:</span> {user.email}
+				<span className="font-bold text-default-900">Correo:</span>{' '}
+				<span className="text-default-700">{user.email}</span>
 			</p>
 			<p>
-				<span className="font-medium">Código:</span> {user.studentId}
+				<span className="font-bold text-default-900">ID Estudiante:</span>{' '}
+				<span className="text-default-700">{user.studentId}</span>
 			</p>
 			<p>
-				<span className="font-medium">Programa:</span> Ingeniería de Sistemas
+				<span className="font-bold text-default-900">Estado:</span>{' '}
+				<Chip color="success" variant="flat" size="md">
+					Activo
+				</Chip>
 			</p>
-			<Button size="sm" color="primary" variant="flat" className="mt-2 w-fit">
+			<Button size="md" color="primary" variant="flat" className="mt-2 w-fit">
 				Editar perfil
 			</Button>
 		</CardBody>
 	</Card>
-);
-
-// Vistas placeholder
+); // Vistas placeholder
 const SimplePlaceholder: React.FC<{ title: string; description?: string }> = ({
 	title,
 	description,
 }) => (
 	<Card radius="sm" shadow="sm">
 		<CardHeader>
-			<h2 className="text-lg font-semibold">{title}</h2>
+			<h2 className="text-xl font-bold text-default-900">{title}</h2>
 		</CardHeader>
 		<Divider />
 		<CardBody>
-			<p className="text-sm text-default-600">
+			<p className="text-base text-default-700">
 				{description ||
 					'Sección en construcción. Próximamente funcionalidades completas.'}
 			</p>
@@ -247,18 +252,13 @@ export default function StudentDashboardRoute() {
 			);
 			break;
 		case 'profile':
-			content = <StudentProfileView user={studentUser} />;
+			content = <ProfileView user={studentUser} />;
 			break;
 		case 'requests':
 			content = <StudentRequests studentId={studentUser.studentId} />;
 			break;
 		case 'create-request':
-			content = (
-				<SimplePlaceholder
-					title="Nueva Solicitud"
-					description="Formulario para crear una nueva solicitud."
-				/>
-			);
+			content = <CreateRequestView />;
 			break;
 		case 'academic-plan':
 			content = <AcademicGrid />;
@@ -307,14 +307,18 @@ export default function StudentDashboardRoute() {
 										? 'Progreso Académico'
 										: view === 'schedule'
 											? 'Mi Horario Académico'
-											: view.replace('-', ' ')}
+											: view === 'create-request'
+												? 'Nueva Solicitud'
+												: view.replace('-', ' ')}
 							</h1>
 							<p className="text-xs text-default-500">
 								{view === 'dashboard'
 									? 'Resumen de tu información académica.'
 									: view === 'schedule'
 										? 'Consulta tu horario de clases y materias.'
-										: 'Gestión de la sección seleccionada.'}
+										: view === 'create-request'
+											? 'Gestión de solicitudes de cambio de horario.'
+											: 'Gestión de la sección seleccionada.'}
 							</p>
 						</div>
 						<div className="flex gap-2">
@@ -323,6 +327,23 @@ export default function StudentDashboardRoute() {
 								variant="flat"
 								color="secondary"
 								onPress={() => navigate('dashboard')}
+								startContent={
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										strokeWidth={2}
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										className="w-4 h-4"
+										role="img"
+										aria-label="Home icon"
+									>
+										<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+										<polyline points="9 22 9 12 15 12 15 22" />
+									</svg>
+								}
 							>
 								Inicio
 							</Button>
@@ -331,6 +352,23 @@ export default function StudentDashboardRoute() {
 								variant="flat"
 								color="primary"
 								onPress={() => navigate('academic-progress')}
+								startContent={
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										strokeWidth={2}
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										className="w-4 h-4"
+										role="img"
+										aria-label="Academic progress icon"
+									>
+										<path d="M3 3v18h18" />
+										<path d="m19 9-5 5-4-4-3 3" />
+									</svg>
+								}
 							>
 								Mi Progreso
 							</Button>
@@ -339,6 +377,23 @@ export default function StudentDashboardRoute() {
 								variant="flat"
 								color="success"
 								onPress={() => navigate('schedule')}
+								startContent={
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										strokeWidth={2}
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										className="w-4 h-4"
+										role="img"
+										aria-label="Schedule icon"
+									>
+										<circle cx="12" cy="12" r="10" />
+										<polyline points="12 6 12 12 16 14" />
+									</svg>
+								}
 							>
 								Mi Horario
 							</Button>
