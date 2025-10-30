@@ -249,9 +249,7 @@ export default function CompleteProfile() {
 						>
 							{Array.isArray(faculties) && faculties.length > 0 ? (
 								faculties.map((faculty) => (
-									<SelectItem key={faculty._id}>
-										{faculty.name}
-									</SelectItem>
+									<SelectItem key={faculty._id}>{faculty.name}</SelectItem>
 								))
 							) : (
 								<SelectItem key="no-faculties">
@@ -281,9 +279,7 @@ export default function CompleteProfile() {
 						>
 							{Array.isArray(programs) && programs.length > 0 ? (
 								programs.map((program) => (
-									<SelectItem key={program._id}>
-										{program.name}
-									</SelectItem>
+									<SelectItem key={program._id}>{program.name}</SelectItem>
 								))
 							) : (
 								<SelectItem key="no-programs">

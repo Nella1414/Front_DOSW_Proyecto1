@@ -57,7 +57,9 @@ const ClientOnlyMotion: React.FC<{
 	className?: string;
 }> = ({ children, initial, animate, exit, transition, className }) => {
 	const [isMounted, setIsMounted] = React.useState(false);
-	const [motion, setMotion] = React.useState<typeof import('framer-motion').motion | null>(null);
+	const [motion, setMotion] = React.useState<
+		typeof import('framer-motion').motion | null
+	>(null);
 
 	React.useEffect(() => {
 		setIsMounted(true);
