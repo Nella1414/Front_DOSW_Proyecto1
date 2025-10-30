@@ -251,7 +251,7 @@ function RequestsManagementView() {
 			{/* Header */}
 			<div className="mb-8">
 				<h1 className="text-4xl font-bold text-foreground mb-2">
-					Panel de Profesores
+					Gestión de Solicitudes
 				</h1>
 				<p className="text-lg text-default-600">
 					Gestiona las solicitudes de cambio de horario de tus estudiantes
@@ -1376,7 +1376,7 @@ export default function FacultyDashboardPage() {
 						<div>
 							<h1 className="text-2xl font-semibold tracking-tight">
 								{view === 'dashboard'
-									? 'Dashboard de Facultad'
+									? 'Panel de Inicio'
 									: view === 'requests'
 										? 'Gestión de Solicitudes'
 										: view === 'reports'
@@ -1427,8 +1427,7 @@ export default function FacultyDashboardPage() {
 					{content}
 					<Spacer y={12} />
 					<footer className="pt-8 pb-6 text-center text-[11px] text-default-400">
-						SIRHA &middot; Dashboard de Facultad &middot;{' '}
-						{new Date().getFullYear()}
+						SIRHA &middot; Panel de Facultad &middot; {new Date().getFullYear()}
 					</footer>
 				</div>
 			</main>

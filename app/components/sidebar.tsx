@@ -267,8 +267,8 @@ const Icon = {
 
 // Configuración de navegación por rol
 const BASE_ITEMS: NavItemConfig[] = [
-	{ key: 'dashboard', label: 'Dashboard', icon: <Icon.Dashboard /> },
-	{ key: 'profile', label: 'Perfil', icon: <Icon.Profile /> },
+	{ key: 'dashboard', label: 'Panel de Inicio', icon: <Icon.Dashboard /> },
+	{ key: 'profile', label: 'Mi Perfil', icon: <Icon.Profile /> },
 ];
 
 const ROLE_ITEMS: Record<UserRole, NavItemConfig[]> = {
@@ -296,7 +296,7 @@ const ROLE_ITEMS: Record<UserRole, NavItemConfig[]> = {
 		},
 		{
 			key: 'requests',
-			label: 'Solicitudes',
+			label: 'Mis Solicitudes',
 			icon: <Icon.Requests />,
 			color: 'primary',
 		},
@@ -309,9 +309,9 @@ const ROLE_ITEMS: Record<UserRole, NavItemConfig[]> = {
 	],
 	faculty: [
 		{
-			key: 'management',
-			label: 'Gestión',
-			icon: <Icon.Management />,
+			key: 'requests',
+			label: 'Gestión de Solicitudes',
+			icon: <Icon.Requests />,
 			color: 'warning',
 			moduleToken: 'classes',
 		},
@@ -325,14 +325,14 @@ const ROLE_ITEMS: Record<UserRole, NavItemConfig[]> = {
 	admin: [
 		{
 			key: 'student-registration',
-			label: 'Registrar Estudiante',
+			label: 'Registro de Estudiantes',
 			icon: <Icon.Students />,
 			color: 'success',
 			moduleToken: 'rooms',
 		},
 		{
 			key: 'role-management',
-			label: 'Roles',
+			label: 'Gestión de Roles',
 			icon: <Icon.Roles />,
 			color: 'danger',
 			moduleToken: 'admin',
@@ -353,7 +353,7 @@ const ROLE_ITEMS: Record<UserRole, NavItemConfig[]> = {
 		},
 		{
 			key: 'management',
-			label: 'Gestión',
+			label: 'Gestión General',
 			icon: <Icon.Management />,
 			color: 'warning',
 		},

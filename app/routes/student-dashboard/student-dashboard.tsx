@@ -5,6 +5,7 @@ import {
 	CardHeader,
 	Chip,
 	Divider,
+	Input,
 	Spacer,
 	Spinner,
 } from '@heroui/react';
@@ -426,14 +427,20 @@ export default function StudentDashboardRoute() {
 						<div>
 							<h1 className="text-2xl font-semibold tracking-tight">
 								{view === 'dashboard'
-									? 'Mi Dashboard'
+									? 'Panel de Inicio'
 									: view === 'academic-progress'
 										? 'Progreso Académico'
 										: view === 'schedule'
 											? 'Mi Horario Académico'
 											: view === 'create-request'
 												? 'Nueva Solicitud'
-												: view.replace('-', ' ')}
+												: view === 'requests'
+													? 'Mis Solicitudes'
+													: view === 'profile'
+														? 'Mi Perfil'
+														: view === 'academic-plan'
+															? 'Plan Académico'
+															: view.replace('-', ' ')}
 							</h1>
 							<p className="text-xs text-default-500">
 								{view === 'dashboard'
@@ -461,8 +468,8 @@ export default function StudentDashboardRoute() {
 										strokeLinecap="round"
 										strokeLinejoin="round"
 										className="w-4 h-4"
-										role="img"
 										aria-label="Home icon"
+										role="img"
 									>
 										<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
 										<polyline points="9 22 9 12 15 12 15 22" />
@@ -486,15 +493,15 @@ export default function StudentDashboardRoute() {
 										strokeLinecap="round"
 										strokeLinejoin="round"
 										className="w-4 h-4"
-										role="img"
 										aria-label="Academic progress icon"
+										role="img"
 									>
 										<path d="M3 3v18h18" />
 										<path d="m19 9-5 5-4-4-3 3" />
 									</svg>
 								}
 							>
-								Mi Progreso
+								Progreso
 							</Button>
 							<Button
 								size="sm"
@@ -511,23 +518,22 @@ export default function StudentDashboardRoute() {
 										strokeLinecap="round"
 										strokeLinejoin="round"
 										className="w-4 h-4"
-										role="img"
 										aria-label="Schedule icon"
+										role="img"
 									>
 										<circle cx="12" cy="12" r="10" />
 										<polyline points="12 6 12 12 16 14" />
 									</svg>
 								}
 							>
-								Mi Horario
+								Horario
 							</Button>
 						</div>
 					</header>
 					{content}
 					<Spacer y={12} />
 					<footer className="pt-8 pb-6 text-center text-[11px] text-default-400">
-						SIRHA &middot; Dashboard Estudiantil &middot;{' '}
-						{new Date().getFullYear()}
+						SIRHA &middot; Panel Estudiantil &middot; {new Date().getFullYear()}
 					</footer>
 				</div>
 			</main>
