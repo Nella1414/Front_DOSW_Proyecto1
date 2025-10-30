@@ -20,12 +20,13 @@ import {
 } from '@heroui/react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
+import { studentApi } from '../lib/api';
 
 interface Subject {
 	id: string;
 	name: string;
 	credits: number;
-	status: 'aprobada' | 'pendiente' | 'en_progreso';
+	status: 'aprobada' | 'pendiente' | 'en_progreso' | 'reprobada';
 	grade?: number;
 }
 
@@ -36,270 +37,91 @@ interface AcademicProgress {
 	totalCredits: number;
 	completedCredits: number;
 	subjects: Subject[];
+	gpa?: number;
 	inconsistent?: boolean;
 	lastUpdated: string;
 }
 
-// Materias de Ingeniería de Sistemas
-const systemsEngineeringSubjects: Subject[] = [
-	// Matemáticas
-	{
-		id: '1',
-		name: 'Matemáticas Básicas',
-		credits: 4,
-		status: 'aprobada',
-		grade: 4.1,
-	},
-	{
-		id: '2',
-		name: 'Cálculo Diferencial',
-		credits: 4,
-		status: 'aprobada',
-		grade: 3.8,
-	},
-	{
-		id: '3',
-		name: 'Cálculo Integral',
-		credits: 4,
-		status: 'aprobada',
-		grade: 4.0,
-	},
-	{
-		id: '4',
-		name: 'Cálculo Vectorial',
-		credits: 4,
-		status: 'aprobada',
-		grade: 3.9,
-	},
-	{
-		id: '5',
-		name: 'Ecuaciones Diferenciales',
-		credits: 3,
-		status: 'aprobada',
-		grade: 3.7,
-	},
-	{
-		id: '6',
-		name: 'Álgebra Lineal',
-		credits: 3,
-		status: 'aprobada',
-		grade: 4.2,
-	},
-	{
-		id: '7',
-		name: 'Matemáticas para Informática',
-		credits: 3,
-		status: 'aprobada',
-		grade: 4.3,
-	},
-	{
-		id: '8',
-		name: 'Lógica y Matemáticas Discretas',
-		credits: 3,
-		status: 'aprobada',
-		grade: 4.0,
-	},
-	{
-		id: '9',
-		name: 'Probabilidad y Estadística',
-		credits: 3,
-		status: 'en_progreso',
-	},
+interface BackendCourse {
+	courseCode: string;
+	courseName: string;
+	credits: number;
+	grade?: number;
+}
 
-	// Física
-	{
-		id: '10',
-		name: 'Física Básica',
-		credits: 4,
-		status: 'aprobada',
-		grade: 3.6,
-	},
-	{ id: '11', name: 'Física 1', credits: 4, status: 'aprobada', grade: 3.8 },
-	{ id: '12', name: 'Física 2', credits: 4, status: 'aprobada', grade: 3.5 },
+interface BackendData {
+	studentInfo?: {
+		gpa?: number;
+		passedCredits?: number;
+		totalCredits?: number;
+	};
+	courseStatuses?: {
+		passedCourses?: BackendCourse[];
+		currentCourses?: BackendCourse[];
+		failedCourses?: BackendCourse[];
+	};
+}
 
-	// Programación y Sistemas
-	{
-		id: '13',
-		name: 'Introducción a la Programación',
-		credits: 4,
-		status: 'aprobada',
-		grade: 4.5,
-	},
-	{
-		id: '14',
-		name: 'Desarrollo Orientado por Objetos',
-		credits: 4,
-		status: 'aprobada',
-		grade: 4.2,
-	},
-	{
-		id: '15',
-		name: 'Diseño de Datos y Algoritmos',
-		credits: 4,
-		status: 'aprobada',
-		grade: 4.0,
-	},
-	{
-		id: '16',
-		name: 'Teoría de la Programación y la Computación',
-		credits: 3,
-		status: 'aprobada',
-		grade: 3.9,
-	},
-	{
-		id: '17',
-		name: 'Organización de los Sistemas de Cómputo',
-		credits: 3,
-		status: 'aprobada',
-		grade: 3.7,
-	},
-	{
-		id: '18',
-		name: 'Arquitectura y Servicios de Red',
-		credits: 3,
-		status: 'en_progreso',
-	},
-	{
-		id: '19',
-		name: 'Fundamentos de Seguridad de la Información',
-		credits: 3,
-		status: 'en_progreso',
-	},
+// Helper function to transform backend data to frontend format
+function transformBackendData(backendData: BackendData): AcademicProgress {
+	const subjects: Subject[] = [];
 
-	// Ingeniería de Software
-	{
-		id: '20',
-		name: 'Modelos y Servicios de Datos',
-		credits: 4,
-		status: 'aprobada',
-		grade: 4.1,
-	},
-	{
-		id: '21',
-		name: 'Desarrollo y Operaciones Software',
-		credits: 4,
-		status: 'en_progreso',
-	},
-	{
-		id: '22',
-		name: 'Arquitecturas de Software',
-		credits: 4,
-		status: 'pendiente',
-	},
-	{
-		id: '23',
-		name: 'Transformación Digital y Soluciones Empresariales',
-		credits: 3,
-		status: 'pendiente',
-	},
+	// Transform passed courses
+	if (backendData.courseStatuses?.passedCourses) {
+		backendData.courseStatuses.passedCourses.forEach((course) => {
+			subjects.push({
+				id: course.courseCode,
+				name: course.courseName,
+				credits: course.credits,
+				status: 'aprobada',
+				grade: course.grade,
+			});
+		});
+	}
 
-	// Proyectos Integradores
-	{
-		id: '24',
-		name: 'Proyecto Integrador 1 – Introducción a la Ingeniería de Sistemas',
-		credits: 2,
-		status: 'aprobada',
-		grade: 4.3,
-	},
-	{
-		id: '25',
-		name: 'Proyecto Integrador 2 – Estrategia de Organizaciones y Procesos',
-		credits: 3,
-		status: 'pendiente',
-	},
-	{
-		id: '26',
-		name: 'Proyecto Integrador 3 – Innovación Software Apoyada en Nuevas Tecnologías',
-		credits: 3,
-		status: 'pendiente',
-	},
+	// Transform current courses (en progreso)
+	if (backendData.courseStatuses?.currentCourses) {
+		backendData.courseStatuses.currentCourses.forEach((course) => {
+			subjects.push({
+				id: course.courseCode,
+				name: course.courseName,
+				credits: course.credits,
+				status: 'en_progreso',
+				grade: course.grade,
+			});
+		});
+	}
 
-	// Humanidades y Sociales
-	{
-		id: '27',
-		name: 'Fundamentos de la Comunicación 1',
-		credits: 2,
-		status: 'aprobada',
-		grade: 4.0,
-	},
-	{
-		id: '28',
-		name: 'Colombia: Realidad, Instituciones Políticas y Paz',
-		credits: 2,
-		status: 'aprobada',
-		grade: 3.8,
-	},
-	{
-		id: '29',
-		name: 'Historia y Geografía de Colombia',
-		credits: 2,
-		status: 'aprobada',
-		grade: 3.9,
-	},
-	{
-		id: '30',
-		name: 'Fundamentos Económicos',
-		credits: 3,
-		status: 'aprobada',
-		grade: 3.6,
-	},
-	{
-		id: '31',
-		name: 'Fundamentos de Proyectos',
-		credits: 3,
-		status: 'aprobada',
-		grade: 4.1,
-	},
+	// Transform failed courses (reprobada - need to retake)
+	if (backendData.courseStatuses?.failedCourses) {
+		backendData.courseStatuses.failedCourses.forEach((course) => {
+			subjects.push({
+				id: course.courseCode,
+				name: course.courseName,
+				credits: course.credits,
+				status: 'reprobada',
+				grade: course.grade,
+			});
+		});
+	}
 
-	// Inteligencia Artificial
-	{
-		id: '32',
-		name: 'Principios y Tecnologías de Inteligencia Artificial',
-		credits: 4,
-		status: 'pendiente',
-	},
+	const totalCredits = backendData.studentInfo?.totalCredits || 0;
+	const completedCredits = backendData.studentInfo?.passedCredits || 0;
+	const percentage =
+		totalCredits > 0 ? Math.round((completedCredits / totalCredits) * 100) : 0;
 
-	// Opción de Grado
-	{
-		id: '33',
-		name: 'Seminario de Opción de Grado',
-		credits: 2,
-		status: 'pendiente',
-	},
-	{ id: '34', name: 'Opción de Grado 1', credits: 3, status: 'pendiente' },
-	{ id: '35', name: 'Opción de Grado 2', credits: 3, status: 'pendiente' },
-	{ id: '36', name: 'Opción de Grado 3', credits: 3, status: 'pendiente' },
-	{ id: '37', name: 'Opción de Grado 4', credits: 3, status: 'pendiente' },
-
-	// Electivas
-	{ id: '38', name: 'Electiva Técnica 1', credits: 3, status: 'pendiente' },
-	{ id: '39', name: 'Electiva Técnica 2', credits: 3, status: 'pendiente' },
-	{ id: '40', name: 'Electiva Técnica 3', credits: 3, status: 'pendiente' },
-
-	// Cursos de Libre Elección (solo algunos como ejemplo)
-	{ id: '41', name: 'CLE 1', credits: 2, status: 'aprobada', grade: 4.0 },
-	{ id: '42', name: 'CLE 2', credits: 2, status: 'aprobada', grade: 3.8 },
-	{ id: '43', name: 'CLE 3', credits: 2, status: 'pendiente' },
-];
-
-// Mock data actualizado
-const mockProgress: AcademicProgress = {
-	percentage: 68,
-	totalSubjects: systemsEngineeringSubjects.length,
-	completedSubjects: systemsEngineeringSubjects.filter(
-		(s) => s.status === 'aprobada',
-	).length,
-	totalCredits: systemsEngineeringSubjects.reduce(
-		(sum, s) => sum + s.credits,
-		0,
-	),
-	completedCredits: systemsEngineeringSubjects
-		.filter((s) => s.status === 'aprobada')
-		.reduce((sum, s) => sum + s.credits, 0),
-	inconsistent: Math.random() > 0.7, // 30% probabilidad de inconsistencia para testing
-	lastUpdated: new Date().toISOString(),
-	subjects: systemsEngineeringSubjects,
-};
+	return {
+		percentage,
+		totalSubjects: subjects.length,
+		completedSubjects: subjects.filter((s) => s.status === 'aprobada').length,
+		totalCredits,
+		completedCredits,
+		subjects,
+		gpa: backendData.studentInfo?.gpa || 0,
+		inconsistent: false,
+		lastUpdated: new Date().toISOString(),
+	};
+}
 
 // FEAT-004 US-0016 – Vista Semáforo
 function SemaphoreIndicator({
@@ -331,20 +153,12 @@ function SemaphoreIndicator({
 			</div>
 		);
 	}
+
 	return (
 		<Tooltip content={`${percentage}% completado. ${getDescription()}`}>
 			<div className="flex items-center gap-3">
-				<Chip
-					color={getColor()}
-					variant="dot"
-					size="lg"
-					classNames={{
-						base: 'gap-3',
-						content: 'font-medium text-base',
-					}}
-				>
-					{percentage}%
-				</Chip>
+				<div className={`w-6 h-6 rounded-full bg-${getColor()}`} />
+				<span className="font-medium">{percentage}%</span>
 			</div>
 		</Tooltip>
 	);
@@ -367,12 +181,16 @@ function SubjectDetails({
 		return subject.status === filter;
 	});
 
-	const getStatusColor = (status: string) => {
+	const getStatusColor = (
+		status: string,
+	): 'success' | 'primary' | 'danger' | 'default' => {
 		switch (status) {
 			case 'aprobada':
 				return 'success';
 			case 'en_progreso':
-				return 'primary'; // Primary (azul) es semánticamente correcto para "en progreso"
+				return 'primary'; // Azul para en progreso
+			case 'reprobada':
+				return 'danger'; // Rojo para reprobada
 			case 'pendiente':
 				return 'default';
 			default:
@@ -386,6 +204,8 @@ function SubjectDetails({
 				return 'Aprobada';
 			case 'en_progreso':
 				return 'En Progreso';
+			case 'reprobada':
+				return 'Reprobada';
 			case 'pendiente':
 				return 'Pendiente';
 			default:
@@ -428,6 +248,7 @@ function SubjectDetails({
 						<SelectItem key="todas">Todas</SelectItem>
 						<SelectItem key="aprobada">Aprobadas</SelectItem>
 						<SelectItem key="en_progreso">En Progreso</SelectItem>
+						<SelectItem key="reprobada">Reprobadas</SelectItem>
 						<SelectItem key="pendiente">Pendientes</SelectItem>
 					</Select>
 
@@ -643,28 +464,105 @@ export function AcademicSemaphore({
 	const queryClient = useQueryClient();
 
 	const {
-		data: progress,
+		data: backendData,
 		isLoading,
+		error,
 		refetch,
 	} = useQuery({
 		queryKey: ['academic-progress'],
-		queryFn: async (): Promise<AcademicProgress> => {
-			await new Promise((resolve) => setTimeout(resolve, 1000));
-			return mockProgress;
+		queryFn: async () => {
+			try {
+				console.log(
+					'[AcademicSemaphore] Fetching academic progress from backend...',
+				);
+				const data = await studentApi.getAcademicProgress();
+				console.log('[AcademicSemaphore] Backend data received:', data);
+				return data;
+			} catch (err) {
+				console.error('[AcademicSemaphore] Error fetching progress:', err);
+				throw err;
+			}
 		},
+		retry: 1,
 	});
+
+	// Transform backend data to frontend format
+	const progress = backendData ? transformBackendData(backendData) : null;
 
 	const { lastUpdated, manualRefresh } = useAutoRefresh(refetch);
 
 	const refreshMutation = useMutation({
 		mutationFn: async () => {
-			await new Promise((resolve) => setTimeout(resolve, 500));
-			return mockProgress;
+			console.log('[AcademicSemaphore] Manual refresh triggered...');
+			const data = await studentApi.getAcademicProgress();
+			return data;
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['academic-progress'] });
+			console.log('[AcademicSemaphore] Progress refreshed successfully');
+		},
+		onError: (err) => {
+			console.error('[AcademicSemaphore] Error refreshing progress:', err);
 		},
 	});
+
+	// Show loading state
+	if (isLoading) {
+		return (
+			<Card>
+				<CardBody className="flex items-center justify-center p-8">
+					<Spinner size="lg" />
+					<p className="mt-4 text-default-500">
+						Cargando progreso académico...
+					</p>
+				</CardBody>
+			</Card>
+		);
+	}
+
+	// Show error state
+	if (error) {
+		return (
+			<Card>
+				<CardBody className="p-6">
+					<Alert color="danger" title="Error al cargar progreso académico">
+						{error instanceof Error
+							? error.message
+							: 'No se pudo cargar la información académica'}
+						<div className="mt-4">
+							<Button size="sm" color="primary" onPress={() => refetch()}>
+								Reintentar
+							</Button>
+						</div>
+					</Alert>
+				</CardBody>
+			</Card>
+		);
+	}
+
+	// Show empty state
+	if (!progress || progress.totalSubjects === 0) {
+		return (
+			<Card>
+				<CardBody className="p-6">
+					<Alert color="warning" title="Sin registro académico">
+						No se encontró información de progreso académico. Esto puede deberse
+						a que aún no tienes materias registradas en el sistema.
+						<div className="mt-4">
+							<Button
+								size="sm"
+								color="primary"
+								variant="bordered"
+								onPress={() => refetch()}
+							>
+								Actualizar
+							</Button>
+						</div>
+					</Alert>
+				</CardBody>
+			</Card>
+		);
+	}
 
 	return (
 		<AccessGuard
@@ -683,7 +581,10 @@ export function AcademicSemaphore({
 								<Button
 									size="sm"
 									variant="light"
-									onPress={manualRefresh}
+									onPress={() => {
+										manualRefresh();
+										refreshMutation.mutate();
+									}}
 									isLoading={refreshMutation.isPending}
 									startContent={
 										!refreshMutation.isPending && (
@@ -710,20 +611,27 @@ export function AcademicSemaphore({
 							</div>
 						</div>
 
-						{progress && (
-							<>
-								<SemaphoreIndicator
-									percentage={progress.percentage}
-									isLoading={isLoading}
-								/>
+						<SemaphoreIndicator
+							percentage={progress.percentage}
+							isLoading={isLoading}
+						/>
 
-								<SubjectDetails
-									subjects={progress.subjects}
-									totalCredits={progress.totalCredits}
-									completedCredits={progress.completedCredits}
-								/>
-							</>
+						{progress.gpa !== undefined && (
+							<div className="flex items-center gap-2 p-3 bg-primary-50 dark:bg-primary-950 rounded-lg">
+								<span className="text-sm font-medium">
+									Promedio Acumulado (GPA):
+								</span>
+								<span className="text-lg font-bold text-primary">
+									{progress.gpa.toFixed(2)}
+								</span>
+							</div>
 						)}
+
+						<SubjectDetails
+							subjects={progress.subjects}
+							totalCredits={progress.totalCredits}
+							completedCredits={progress.completedCredits}
+						/>
 
 						<div className="text-xs text-default-500">
 							Última actualización: {lastUpdated.toLocaleString()}

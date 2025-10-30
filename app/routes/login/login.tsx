@@ -13,7 +13,8 @@ import {
 } from '@heroui/react';
 import type React from 'react';
 import { useEffect, useState } from 'react';
-import { DemoCredentials } from '../../components/demo-credentials';
+import { useNavigate } from 'react-router';
+import { authApi } from '../../lib/api';
 
 export function meta() {
 	return [
@@ -25,50 +26,47 @@ export function meta() {
 export default function Login() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
-	const [isLoading, setIsLoading] = useState(false);
+	const [isEmailLoading, setIsEmailLoading] = useState(false);
+	const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+	const [error, setError] = useState('');
+	const navigate = useNavigate();
 
 	const handleEmailLogin = async (e: React.FormEvent) => {
 		e.preventDefault();
-		setIsLoading(true);
+		setIsEmailLoading(true);
+		setError('');
 
-		// Simulate login process
-		setTimeout(() => {
-			console.log('Login attempt:', { email, password });
+		try {
+			const response = await authApi.login({ email, password });
 
-			// Check credentials and redirect based on role
-			if (email === 'du.important@gmail.com' && password === '123456789') {
-				// Admin credentials - redirect to admin dashboard
-				window.location.href = '/admin-dashboard';
-			} else if (
-				email === 'decano@escuelaing.edu.co' &&
-				password === '123456789'
-			) {
-				// Faculty/Decano credentials - redirect to admin dashboard
-				window.location.href = '/admin-dashboard';
-			} else if (
-				email === 'juan.perez@escuelaing.edu.co' &&
-				password === '123456789'
-			) {
-				// Student credentials - redirect to student dashboard
-				window.location.href = '/student-dashboard';
+			// Guardar token en localStorage
+			localStorage.setItem('accessToken', response.accessToken);
+
+			// Redirigir según el rol del usuario
+			const userRole = response.user.roles[0];
+
+			if (userRole === 'ADMIN' || userRole === 'DEAN') {
+				navigate('/admin-dashboard');
 			} else {
-				// Show error for invalid credentials
-				alert('Credenciales inválidas. Verifica tu email y contraseña.');
+				navigate('/student-dashboard');
 			}
-
-			setIsLoading(false);
-		}, 2000);
+		} catch (err: unknown) {
+			console.error('Login error:', err);
+			const error = err as { response?: { data?: { message?: string } } };
+			const errorMessage =
+				error.response?.data?.message ||
+				'Error al iniciar sesión. Verifica tus credenciales.';
+			setError(errorMessage);
+		} finally {
+			setIsEmailLoading(false);
+		}
 	};
 
 	const handleGoogleLogin = () => {
-		setIsLoading(true);
-		// Simulate Google OAuth process
-		setTimeout(() => {
-			console.log('Google login attempt');
-			setIsLoading(false);
-			// Here you would typically redirect to Google OAuth
-		}, 1500);
+		setIsGoogleLoading(true);
+		authApi.googleLogin();
 	};
+
 	useEffect(() => {}, []);
 	return (
 		<div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br dark:bg-gradient-to-tl from-content3 to-content1 p-4">
@@ -92,7 +90,7 @@ export default function Login() {
 					</Button>
 				</CardHeader>
 				<CardBody className="flex flex-col items-center text-center">
-					<h1 className="text-3xl font-bold text-default-900 mb-2">
+					<h1 className="text-3xl font-medium items-center text-2xl-900 mb-2">
 						SIRHA - DOSW
 					</h1>
 				</CardBody>
@@ -113,6 +111,12 @@ export default function Login() {
 				</CardHeader>
 
 				<CardBody className="space-y-5 px-5">
+					{error && (
+						<div className="bg-danger-50 border border-danger-200 text-danger-800 px-4 py-3 rounded">
+							{error}
+						</div>
+					)}
+
 					<Form onSubmit={handleEmailLogin} className="space-y-4">
 						<Input
 							type="email"
@@ -155,18 +159,16 @@ export default function Login() {
 							color="primary"
 							size="lg"
 							className="loginButton w-full"
-							isLoading={isLoading}
-							isDisabled={isLoading}
+							isLoading={isEmailLoading}
+							isDisabled={isEmailLoading || isGoogleLoading}
 						>
-							{isLoading ? 'Iniciando sesión...' : 'Iniciar sesión'}
+							{isEmailLoading ? 'Iniciando sesión...' : 'Iniciar sesión'}
 						</Button>
 					</Form>
 
 					<div className="flex items-center gap-3">
 						<Divider className="flex-1" />
-						<span className="text-sm text-default-600 font-medium">
-							O continúa con
-						</span>
+						<span className="text-small text-default-100">O continúa con</span>
 						<Divider className="flex-1" />
 					</div>
 
@@ -175,8 +177,8 @@ export default function Login() {
 						variant="bordered"
 						size="lg"
 						className="loginGoogle w-full"
-						isLoading={isLoading}
-						isDisabled={isLoading}
+						isLoading={isGoogleLoading}
+						isDisabled={isEmailLoading || isGoogleLoading}
 						startContent={
 							<svg
 								className="w-5 h-5"
@@ -204,24 +206,22 @@ export default function Login() {
 							</svg>
 						}
 					>
-						{isLoading ? 'Conectando...' : 'Continuar con Google'}
+						{isGoogleLoading ? 'Conectando...' : 'Continuar con Google'}
 					</Button>
 				</CardBody>
 
 				<CardFooter className="flex justify-center mb-5">
-					<p className="text-base text-default-700">
+					<p className="text-small text-default-600">
 						¿No tienes cuenta?{' '}
 						<Link
 							href="/register"
-							className="text-primary font-semibold hover:text-primary-600"
+							className="text-primary-600 hover:text-primary-800 font-medium"
 						>
 							Regístrate aquí
 						</Link>
 					</p>
 				</CardFooter>
 			</Card>
-
-			<DemoCredentials />
 		</div>
 	);
 }

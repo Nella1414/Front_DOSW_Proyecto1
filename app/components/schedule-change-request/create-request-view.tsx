@@ -24,9 +24,9 @@ const ClientOnlyAnimation: React.FC<{
 }> = ({ children, show }) => {
 	const [isMounted, setIsMounted] = React.useState(false);
 	const [AnimatePresence, setAnimatePresence] =
-		React.useState<React.ComponentType<{
-			children: React.ReactNode;
-		}> | null>(null);
+		React.useState<React.ComponentType<{ children: React.ReactNode }> | null>(
+			null,
+		);
 
 	React.useEffect(() => {
 		setIsMounted(true);
@@ -46,28 +46,25 @@ const ClientOnlyAnimation: React.FC<{
 // Componente wrapper para motion que se monta solo en el cliente
 const ClientOnlyMotion: React.FC<{
 	children: React.ReactNode;
-	initial?: Record<string, string | number | number[]>;
-	animate?: Record<string, string | number | number[]>;
-	exit?: Record<string, string | number | number[]>;
-	transition?: Record<string, string | number | number[]>;
+	// biome-ignore lint/suspicious/noExplicitAny: necesario para framer-motion
+	initial?: any;
+	// biome-ignore lint/suspicious/noExplicitAny: necesario para framer-motion
+	animate?: any;
+	// biome-ignore lint/suspicious/noExplicitAny: necesario para framer-motion
+	exit?: any;
+	// biome-ignore lint/suspicious/noExplicitAny: necesario para framer-motion
+	transition?: any;
 	className?: string;
 }> = ({ children, initial, animate, exit, transition, className }) => {
 	const [isMounted, setIsMounted] = React.useState(false);
-	const [motion, setMotion] = React.useState<{
-		div: React.ComponentType<{
-			children: React.ReactNode;
-			initial?: Record<string, string | number | number[]>;
-			animate?: Record<string, string | number | number[]>;
-			exit?: Record<string, string | number | number[]>;
-			transition?: Record<string, string | number | number[]>;
-			className?: string;
-		}>;
-	} | null>(null);
+	const [motion, setMotion] = React.useState<
+		typeof import('framer-motion').motion | null
+	>(null);
 
 	React.useEffect(() => {
 		setIsMounted(true);
 		import('framer-motion').then((mod) => {
-			setMotion(() => mod.motion);
+			setMotion(mod.motion);
 		});
 	}, []);
 

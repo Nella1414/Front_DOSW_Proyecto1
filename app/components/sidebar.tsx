@@ -8,6 +8,7 @@ import {
 	Tooltip,
 } from '@heroui/react';
 import React from 'react';
+import { authApi } from '../lib/api';
 
 // Función utilitaria para concatenar clases
 function clsx(...classes: Array<string | false | null | undefined>) {
@@ -312,7 +313,7 @@ const ROLE_ITEMS: Record<UserRole, NavItemConfig[]> = {
 			label: 'Gestión de Solicitudes',
 			icon: <Icon.Requests />,
 			color: 'warning',
-			moduleToken: 'requests',
+			moduleToken: 'classes',
 		},
 		{
 			key: 'reports',
@@ -426,14 +427,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
 					<div className="flex items-center gap-3">
 						<Avatar
 							name={user.name}
-							className="h-10 w-10 text-sm font-semibold bg-primary/20 text-primary-600"
+							className="h-10 w-10 text-xs font-medium bg-primary/20 text-primary-600"
 						/>
 						{!collapsed && (
 							<div className="min-w-0">
-								<p className="text-base font-semibold truncate text-default-900">
-									{user.name}
-								</p>
-								<p className="text-sm text-default-600 truncate">
+								<p className="text-sm font-medium truncate">{user.name}</p>
+								<p className="text-xs text-default-500 truncate">
 									{user.email}
 								</p>
 								{role && (
@@ -486,9 +485,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
 												)}
 											</svg>
 										}
-										classNames={{
-											content: 'font-medium text-xs',
-										}}
 									>
 										{role === 'student' ? 'estudiante' : role}
 									</Chip>
@@ -515,10 +511,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
 										active
 											? 'bg-primary text-primary-foreground shadow-sm'
 											: 'text-default-600 hover:bg-content2 hover:text-default-900',
-										'group w-full flex items-center gap-3 rounded-md px-3 py-2.5 text-left text-base font-semibold transition-colors outline-none focus-visible:ring-2 focus-visible:ring-focus',
-										active
-											? 'bg-primary text-primary-foreground shadow-sm'
-											: 'text-default-700 hover:bg-content2 hover:text-default-900',
 									)}
 								>
 									{item.icon}
@@ -550,7 +542,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
 					color="danger"
 					size="sm"
 					className={clsx(collapsed && 'px-0')}
-					onPress={() => onNavigate('dashboard')}
+					onPress={() => {
+						authApi.logout();
+					}}
 				>
 					{collapsed ? '⏻' : 'Cerrar sesión'}
 				</Button>

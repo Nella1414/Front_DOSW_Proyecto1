@@ -1,80 +1,102 @@
 import { Alert, Button, Input, Select, SelectItem } from '@heroui/react';
 import { useForm } from '@tanstack/react-form';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import { generateRadicado } from '../lib/api';
-
-// Lista de todas las carreras disponibles en la universidad
-const CAREERS = [
-	'Ingeniería en Biotecnología',
-	'Ingeniería de Inteligencia Artificial',
-	'Ingeniería de Ciberseguridad',
-	'Ingeniería Civil',
-	'Ingeniería Ambiental',
-	'Ingeniería Estadística',
-	'Ingeniería Eléctrica',
-	'Ingeniería de Sistemas',
-	'Administración de empresas',
-	'Matemáticas',
-	'Ingeniería Mecánica',
-	'Ingeniería Biomédica',
-];
+import { useNavigate } from 'react-router';
+import { authApi, facultyApi } from '../lib/api';
 
 interface StudentData {
-	code: string;
-	name: string;
-	career: string;
 	email: string;
+	password: string;
+	name: string;
+	displayName: string;
+	programId: string;
+}
+
+interface Program {
+	_id?: string;
+	id?: string;
+	name: string;
 }
 
 // Componente para registrar nuevos estudiantes
-// Maneja validaciones, envío de datos y muestra mensajes de éxito/error
 export function StudentRegistration() {
-	// Estado para mostrar mensaje de éxito cuando se registra un estudiante
-	const [success, setSuccess] = useState<{
-		name: string;
-		radicado: string;
-	} | null>(null);
+	const [error, setError] = useState<string | null>(null);
+	const navigate = useNavigate();
 
-	// Mutación para registrar el estudiante
-	// Simula una llamada al servidor con delay y validación de código duplicado
-	const registerStudent = useMutation({
-		mutationFn: async (data: StudentData) => {
-			// Simula delay de red
-			await new Promise((resolve) => setTimeout(resolve, 1000));
-
-			// Simula error si el código ya existe
-			if (data.code === '1234567890') {
-				throw new Error('El código de estudiante ya existe');
+	// Obtener lista de programas desde el backend
+	const { data: programs = [], isLoading: programsLoading } = useQuery({
+		queryKey: ['programs'],
+		queryFn: async () => {
+			try {
+				const response = await facultyApi.getPrograms('');
+				return response;
+			} catch (err) {
+				console.error('Error loading programs:', err);
+				return [];
 			}
-			return { name: data.name, radicado: generateRadicado() };
-		},
-		onSuccess: (data) => {
-			// Cuando se registra exitosamente, muestra el mensaje y limpia el form
-			setSuccess({ name: data.name, radicado: data.radicado });
-			form.reset();
 		},
 	});
 
-	// Configuración del formulario con TanStack Form
-	// Maneja el estado de todos los campos y las validaciones
+	// Mutación para registrar el estudiante
+	const registerStudent = useMutation({
+		mutationFn: async (data: StudentData) => {
+			return await authApi.register(data);
+		},
+		onSuccess: () => {
+			// Redirigir al login después del registro exitoso
+			navigate('/login');
+		},
+		onError: (err: unknown) => {
+			console.error('Registration error:', err);
+			const error = err as {
+				response?: { data?: { message?: string | string[] } };
+			};
+			const errorMessage =
+				error.response?.data?.message || 'Error al registrar el estudiante';
+			setError(
+				Array.isArray(errorMessage) ? errorMessage.join(', ') : errorMessage,
+			);
+		},
+	});
+
+	// Configuración del formulario
 	const form = useForm({
 		defaultValues: {
-			code: '',
-			name: '',
-			career: '',
 			email: '',
+			password: '',
+			confirmPassword: '',
+			name: '',
+			displayName: '',
+			programId: '',
 		},
 		onSubmit: async ({ value }) => {
-			registerStudent.mutate(value);
+			setError(null);
+
+			// Validar que las contraseñas coincidan
+			if (value.password !== value.confirmPassword) {
+				setError('Las contraseñas no coinciden');
+				return;
+			}
+
+			// Enviar datos al backend
+			// biome-ignore lint/correctness/noUnusedVariables: confirmPassword is used for validation but not sent to backend
+			const { confirmPassword, ...registerData } = value;
+			registerStudent.mutate(registerData);
 		},
 	});
 
 	return (
 		<div className="space-y-6">
-			{success && (
-				<Alert color="success" title="Estudiante registrado exitosamente">
-					Estudiante: {success.name} | Radicado: {success.radicado}
+			{error && (
+				<Alert color="danger" title="Error en el registro">
+					{error}
+				</Alert>
+			)}
+
+			{registerStudent.isSuccess && (
+				<Alert color="success" title="Registro exitoso">
+					Tu cuenta ha sido creada. Redirigiendo al login...
 				</Alert>
 			)}
 
@@ -85,32 +107,80 @@ export function StudentRegistration() {
 				}}
 				className="space-y-4"
 			>
-				{/* Campo para el código del estudiante - debe ser exactamente 10 dígitos */}
+				{/* Campo de email */}
 				<form.Field
-					name="code"
+					name="email"
 					validators={{
 						onChange: ({ value }) => {
-							if (!value) return 'Código requerido';
-							if (!/^\d{10}$/.test(value))
-								return 'Debe ser exactamente 10 dígitos';
+							if (!value) return 'Correo requerido';
+							const emailRegex =
+								/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+							if (!emailRegex.test(value)) return 'Formato de email inválido';
 						},
 					}}
 				>
 					{(field) => (
 						<Input
-							label="Código de Estudiante"
-							placeholder="1234567890"
+							label="Correo Electrónico"
+							placeholder="juan.perez@escuelaing.edu.co"
+							type="email"
 							value={field.state.value}
 							onChange={(e) => field.handleChange(e.target.value)}
 							isInvalid={!!field.state.meta.errors.length}
 							errorMessage={field.state.meta.errors[0]}
-							maxLength={10}
 							isRequired
 						/>
 					)}
 				</form.Field>
 
-				{/* Campo para el nombre - solo acepta letras, espacios y acentos */}
+				{/* Campo de contraseña */}
+				<form.Field
+					name="password"
+					validators={{
+						onChange: ({ value }) => {
+							if (!value) return 'Contraseña requerida';
+							if (value.length < 6) return 'Debe tener al menos 6 caracteres';
+						},
+					}}
+				>
+					{(field) => (
+						<Input
+							label="Contraseña"
+							placeholder="••••••••"
+							type="password"
+							value={field.state.value}
+							onChange={(e) => field.handleChange(e.target.value)}
+							isInvalid={!!field.state.meta.errors.length}
+							errorMessage={field.state.meta.errors[0]}
+							isRequired
+						/>
+					)}
+				</form.Field>
+
+				{/* Confirmar contraseña */}
+				<form.Field
+					name="confirmPassword"
+					validators={{
+						onChange: ({ value }) => {
+							if (!value) return 'Confirma tu contraseña';
+						},
+					}}
+				>
+					{(field) => (
+						<Input
+							label="Confirmar Contraseña"
+							placeholder="••••••••"
+							type="password"
+							value={field.state.value}
+							onChange={(e) => field.handleChange(e.target.value)}
+							isInvalid={!!field.state.meta.errors.length}
+							errorMessage={field.state.meta.errors[0]}
+							isRequired
+						/>
+					)}
+				</form.Field>
+
+				{/* Nombre completo */}
 				<form.Field
 					name="name"
 					validators={{
@@ -118,6 +188,7 @@ export function StudentRegistration() {
 							if (!value) return 'Nombre requerido';
 							if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(value))
 								return 'Solo letras y espacios';
+							if (value.length < 3) return 'Debe tener al menos 3 caracteres';
 						},
 					}}
 				>
@@ -134,54 +205,21 @@ export function StudentRegistration() {
 					)}
 				</form.Field>
 
-				{/* Select para elegir la carrera - valida que esté en la lista */}
+				{/* Nombre para mostrar */}
 				<form.Field
-					name="career"
+					name="displayName"
 					validators={{
 						onChange: ({ value }) => {
-							if (!value) return 'Carrera requerida';
-							if (!CAREERS.includes(value)) return 'Carrera no válida';
-						},
-					}}
-				>
-					{(field) => (
-						<Select
-							label="Carrera"
-							placeholder="Selecciona una carrera"
-							selectedKeys={field.state.value ? [field.state.value] : []}
-							onSelectionChange={(keys) => {
-								const selected = Array.from(keys)[0] as string;
-								field.handleChange(selected);
-							}}
-							isInvalid={!!field.state.meta.errors.length}
-							errorMessage={field.state.meta.errors[0]}
-							isRequired
-						>
-							{CAREERS.map((career) => (
-								<SelectItem className="text-default-900" key={career}>
-									{career}
-								</SelectItem>
-							))}
-						</Select>
-					)}
-				</form.Field>
-
-				{/* Campo de email - debe seguir el formato institucional */}
-				<form.Field
-					name="email"
-					validators={{
-						onChange: ({ value }) => {
-							if (!value) return 'Correo requerido';
-							const emailRegex = /^[a-zA-Z]+\.[a-zA-Z]+@escuelaing\.edu\.co$/;
-							if (!emailRegex.test(value))
-								return 'Formato: nombre.apellido@escuelaing.edu.co';
+							if (!value) return 'Nombre para mostrar requerido';
+							if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(value))
+								return 'Solo letras y espacios';
 						},
 					}}
 				>
 					{(field) => (
 						<Input
-							label="Correo Institucional"
-							placeholder="juan.perez@escuelaing.edu.co"
+							label="Nombre para Mostrar"
+							placeholder="Juan Pérez"
 							value={field.state.value}
 							onChange={(e) => field.handleChange(e.target.value)}
 							isInvalid={!!field.state.meta.errors.length}
@@ -191,20 +229,97 @@ export function StudentRegistration() {
 					)}
 				</form.Field>
 
+				{/* Select de programa académico */}
+				<form.Field
+					name="programId"
+					validators={{
+						onChange: ({ value }) => {
+							if (!value) return 'Programa académico requerido';
+						},
+					}}
+				>
+					{(field) => (
+						<Select
+							label="Programa Académico"
+							placeholder={
+								programsLoading
+									? 'Cargando programas...'
+									: 'Selecciona tu programa'
+							}
+							selectedKeys={field.state.value ? [field.state.value] : []}
+							onSelectionChange={(keys) => {
+								const selected = Array.from(keys)[0] as string;
+								field.handleChange(selected);
+							}}
+							isInvalid={!!field.state.meta.errors.length}
+							errorMessage={field.state.meta.errors[0]}
+							isRequired
+							isDisabled={programsLoading}
+						>
+							{programs.map((program: Program) => (
+								<SelectItem
+									className="text-default-900"
+									key={program._id || program.id}
+								>
+									{program.name}
+								</SelectItem>
+							))}
+						</Select>
+					)}
+				</form.Field>
+
+				{/* Botón de Google para registro */}
+				<div className="flex items-center gap-3">
+					<div className="flex-1 border-t border-default-200" />
+					<span className="text-small text-default-400">O regístrate con</span>
+					<div className="flex-1 border-t border-default-200" />
+				</div>
+
+				<Button
+					onClick={() => authApi.googleLogin()}
+					variant="bordered"
+					size="lg"
+					className="w-full"
+					startContent={
+						<svg
+							className="w-5 h-5"
+							viewBox="0 0 24 24"
+							aria-label="Google logo"
+						>
+							<title>Google</title>
+							<path
+								fill="currentColor"
+								d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+							/>
+							<path
+								fill="currentColor"
+								d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+							/>
+							<path
+								fill="currentColor"
+								d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+							/>
+							<path
+								fill="currentColor"
+								d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+							/>
+						</svg>
+					}
+				>
+					Continuar con Google
+				</Button>
+
+				{/* Botón de registro */}
 				<Button
 					type="submit"
 					color="primary"
-					isLoading={registerStudent.isPending}
+					size="lg"
 					className="w-full"
+					isLoading={registerStudent.isPending}
+					isDisabled={registerStudent.isPending}
 				>
-					Registrar Estudiante
+					{registerStudent.isPending ? 'Registrando...' : 'Registrarse'}
 				</Button>
-
-				{registerStudent.error && (
-					<Alert color="danger" title="Error al registrar">
-						{registerStudent.error.message}
-					</Alert>
-				)}
 			</form>
 		</div>
 	);
