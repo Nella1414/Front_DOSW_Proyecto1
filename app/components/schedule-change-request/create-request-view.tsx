@@ -23,7 +23,10 @@ const ClientOnlyAnimation: React.FC<{
 	mode?: 'wait' | 'sync' | 'popLayout';
 }> = ({ children, show }) => {
 	const [isMounted, setIsMounted] = React.useState(false);
-	const [AnimatePresence, setAnimatePresence] = React.useState<any>(null);
+	const [AnimatePresence, setAnimatePresence] =
+		React.useState<React.ComponentType<{
+			children: React.ReactNode;
+		}> | null>(null);
 
 	React.useEffect(() => {
 		setIsMounted(true);
@@ -34,7 +37,7 @@ const ClientOnlyAnimation: React.FC<{
 
 	// Si no está montado o framer-motion no está cargado, mostrar sin animación
 	if (!isMounted || !AnimatePresence) {
-		return show ? <>{children}</> : null;
+		return show ? children : null;
 	}
 
 	return <AnimatePresence>{show && children}</AnimatePresence>;
@@ -43,14 +46,23 @@ const ClientOnlyAnimation: React.FC<{
 // Componente wrapper para motion que se monta solo en el cliente
 const ClientOnlyMotion: React.FC<{
 	children: React.ReactNode;
-	initial?: any;
-	animate?: any;
-	exit?: any;
-	transition?: any;
+	initial?: Record<string, string | number | number[]>;
+	animate?: Record<string, string | number | number[]>;
+	exit?: Record<string, string | number | number[]>;
+	transition?: Record<string, string | number | number[]>;
 	className?: string;
 }> = ({ children, initial, animate, exit, transition, className }) => {
 	const [isMounted, setIsMounted] = React.useState(false);
-	const [motion, setMotion] = React.useState<any>(null);
+	const [motion, setMotion] = React.useState<{
+		div: React.ComponentType<{
+			children: React.ReactNode;
+			initial?: Record<string, string | number | number[]>;
+			animate?: Record<string, string | number | number[]>;
+			exit?: Record<string, string | number | number[]>;
+			transition?: Record<string, string | number | number[]>;
+			className?: string;
+		}>;
+	} | null>(null);
 
 	React.useEffect(() => {
 		setIsMounted(true);

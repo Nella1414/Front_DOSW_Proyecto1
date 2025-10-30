@@ -241,6 +241,8 @@ const ProfileView: React.FC<{ user: User }> = ({ user }) => {
 								strokeLinecap="round"
 								strokeLinejoin="round"
 								className="w-4 h-4"
+								aria-label="Icono decorativo"
+								role="img"
 							>
 								{isEditing ? (
 									<>
@@ -249,9 +251,7 @@ const ProfileView: React.FC<{ user: User }> = ({ user }) => {
 										<polyline points="7 3 7 8 15 8" />
 									</>
 								) : (
-									<>
-										<path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
-									</>
+									<path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
 								)}
 							</svg>
 						}
@@ -278,6 +278,8 @@ const ProfileView: React.FC<{ user: User }> = ({ user }) => {
 										viewBox="0 0 24 24"
 										fill="currentColor"
 										className="w-5 h-5 text-white"
+										aria-label="Icono decorativo"
+										role="img"
 									>
 										<path
 											fillRule="evenodd"
@@ -319,9 +321,9 @@ const ProfileView: React.FC<{ user: User }> = ({ user }) => {
 						<div className="flex-1 space-y-4">
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 								<div>
-									<label className="text-sm font-semibold text-default-700 mb-1 block">
+									<div className="text-sm font-semibold text-default-700 mb-1 block">
 										Nombre Completo
-									</label>
+									</div>
 									{isEditing ? (
 										<Input
 											value={profileData.name}
@@ -339,9 +341,9 @@ const ProfileView: React.FC<{ user: User }> = ({ user }) => {
 								</div>
 
 								<div>
-									<label className="text-sm font-semibold text-default-700 mb-1 block">
+									<span className="text-sm font-semibold text-default-700 mb-1 block">
 										Correo Electrónico
-									</label>
+									</span>
 									<p className="text-base text-default-900 font-medium py-2 flex items-center gap-2">
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
@@ -352,6 +354,8 @@ const ProfileView: React.FC<{ user: User }> = ({ user }) => {
 											strokeLinecap="round"
 											strokeLinejoin="round"
 											className="w-4 h-4 text-default-500"
+											aria-label="Icono decorativo"
+											role="img"
 										>
 											<rect width="20" height="16" x="2" y="4" rx="2" />
 											<path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
@@ -364,9 +368,9 @@ const ProfileView: React.FC<{ user: User }> = ({ user }) => {
 								</div>
 
 								<div>
-									<label className="text-sm font-semibold text-default-700 mb-1 block">
+									<div className="text-sm font-semibold text-default-700 mb-1 block">
 										Teléfono
-									</label>
+									</div>
 									{isEditing ? (
 										<Input
 											value={profileData.phone}
@@ -388,6 +392,8 @@ const ProfileView: React.FC<{ user: User }> = ({ user }) => {
 													strokeLinecap="round"
 													strokeLinejoin="round"
 													className="w-4 h-4 text-default-400"
+													aria-label="Icono decorativo"
+													role="img"
 												>
 													<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
 												</svg>
@@ -404,6 +410,8 @@ const ProfileView: React.FC<{ user: User }> = ({ user }) => {
 												strokeLinecap="round"
 												strokeLinejoin="round"
 												className="w-4 h-4 text-default-500"
+												aria-label="Icono decorativo"
+												role="img"
 											>
 												<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
 											</svg>
@@ -413,9 +421,9 @@ const ProfileView: React.FC<{ user: User }> = ({ user }) => {
 								</div>
 
 								<div>
-									<label className="text-sm font-semibold text-default-700 mb-1 block">
+									<span className="text-sm font-semibold text-default-700 mb-1 block">
 										Programa Académico
-									</label>
+									</span>
 									<p className="text-base text-default-900 font-medium py-2 flex items-center gap-2">
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
@@ -426,6 +434,8 @@ const ProfileView: React.FC<{ user: User }> = ({ user }) => {
 											strokeLinecap="round"
 											strokeLinejoin="round"
 											className="w-4 h-4 text-default-500"
+											aria-label="Icono decorativo"
+											role="img"
 										>
 											<path d="M22 10v6M2 10l10-5 10 5-10 5z" />
 											<path d="M6 12v5c3 3 9 3 12 0v-5" />
@@ -435,9 +445,9 @@ const ProfileView: React.FC<{ user: User }> = ({ user }) => {
 								</div>
 
 								<div className="md:col-span-2">
-									<label className="text-sm font-semibold text-default-700 mb-1 block">
+									<div className="text-sm font-semibold text-default-700 mb-1 block">
 										Dirección
-									</label>
+									</div>
 									{isEditing ? (
 										<Input
 											value={profileData.address}
@@ -459,6 +469,8 @@ const ProfileView: React.FC<{ user: User }> = ({ user }) => {
 													strokeLinecap="round"
 													strokeLinejoin="round"
 													className="w-4 h-4 text-default-400"
+													aria-label="Icono decorativo"
+													role="img"
 												>
 													<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
 													<circle cx="12" cy="10" r="3" />
@@ -476,6 +488,8 @@ const ProfileView: React.FC<{ user: User }> = ({ user }) => {
 												strokeLinecap="round"
 												strokeLinejoin="round"
 												className="w-4 h-4 text-default-500"
+												aria-label="Icono decorativo"
+												role="img"
 											>
 												<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
 												<circle cx="12" cy="10" r="3" />
@@ -486,9 +500,9 @@ const ProfileView: React.FC<{ user: User }> = ({ user }) => {
 								</div>
 
 								<div className="md:col-span-2">
-									<label className="text-sm font-semibold text-default-700 mb-1 block">
+									<div className="text-sm font-semibold text-default-700 mb-1 block">
 										Contacto de Emergencia
-									</label>
+									</div>
 									{isEditing ? (
 										<Input
 											value={profileData.emergencyContact}
@@ -510,6 +524,8 @@ const ProfileView: React.FC<{ user: User }> = ({ user }) => {
 													strokeLinecap="round"
 													strokeLinejoin="round"
 													className="w-4 h-4 text-default-400"
+													aria-label="Icono decorativo"
+													role="img"
 												>
 													<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
 													<circle cx="9" cy="7" r="4" />
@@ -529,6 +545,8 @@ const ProfileView: React.FC<{ user: User }> = ({ user }) => {
 												strokeLinecap="round"
 												strokeLinejoin="round"
 												className="w-4 h-4 text-default-500"
+												aria-label="Icono decorativo"
+												role="img"
 											>
 												<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
 												<circle cx="9" cy="7" r="4" />
@@ -575,6 +593,8 @@ const ProfileView: React.FC<{ user: User }> = ({ user }) => {
 							viewBox="0 0 24 24"
 							fill="currentColor"
 							className="w-5 h-5 text-primary"
+							aria-label="Icono decorativo"
+							role="img"
 						>
 							<path d="M11.7 2.805a.75.75 0 01.6 0A60.65 60.65 0 0122.83 8.72a.75.75 0 01-.231 1.337 49.949 49.949 0 00-9.902 3.912l-.003.002-.34.18a.75.75 0 01-.707 0A50.009 50.009 0 007.5 12.174v-.224c0-.131.067-.248.172-.311a54.614 54.614 0 014.653-2.52.75.75 0 00-.65-1.352 56.129 56.129 0 00-4.78 2.589 1.858 1.858 0 00-.859 1.228 49.803 49.803 0 00-4.634-1.527.75.75 0 01-.231-1.337A60.653 60.653 0 0111.7 2.805z" />
 							<path d="M13.06 15.473a48.45 48.45 0 017.666-3.282c.134 1.414.22 2.843.255 4.285a.75.75 0 01-.46.71 47.878 47.878 0 00-8.105 4.342.75.75 0 01-.832 0 47.877 47.877 0 00-8.104-4.342.75.75 0 01-.461-.71c.035-1.442.121-2.87.255-4.286A48.4 48.4 0 016 13.18v1.27a1.5 1.5 0 00-.14 2.508c-.09.38-.222.753-.397 1.11.452.213.901.434 1.346.661a6.729 6.729 0 00.551-1.608 1.5 1.5 0 00.14-2.67v-.645a48.549 48.549 0 013.44 1.668 2.25 2.25 0 002.12 0z" />
@@ -639,6 +659,8 @@ const ProfileView: React.FC<{ user: User }> = ({ user }) => {
 								viewBox="0 0 24 24"
 								fill="currentColor"
 								className="w-6 h-6 text-white"
+								aria-label="Icono decorativo"
+								role="img"
 							>
 								<path d="M11.25 4.533A9.707 9.707 0 006 3a9.735 9.735 0 00-3.25.555.75.75 0 00-.5.707v14.25a.75.75 0 001 .707A8.237 8.237 0 016 18.75c1.995 0 3.823.707 5.25 1.886V4.533zM12.75 20.636A8.214 8.214 0 0118 18.75c.966 0 1.89.166 2.75.47a.75.75 0 001-.708V4.262a.75.75 0 00-.5-.707A9.735 9.735 0 0018 3a9.707 9.707 0 00-5.25 1.533v16.103z" />
 							</svg>
@@ -660,6 +682,8 @@ const ProfileView: React.FC<{ user: User }> = ({ user }) => {
 								viewBox="0 0 24 24"
 								fill="currentColor"
 								className="w-6 h-6 text-white"
+								aria-label="Icono decorativo"
+								role="img"
 							>
 								<path
 									fillRule="evenodd"
@@ -685,6 +709,8 @@ const ProfileView: React.FC<{ user: User }> = ({ user }) => {
 								viewBox="0 0 24 24"
 								fill="currentColor"
 								className="w-6 h-6 text-white"
+								aria-label="Icono decorativo"
+								role="img"
 							>
 								<path d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0016.5 9h-1.875a1.875 1.875 0 01-1.875-1.875V5.25A3.75 3.75 0 009 1.5H5.625z" />
 								<path d="M12.971 1.816A5.23 5.23 0 0114.25 5.25v1.875c0 .207.168.375.375.375H16.5a5.23 5.23 0 013.434 1.279 9.768 9.768 0 00-6.963-6.963z" />
@@ -709,6 +735,8 @@ const ProfileView: React.FC<{ user: User }> = ({ user }) => {
 							viewBox="0 0 24 24"
 							fill="currentColor"
 							className="w-5 h-5 text-danger"
+							aria-label="Icono decorativo"
+							role="img"
 						>
 							<path
 								fillRule="evenodd"
@@ -889,8 +917,8 @@ export default function StudentDashboardRoute() {
 										strokeLinecap="round"
 										strokeLinejoin="round"
 										className="w-4 h-4"
-										role="img"
 										aria-label="Home icon"
+										role="img"
 									>
 										<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
 										<polyline points="9 22 9 12 15 12 15 22" />
@@ -914,8 +942,8 @@ export default function StudentDashboardRoute() {
 										strokeLinecap="round"
 										strokeLinejoin="round"
 										className="w-4 h-4"
-										role="img"
 										aria-label="Academic progress icon"
+										role="img"
 									>
 										<path d="M3 3v18h18" />
 										<path d="m19 9-5 5-4-4-3 3" />
@@ -939,8 +967,8 @@ export default function StudentDashboardRoute() {
 										strokeLinecap="round"
 										strokeLinejoin="round"
 										className="w-4 h-4"
-										role="img"
 										aria-label="Schedule icon"
+										role="img"
 									>
 										<circle cx="12" cy="12" r="10" />
 										<polyline points="12 6 12 12 16 14" />
