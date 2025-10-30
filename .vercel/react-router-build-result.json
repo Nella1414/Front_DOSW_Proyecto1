@@ -1,0 +1,223 @@
+{
+	"buildManifest": {
+		"serverBundles": {
+			"nodejs_eyJydW50aW1lIjoibm9kZWpzIn0": {
+				"id": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+				"file": "build/server/nodejs_eyJydW50aW1lIjoibm9kZWpzIn0/index.js",
+				"config": {
+					"runtime": "nodejs"
+				}
+			}
+		},
+		"routeIdToServerBundleId": {
+			"routes/home/home": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+			"routes/admin/admin": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+			"routes/login/login": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+			"routes/register/register": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+			"routes/academic-progress/academic-progress": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+			"routes/student-dashboard/student-dashboard": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+			"routes/admin-dashboard/admin-dashboard": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+			"routes/faculty-dashboard/faculty-dashboard": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0"
+		},
+		"routes": {
+			"root": {
+				"id": "root",
+				"file": "app/root.tsx",
+				"path": "",
+				"config": {}
+			},
+			"routes/home/home": {
+				"id": "routes/home/home",
+				"parentId": "root",
+				"file": "app/routes/home/home.tsx",
+				"index": true,
+				"config": {
+					"runtime": "nodejs"
+				}
+			},
+			"routes/admin/admin": {
+				"id": "routes/admin/admin",
+				"parentId": "root",
+				"file": "app/routes/admin/admin.tsx",
+				"path": "/admin",
+				"config": {
+					"runtime": "nodejs"
+				}
+			},
+			"routes/login/login": {
+				"id": "routes/login/login",
+				"parentId": "root",
+				"file": "app/routes/login/login.tsx",
+				"path": "/login",
+				"config": {
+					"runtime": "nodejs"
+				}
+			},
+			"routes/register/register": {
+				"id": "routes/register/register",
+				"parentId": "root",
+				"file": "app/routes/register/register.tsx",
+				"path": "/register",
+				"config": {
+					"runtime": "nodejs"
+				}
+			},
+			"routes/academic-progress/academic-progress": {
+				"id": "routes/academic-progress/academic-progress",
+				"parentId": "root",
+				"file": "app/routes/academic-progress/academic-progress.tsx",
+				"path": "/academic-progress",
+				"config": {
+					"runtime": "nodejs"
+				}
+			},
+			"routes/student-dashboard/student-dashboard": {
+				"id": "routes/student-dashboard/student-dashboard",
+				"parentId": "root",
+				"file": "app/routes/student-dashboard/student-dashboard.tsx",
+				"path": "/student-dashboard",
+				"config": {
+					"runtime": "nodejs"
+				}
+			},
+			"routes/admin-dashboard/admin-dashboard": {
+				"id": "routes/admin-dashboard/admin-dashboard",
+				"parentId": "root",
+				"file": "app/routes/admin-dashboard/admin-dashboard.tsx",
+				"path": "/admin-dashboard",
+				"config": {
+					"runtime": "nodejs"
+				}
+			},
+			"routes/faculty-dashboard/faculty-dashboard": {
+				"id": "routes/faculty-dashboard/faculty-dashboard",
+				"parentId": "root",
+				"file": "app/routes/faculty-dashboard/faculty-dashboard.tsx",
+				"path": "/faculty-dashboard",
+				"config": {
+					"runtime": "nodejs"
+				}
+			}
+		}
+	},
+	"reactRouterConfig": {
+		"appDirectory": "C:/Users/maria/Desktop/a/9_Semestre/DOSW/proyecto/frontProyecto1/app",
+		"basename": "/",
+		"buildDirectory": "C:/Users/maria/Desktop/a/9_Semestre/DOSW/proyecto/frontProyecto1/build",
+		"future": {
+			"v8_middleware": false,
+			"unstable_optimizeDeps": false,
+			"unstable_splitRouteModules": false,
+			"unstable_subResourceIntegrity": false,
+			"unstable_viteEnvironmentApi": false
+		},
+		"routes": {
+			"root": {
+				"id": "root",
+				"file": "root.tsx",
+				"path": ""
+			},
+			"routes/home/home": {
+				"id": "routes/home/home",
+				"parentId": "root",
+				"file": "routes/home/home.tsx",
+				"index": true
+			},
+			"routes/admin/admin": {
+				"id": "routes/admin/admin",
+				"parentId": "root",
+				"file": "routes/admin/admin.tsx",
+				"path": "/admin"
+			},
+			"routes/login/login": {
+				"id": "routes/login/login",
+				"parentId": "root",
+				"file": "routes/login/login.tsx",
+				"path": "/login"
+			},
+			"routes/register/register": {
+				"id": "routes/register/register",
+				"parentId": "root",
+				"file": "routes/register/register.tsx",
+				"path": "/register"
+			},
+			"routes/academic-progress/academic-progress": {
+				"id": "routes/academic-progress/academic-progress",
+				"parentId": "root",
+				"file": "routes/academic-progress/academic-progress.tsx",
+				"path": "/academic-progress"
+			},
+			"routes/student-dashboard/student-dashboard": {
+				"id": "routes/student-dashboard/student-dashboard",
+				"parentId": "root",
+				"file": "routes/student-dashboard/student-dashboard.tsx",
+				"path": "/student-dashboard"
+			},
+			"routes/admin-dashboard/admin-dashboard": {
+				"id": "routes/admin-dashboard/admin-dashboard",
+				"parentId": "root",
+				"file": "routes/admin-dashboard/admin-dashboard.tsx",
+				"path": "/admin-dashboard"
+			},
+			"routes/faculty-dashboard/faculty-dashboard": {
+				"id": "routes/faculty-dashboard/faculty-dashboard",
+				"parentId": "root",
+				"file": "routes/faculty-dashboard/faculty-dashboard.tsx",
+				"path": "/faculty-dashboard"
+			}
+		},
+		"routeDiscovery": {
+			"mode": "lazy",
+			"manifestPath": "/__manifest"
+		},
+		"serverBuildFile": "index.js",
+		"serverModuleFormat": "esm",
+		"ssr": true,
+		"unstable_routeConfig": [
+			{
+				"id": "root",
+				"path": "",
+				"file": "root.tsx",
+				"children": [
+					{
+						"file": "routes/home/home.tsx",
+						"index": true
+					},
+					{
+						"file": "routes/admin/admin.tsx",
+						"path": "/admin"
+					},
+					{
+						"file": "routes/login/login.tsx",
+						"path": "/login"
+					},
+					{
+						"file": "routes/register/register.tsx",
+						"path": "/register"
+					},
+					{
+						"file": "routes/academic-progress/academic-progress.tsx",
+						"path": "/academic-progress"
+					},
+					{
+						"file": "routes/student-dashboard/student-dashboard.tsx",
+						"path": "/student-dashboard"
+					},
+					{
+						"file": "routes/admin-dashboard/admin-dashboard.tsx",
+						"path": "/admin-dashboard"
+					},
+					{
+						"file": "routes/faculty-dashboard/faculty-dashboard.tsx",
+						"path": "/faculty-dashboard"
+					}
+				]
+			}
+		]
+	},
+	"viteConfig": {
+		"build": {
+			"assetsDir": "assets"
+		}
+	}
+}

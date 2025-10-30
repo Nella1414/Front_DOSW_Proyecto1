@@ -28,6 +28,15 @@ export default function AuthCallback() {
 			})
 				.then((res) => res.json())
 				.then((data) => {
+					// Verificar si el estudiante tiene perfil completo
+					if (data.user.roles.includes('STUDENT')) {
+						// Si no hay perfil de estudiante o no tiene programa, redirigir a completar perfil
+						if (!data.student || !data.student.programId) {
+							navigate('/complete-profile');
+							return;
+						}
+					}
+
 					const userRole = data.user.roles[0];
 
 					// Redirigir según el rol

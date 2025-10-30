@@ -14,7 +14,6 @@ import {
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { DemoCredentials } from '../../components/demo-credentials';
 import { authApi } from '../../lib/api';
 
 export function meta() {
@@ -223,8 +222,6 @@ export default function Login() {
 					</p>
 				</CardFooter>
 			</Card>
-
-			<DemoCredentials />
 		</div>
 	);
 }
