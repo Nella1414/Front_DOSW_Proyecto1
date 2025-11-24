@@ -21,8 +21,8 @@ importers:
         specifier: ^7.9.4
         version: 7.9.4(express@5.1.0)(react-router@7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)
       '@react-router/node':
-        specifier: ^7.7.1
-        version: 7.9.4(react-router@7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)
+        specifier: ^7.9.6
+        version: 7.9.6(react-router@7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)
       '@react-router/serve':
         specifier: ^7.7.1
         version: 7.9.4(react-router@7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)
@@ -34,7 +34,7 @@ importers:
         version: 5.90.5(react@19.2.0)
       '@vercel/react-router':
         specifier: ^1.2.3
-        version: 1.2.3(@react-router/dev@7.9.4(@react-router/serve@7.9.4(react-router@7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3))(@types/node@20.19.23)(jiti@2.6.1)(lightningcss@1.30.2)(react-router@7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)(vite@6.4.1(@types/node@20.19.23)(jiti@2.6.1)(lightningcss@1.30.2)))(@react-router/node@7.9.4(react-router@7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3))(isbot@5.1.31)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        version: 1.2.3(@react-router/dev@7.9.4(@react-router/serve@7.9.4(react-router@7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3))(@types/node@20.19.23)(jiti@2.6.1)(lightningcss@1.30.2)(react-router@7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)(vite@6.4.1(@types/node@20.19.23)(jiti@2.6.1)(lightningcss@1.30.2)))(@react-router/node@7.9.6(react-router@7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3))(isbot@5.1.31)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       axios:
         specifier: ^1.12.2
         version: 1.12.2
@@ -1403,6 +1403,16 @@ packages:
     engines: {node: '>=20.0.0'}
     peerDependencies:
       react-router: 7.9.4
+      typescript: ^5.1.0
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
+  '@react-router/node@7.9.6':
+    resolution: {integrity: sha512-XzU8gPHwSl2Qh8/bOV30npbpH2fWOO3sFg+SwhX3+IddD1a/0C2KQzRiW/qAngkvZTJVdbca5Qp+FJjCCE7sNw==}
+    engines: {node: '>=20.0.0'}
+    peerDependencies:
+      react-router: 7.9.6
       typescript: ^5.1.0
     peerDependenciesMeta:
       typescript:
@@ -5670,6 +5680,13 @@ snapshots:
     optionalDependencies:
       typescript: 5.9.3
 
+  '@react-router/node@7.9.6(react-router@7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)':
+    dependencies:
+      '@mjackson/node-fetch-server': 0.2.0
+      react-router: 7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+    optionalDependencies:
+      typescript: 5.9.3
+
   '@react-router/serve@7.9.4(react-router@7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)':
     dependencies:
       '@mjackson/node-fetch-server': 0.2.0
@@ -6251,10 +6268,10 @@ snapshots:
 
   '@types/use-sync-external-store@0.0.6': {}
 
-  '@vercel/react-router@1.2.3(@react-router/dev@7.9.4(@react-router/serve@7.9.4(react-router@7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3))(@types/node@20.19.23)(jiti@2.6.1)(lightningcss@1.30.2)(react-router@7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)(vite@6.4.1(@types/node@20.19.23)(jiti@2.6.1)(lightningcss@1.30.2)))(@react-router/node@7.9.4(react-router@7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3))(isbot@5.1.31)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
+  '@vercel/react-router@1.2.3(@react-router/dev@7.9.4(@react-router/serve@7.9.4(react-router@7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3))(@types/node@20.19.23)(jiti@2.6.1)(lightningcss@1.30.2)(react-router@7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)(vite@6.4.1(@types/node@20.19.23)(jiti@2.6.1)(lightningcss@1.30.2)))(@react-router/node@7.9.6(react-router@7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3))(isbot@5.1.31)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
     dependencies:
       '@react-router/dev': 7.9.4(@react-router/serve@7.9.4(react-router@7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3))(@types/node@20.19.23)(jiti@2.6.1)(lightningcss@1.30.2)(react-router@7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)(vite@6.4.1(@types/node@20.19.23)(jiti@2.6.1)(lightningcss@1.30.2))
-      '@react-router/node': 7.9.4(react-router@7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)
+      '@react-router/node': 7.9.6(react-router@7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)
       '@vercel/static-config': 3.1.2
       isbot: 5.1.31
       react: 19.2.0
