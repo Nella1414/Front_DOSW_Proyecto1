@@ -1,3 +1,5 @@
+import { Snippet } from '@heroui/react';
+import type React from 'react';
 import {
 	isRouteErrorResponse,
 	Links,
@@ -6,12 +8,9 @@ import {
 	Scripts,
 	ScrollRestoration,
 } from 'react-router';
-
 import type { Route } from './+types/root';
-import './app.css';
-import { Snippet } from '@heroui/react';
-import type React from 'react';
 import { Providers } from './providers';
+import './app.css';
 
 // Aquí configuramos las fuentes que va a usar toda la app
 // Preconectamos a Google Fonts para que cargue más rápido
@@ -27,6 +26,18 @@ export const links: Route.LinksFunction = () => [
 		href: 'https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap',
 	},
 ];
+
+// Meta tags para la aplicación
+export const meta: Route.MetaFunction = () => {
+	return [
+		{ title: 'DOSW - Sistema de Gestión Académica' },
+		{
+			name: 'description',
+			content:
+				'Sistema de Gestión Académica para estudiantes y administradores',
+		},
+	];
+};
 
 // Este es el layout base de toda la aplicación
 // Envuelve todo en los providers y configura el HTML básico
@@ -44,7 +55,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 				<Links />
 			</head>
 			<body>
-				<Providers>{children}</Providers>
+				{children}
 				<ScrollRestoration />
 				<Scripts />
 			</body>
@@ -54,7 +65,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 // El componente principal - básicamente solo renderiza las rutas
 export default function App() {
-	return <Outlet />;
+	return (
+		<Providers>
+			<Outlet />
+		</Providers>
+	);
 }
 
 // Maneja todos los errores que puedan pasar en la app

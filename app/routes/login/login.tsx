@@ -11,6 +11,7 @@ import {
 	Input,
 	Link,
 } from '@heroui/react';
+import type React from 'react';
 import { useEffect, useState } from 'react';
 import { DemoCredentials } from '../../components/demo-credentials';
 
@@ -37,6 +38,12 @@ export default function Login() {
 			// Check credentials and redirect based on role
 			if (email === 'du.important@gmail.com' && password === '123456789') {
 				// Admin credentials - redirect to admin dashboard
+				window.location.href = '/admin-dashboard';
+			} else if (
+				email === 'decano@escuelaing.edu.co' &&
+				password === '123456789'
+			) {
+				// Faculty/Decano credentials - redirect to admin dashboard
 				window.location.href = '/admin-dashboard';
 			} else if (
 				email === 'juan.perez@escuelaing.edu.co' &&
@@ -91,17 +98,17 @@ export default function Login() {
 				</CardBody>
 				<CardFooter className="flex justify-center mb-5">
 					<p className="text-base text-default-700 font-medium">
-						Academic Schedule Reassignment System
+						Sistema de Reasignación de Horarios Académicos
 					</p>
 				</CardFooter>
 			</Card>
 			<Card className="w-full max-w-md shadow-medium container mx-auto bg-content4 mt-10">
 				<CardHeader className="flex flex-col items-center pb-2 mt-5">
 					<h1 className="text-2xl font-bold text-default-900 mb-2">
-						Sign In to Your Account!
+						¡Inicia Sesión en Tu Cuenta!
 					</h1>
 					<p className="text-base text-default-700 text-center">
-						Enter your credentials to access your account
+						Ingresa tus credenciales para acceder a tu cuenta
 					</p>
 				</CardHeader>
 
@@ -109,8 +116,8 @@ export default function Login() {
 					<Form onSubmit={handleEmailLogin} className="space-y-4">
 						<Input
 							type="email"
-							label="Email"
-							placeholder="you@email.com"
+							label="Correo Electrónico"
+							placeholder="tucorreo@email.com"
 							value={email}
 							onChange={(e) => setEmail(e.target.value)}
 							isRequired
@@ -122,7 +129,7 @@ export default function Login() {
 
 						<Input
 							type="password"
-							label="Password"
+							label="Contraseña"
 							placeholder="••••••••"
 							value={password}
 							onChange={(e) => setPassword(e.target.value)}
@@ -134,12 +141,12 @@ export default function Login() {
 						/>
 
 						<div className="flex justify-between items-center text-small w-full">
-							<Checkbox size="sm">Remember me</Checkbox>
+							<Checkbox size="sm">Recordarme</Checkbox>
 							<Link
 								href="#"
 								className="text-primary-600 hover:text-primary-800"
 							>
-								Forgot your password?
+								¿Olvidaste tu contraseña?
 							</Link>
 						</div>
 
